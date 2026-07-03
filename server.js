@@ -6,8 +6,6 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.disable('x-powered-by');
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -151,8 +149,8 @@ app.all('/:tunnelId/*', (req, res, next) => {
     const timeoutSeconds = ids[tunnelId].timeout || 30;
     
     const tId = setTimeout(() => {
-        if (pendingResponses.has(requestId)) {
-            pendingResponses.delete(requestId);
+        if (pendingRequests.has(requestId)) {
+            pendingRequests.delete(requestId);
 
             if (fs.existsSync(reqFilePath)) {
                 try {
@@ -172,7 +170,7 @@ app.all('/:tunnelId/*', (req, res, next) => {
         }
     }, timeoutSeconds * 1000);
 
-    pendingResponses.set(requestId, {
+    pendingRequests.set(requestId, {
         resolve: resolveRequest,
         timeoutId: tId,
         tunnelId: tunnelId
