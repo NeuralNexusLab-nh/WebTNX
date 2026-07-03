@@ -37,8 +37,17 @@
         .no-reqs { text-align: center; color: #adb5bd; padding: 20px 0; font-size: 0.9rem; font-style: italic; }
 
         /* 單個紀錄框框的外觀 */
-        .log-item { border: 1px solid #dee2e6; border-radius: 6px; overflow: hidden; background: #fff; font-size: 0.85rem; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
-        
+.log-item { 
+    border: 1px solid #dee2e6; 
+    border-radius: 6px; 
+    overflow: hidden; 
+    background: #fff; 
+    font-size: 0.85rem; 
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02); 
+    
+    /* 💡 關鍵：強制防止此元素在 Flex 容器中被垂直擠壓，維持其本來的完整高度 */
+    flex-shrink: 0; 
+}        
         /* 上半段：ID, Method, Path */
         .log-header { padding: 8px 12px; background: #f8f9fa; border-bottom: 1px solid #dee2e6; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
         .log-path { font-family: monospace; font-weight: 600; color: #212529; word-break: break-all; flex: 1; text-align: left; }
