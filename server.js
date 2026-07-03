@@ -6,8 +6,10 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '2mb' }));
+app.use(express.urlencoded({ limit: '2mb', extended: true }));
+app.use(express.text({ limit: '2mb' }));
+app.use(express.raw({ limit: '2mb' }));
 
 const dataDir = path.join(__dirname, 'data');
 const reqsDir = path.join(__dirname, 'data', 'requests');
@@ -197,6 +199,13 @@ app.all('/:tunnelId/*', (req, res, next) => {
 
         res.status(status || 200).send(finalBody);
     });
+});
+
+app.use((err, req, res, next) => {
+    if (err.type === 'entity.too.large' || err.status === 413) {
+        return res.status(413).send('413 Payload Too Large: WebTNX limit is 2MB to protect server memory.');
+    }
+    next(err);
 });
 
 app.listen(PORT, () => {
