@@ -14,14 +14,48 @@
         h1 { font-size: 1.8rem; color: #28a745; margin-top: 0; margin-bottom: 20px; }
         .alert-danger { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; padding: 15px; border-radius: 5px; margin-bottom: 20px; line-height: 1.5; }
         
-        /* 警告與說明的專用樣式 */
         .alert-warning { background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba; padding: 15px; border-radius: 5px; margin: 15px 0; line-height: 1.6; font-size: 0.95rem; }
         .alert-info { background-color: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; padding: 15px; border-radius: 5px; margin: 15px 0; line-height: 1.6; font-size: 0.95rem; }
         
         code { background: #e9ecef; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 0.95rem; }
         .btn-back { display: inline-block; background: #dc3545; color: white; text-decoration: none; padding: 10px 20px; border-radius: 4px; font-weight: bold; transition: background 0.2s; border: none; cursor: pointer; }
         .btn-back:hover { background: #bd2130; }
-        .status-box { background: #f1f3f5; padding: 15px; border-radius: 5px; margin-top: 20px; }
+
+        /* ==========================================
+           紀錄框框設計（Log Box UI）
+           ========================================== */
+        .history-box { margin-top: 25px; border-top: 1px solid #dee2e6; padding-top: 20px; }
+        .history-title { font-size: 1.1rem; font-weight: 600; color: #495057; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
+        .pulse-dot { width: 8px; height: 8px; background-color: #28a745; border-radius: 50%; display: inline-block; animation: pulse 1.5s infinite; }
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(40, 167, 69, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(40, 167, 69, 0); }
+        }
+        
+        .log-list { display: flex; flex-direction: column; gap: 10px; max-height: 320px; overflow-y: auto; padding-right: 5px; }
+        .no-reqs { text-align: center; color: #adb5bd; padding: 20px 0; font-size: 0.9rem; font-style: italic; }
+
+        /* 單個紀錄框框的外觀 */
+        .log-item { border: 1px solid #dee2e6; border-radius: 6px; overflow: hidden; background: #fff; font-size: 0.85rem; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+        
+        /* 上半段：ID, Method, Path */
+        .log-header { padding: 8px 12px; background: #f8f9fa; border-bottom: 1px solid #dee2e6; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+        .log-path { font-family: monospace; font-weight: 600; color: #212529; word-break: break-all; flex: 1; text-align: left; }
+        .log-id { font-size: 0.75rem; color: #868e96; font-family: monospace; flex-shrink: 0; }
+        
+        /* HTTP Method Badges */
+        .badge { padding: 3px 6px; border-radius: 4px; font-weight: bold; font-size: 0.7rem; color: #fff; flex-shrink: 0; text-transform: uppercase; }
+        .badge-get { background-color: #007bff; }
+        .badge-post { background-color: #28a745; }
+        .badge-other { background-color: #6c757d; }
+
+        /* 下半段：Status, Body */
+        .log-body-section { padding: 10px 12px; display: flex; align-items: center; justify-content: space-between; gap: 15px; }
+        .status-indicator { font-weight: bold; }
+        .status-success { color: #28a745; }
+        .status-error { color: #dc3545; }
+        .body-preview { color: #495057; font-family: monospace; background: #f1f3f5; padding: 2px 6px; border-radius: 3px; word-break: break-all; max-width: 60%; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; font-size: 0.8rem; }
     </style>
 </head>
 <body>
@@ -44,17 +78,20 @@
             <p><span id="txt-local-port">Local service port:</span> <code id="display-port">8080</code></p>
             <p><strong><span id="txt-public-url">Public URL:</span></strong> <a id="public-link" href="#" target="_blank"></a></p>
             
-            <!-- ⚠️ 新增：連線維持警告卡 -->
+            <!-- 警告與路徑說明 -->
             <div class="alert-warning" id="keep-alive-warning"></div>
-
-            <!-- 💡 新增：相對路徑改寫說明卡 -->
             <div class="alert-info" id="rewriting-info"></div>
-
-            <!-- CORS 設定提示 -->
             <div class="alert-info" id="cors-warning"></div>
 
-            <div class="status-box">
-                <strong id="txt-current-status">Current Status:</strong> <span id="status" style="color: green;">Polling...</span>
+            <!-- ⚠️ 新增：漂亮的動態請求紀錄區 -->
+            <div class="history-box">
+                <div class="history-title">
+                    <span id="txt-history-title">Request History</span>
+                    <span class="pulse-dot"></span>
+                </div>
+                <div class="log-list" id="log-list">
+                    <div class="no-reqs" id="no-reqs-placeholder">No requests processed yet.</div>
+                </div>
             </div>
         </div>
 
@@ -76,12 +113,14 @@
                 keep_alive_warning: "<strong>⚠️ Do not refresh or close this tab!</strong><br>This browser page serves as your tunnel agent. Closing, refreshing, or letting your computer fall asleep (or putting this tab to sleep in the background) will immediately disconnect your tunnel.",
                 rewriting_info: "<strong>💡 Auto Path Rewriting Enabled:</strong><br>To ensure resources load properly, WebTNX automatically rewrites absolute and relative paths (e.g. <code>/assets</code>) inside your HTML and JS responses, prefixing them with <code>/{id}/</code>.",
                 cors_warning: "<strong>⚠️ CORS Setting Required:</strong><br>Please allow CORS for <code>https://webtnx.zone.id</code> in your localhost local app.<br>Example Header: <code>Access-Control-Allow-Origin: https://webtnx.zone.id</code>",
-                status_txt: "Current Status:",
-                polling: "Polling...",
-                processing: "Processing request: ",
                 error_in_use: "This ID is currently in use. Please choose another one.",
                 btn_back: "Back to Configuration",
-                conn_err: "Failed to connect to WebTNX Server."
+                conn_err: "Failed to connect to WebTNX Server.",
+                // 新增翻譯
+                txt_history_title: "Request History",
+                txt_no_reqs: "No requests processed yet.",
+                txt_status: "Status",
+                txt_body: "Body"
             },
             "zh-TW": {
                 active_title: "WebTNX 網頁隧道正在運行中！",
@@ -90,12 +129,14 @@
                 keep_alive_warning: "<strong>⚠️ 請勿重新整理（Refresh）或關閉此分頁！</strong><br>本網頁正扮演您的隧道代理。若關閉、重整分頁，或是讓電腦進入休眠狀態（或讓此分頁在背景休眠），隧道連線將會立即中斷。",
                 rewriting_info: "<strong>💡 已啟用相對路徑重寫：</strong><br>為了讓資源正常載入，WebTNX 已自動將 HTML 與 JS 回應內容中的相對與絕對路徑（例如 <code>/assets</code>）重寫並加上了 <code>/{id}/</code> 前綴。",
                 cors_warning: "<strong>⚠️ 必須設定 CORS 允許跨來源請求：</strong><br>請在您的本機程式中啟用 CORS，允許來自 <code>https://webtnx.zone.id</code> 的請求。<br>例 Headers：<code>Access-Control-Allow-Origin: https://webtnx.zone.id</code>",
-                status_txt: "當前狀態：",
-                polling: "正在輪詢...",
-                processing: "正在處理請求：",
                 error_in_use: "此 ID 目前已被佔用，請重新選擇另一個 ID。",
                 btn_back: "返回重新設定",
-                conn_err: "與 WebTNX 伺服器連線失敗。"
+                conn_err: "與 WebTNX 伺服器連線失敗。",
+                // 新增翻譯
+                txt_history_title: "請求歷史紀錄",
+                txt_no_reqs: "目前尚無任何請求紀錄。",
+                txt_status: "狀態碼",
+                txt_body: "回應內容"
             },
             ja: {
                 active_title: "WebTNX トンネルが稼働しています！",
@@ -104,12 +145,14 @@
                 keep_alive_warning: "<strong>⚠️ このタブを更新または閉じないでください！</strong><br>このブラウザページはトンネルエージェントとして機能しています。ページを閉じる・更新する、またはコンピュータがスリープ状態になると、接続が切断されます。",
                 rewriting_info: "<strong>💡 パス自動書き換えが有効：</strong><br>リソースを正常に読み込むため、WebTNXはHTMLおよびJSレスポンス内の相対/絶対パス（例：<code>/assets</code>）の前に自動的に <code>/{id}/</code> を追加します。",
                 cors_warning: "<strong>⚠️ CORS 設定が必要です：</strong><br>ローカルアプリで <code>https://webtnx.zone.id</code> からの CORS を許可してください。<br>ヘッダーの例：<code>Access-Control-Allow-Origin: https://webtnx.zone.id</code>",
-                status_txt: "現在のステータス：",
-                polling: "ポーリング中...",
-                processing: "リクエストを処理中: ",
                 error_in_use: "このIDは既に使用されています。別のIDを選択してください。",
                 btn_back: "設定に戻る",
-                conn_err: "WebTNX サーバーとの接続に失敗しました。"
+                conn_err: "WebTNX サーバーとの接続に失敗しました。",
+                // 新增翻譯
+                txt_history_title: "リクエスト履歴",
+                txt_no_reqs: "リクエストはまだ処理されていません。",
+                txt_status: "状態",
+                txt_body: "ボディ"
             },
             fr: {
                 active_title: "Le tunnel WebTNX est en cours d'exécution !",
@@ -118,12 +161,14 @@
                 keep_alive_warning: "<strong>⚠️ Ne rafraîchissez pas et ne fermez pas cet onglet !</strong><br>Cette page sert d'agent de tunnel. Fermer, rafraîchir ou laisser l'ordinateur s'endormir coupera immédiatement la connexion.",
                 rewriting_info: "<strong>💡 Réécriture automatique des chemins :</strong><br>Pour charger les ressources correctement, WebTNX réécrit automatiquement les chemins relatifs/absolus (ex: <code>/assets</code>) dans vos fichiers HTML et JS avec le préfixe <code>/{id}/</code>.",
                 cors_warning: "<strong>⚠️ Configuration CORS requise :</strong><br>Veuillez autoriser CORS pour <code>https://webtnx.zone.id</code> dans votre application locale.<br>Exemple d'en-tête : <code>Access-Control-Allow-Origin: https://webtnx.zone.id</code>",
-                status_txt: "Statut actuel :",
-                polling: "Interrogation...",
-                processing: "Traitement de la demande: ",
                 error_in_use: "Cet ID est déjà utilisé. Veuillez en choisir un autre.",
                 btn_back: "Retour à la configuration",
-                conn_err: "Échec de connexion au serveur WebTNX."
+                conn_err: "Échec de connexion au serveur WebTNX.",
+                // 新增翻譯
+                txt_history_title: "Historique des requêtes",
+                txt_no_reqs: "Aucune requête traitée pour le moment.",
+                txt_status: "Statut",
+                txt_body: "Corps"
             },
             it: {
                 active_title: "Il tunnel WebTNX è in esecuzione!",
@@ -132,12 +177,14 @@
                 keep_alive_warning: "<strong>⚠️ Non aggiornare o chiudere questa scheda!</strong><br>Questa pagina funge da agente del tunnel. Chiudere, aggiornare o consentire al computer di andare in standby interromperà la connessione.",
                 rewriting_info: "<strong>💡 Riscrittura automatica dei percorsi :</strong><br>Per caricare correttamente le risorse, WebTNX riscrive automaticamente i percorsi relativi/assoluti (es: <code>/assets</code>) in HTML e JS, aggiungendo il prefisso <code>/{id}/</code>.",
                 cors_warning: "<strong>⚠️ Impostazione CORS richiesta:</strong><br>Consenti CORS per <code>https://webtnx.zone.id</code> nella tua applicazione locale.<br>Esempio di intestazione: <code>Access-Control-Allow-Origin: https://webtnx.zone.id</code>",
-                status_txt: "Stato attuale:",
-                polling: "Verifica...",
-                processing: "Elaborazione richiesta: ",
                 error_in_use: "Questo ID è già in uso. Scegline un altro.",
                 btn_back: "Torna alla configurazione",
-                conn_err: "Connessione al server WebTNX non riuscita."
+                conn_err: "Connessione al server WebTNX non riuscita.",
+                // 新增翻譯
+                txt_history_title: "Cronologia richieste",
+                txt_no_reqs: "Nessuna richiesta ancora elaborata.",
+                txt_status: "Stato",
+                txt_body: "Corpo"
             },
             pt: {
                 active_title: "O túnel WebTNX está em execução!",
@@ -146,12 +193,14 @@
                 keep_alive_warning: "<strong>⚠️ Não atualize ou feche esta guia!</strong><br>Esta página funciona como o agente do túnel. Fechar, atualizar ou permitir que o computador entre em modo de suspensão desconectará o túnel.",
                 rewriting_info: "<strong>💡 Reesquema de caminhos ativo :</strong><br>Para carregar os recursos corretamente, o WebTNX reescreve caminhos absolutos/relativos (ex: <code>/assets</code>) no HTML e JS, prefixando-os com <code>/{id}/</code>.",
                 cors_warning: "<strong>⚠️ Configuração CORS necessária:</strong><br>Permita CORS para <code>https://webtnx.zone.id</code> em seu aplicativo local.<br>Exemplo de cabeçalho: <code>Access-Control-Allow-Origin: https://webtnx.zone.id</code>",
-                status_txt: "Status atual:",
-                polling: "Interrogando...",
-                processing: "Processando solicitação: ",
                 error_in_use: "Este ID já está em uso. Por favor, escolha outro.",
                 btn_back: "Voltar para configuração",
-                conn_err: "Falha na conexão com o servidor WebTNX."
+                conn_err: "Falha na conexão com o servidor WebTNX.",
+                // 新增翻譯
+                txt_history_title: "Histórico de requisições",
+                txt_no_reqs: "Nenhuma requisição processada ainda.",
+                txt_status: "Status",
+                txt_body: "Corpo"
             },
             ko: {
                 active_title: "WebTNX 터널이 실행 중입니다!",
@@ -160,12 +209,14 @@
                 keep_alive_warning: "<strong>⚠️ 이 탭을 새로고침하거나 닫지 마세요!</strong><br>이 페이지는 터널 에이전트로 작동합니다. 탭을 닫거나 새로고침하거나, 컴퓨터가 절전 모드로 전환되면 터널 연결이 즉시 끊어집니다.",
                 rewriting_info: "<strong>💡 자동 경로 재작성 활성화 :</strong><br>리소스의 원활한 로딩을 위해 WebTNX는 HTML 및 JS 응답 내의 모든 상대/절대 경로(예: <code>/assets</code>) 앞에 <code>/{id}/</code>를 자동으로 붙여서 재작성합니다.",
                 cors_warning: "<strong>⚠️ CORS 설정 필요:</strong><br>로컬 앱에서 <code>https://webtnx.zone.id</code>의 CORS를 허용해 주세요.<br>헤더 예시: <code>Access-Control-Allow-Origin: https://webtnx.zone.id</code>",
-                status_txt: "현재 상태:",
-                polling: "폴링 중...",
-                processing: "요청 처리 중: ",
                 error_in_use: "이 ID는 이미 사용 중입니다. 다른 ID를 선택해 주세요.",
                 btn_back: "설정으로 돌아가기",
-                conn_err: "WebTNX 서버 연결에 실패했습니다."
+                conn_err: "WebTNX 서버 연결에 실패했습니다.",
+                // 新增翻譯
+                txt_history_title: "요청 기록",
+                txt_no_reqs: "아직 처리된 요청이 없습니다.",
+                txt_status: "상태",
+                txt_body: "본문"
             }
         };
 
@@ -179,19 +230,79 @@
             document.getElementById('lang-select').value = lang;
             const data = i18n[lang] || i18n['en'];
 
-            // 替換各語系 DOM
             document.getElementById('tunnel-active-title').innerText = data.active_title;
             document.getElementById('txt-local-port').innerText = data.local_port;
             document.getElementById('txt-public-url').innerText = data.public_url;
             document.getElementById('keep-alive-warning').innerHTML = data.keep_alive_warning;
             
-            // 將說明卡中的 {id} 動態替換成當前的 tunnelId
             document.getElementById('rewriting-info').innerHTML = data.rewriting_info.replace(/{id}/g, tunnelId);
-            
             document.getElementById('cors-warning').innerHTML = data.cors_warning;
-            document.getElementById('txt-current-status').innerText = data.status_txt;
             document.getElementById('btn-back').innerText = data.btn_back;
             document.getElementById('err-message').innerText = data.error_in_use;
+
+            // 更新新增的紀錄標題與佔位符
+            document.getElementById('txt-history-title').innerText = data.txt_history_title;
+            const placeholder = document.getElementById('no-reqs-placeholder');
+            if (placeholder) {
+                placeholder.innerText = data.txt_no_reqs;
+            }
+        }
+
+        // ==========================================
+        // 💡 渲染單個漂亮的請求紀錄框框
+        // ==========================================
+        function addRequestLog(reqId, method, path, status, body) {
+            const logList = document.getElementById('log-list');
+            const placeholder = document.getElementById('no-reqs-placeholder');
+            
+            if (placeholder) {
+                placeholder.style.display = 'none';
+            }
+
+            // 限制最多只顯示 10 筆，避免瀏覽器耗費太多 RAM
+            if (logList.children.length >= 10) {
+                logList.removeChild(logList.lastChild);
+            }
+
+            const logItem = document.createElement('div');
+            logItem.className = 'log-item';
+
+            // 判斷 HTTP Method 的標籤顏色
+            let badgeClass = 'badge-other';
+            if (method === 'GET') badgeClass = 'badge-get';
+            else if (method === 'POST') badgeClass = 'badge-post';
+
+            // 安全轉義 HTML 避免內容破圖
+            const escapedPath = path.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            const safeBody = (body || '').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            
+            // 限制 body 只顯示前 20 字，超出以 ... 表示
+            const bodyPreview = safeBody.length > 20 
+                ? safeBody.substring(0, 20) + '...' 
+                : (safeBody || '(Empty)');
+
+            const statusClass = status < 400 ? 'status-success' : 'status-error';
+
+            const lang = localStorage.getItem('webtnx_lang') || 'en';
+            const dict = i18n[lang] || i18n['en'];
+
+            // 縮寫長 request id
+            const shortId = reqId.length > 10 ? reqId.substring(0, 10) + '..' : reqId;
+
+            logItem.innerHTML = `
+                <div class="log-header">
+                    <span class="badge ${badgeClass}">${method}</span>
+                    <span class="log-path" title="${escapedPath}">${escapedPath}</span>
+                    <span class="log-id" title="${reqId}">ID: ${shortId}</span>
+                </div>
+                <div class="log-body-section">
+                    <span><strong>${dict.txt_status}:</strong> <span class="status-indicator ${statusClass}">${status}</span></span>
+                    <span><strong>${dict.txt_body}:</strong> <span class="body-preview" title="${safeBody}">${bodyPreview}</span></span>
+                </div>
+            `;
+
+            // 最新處理的請求排在最上面 (置頂)
+            logList.insertBefore(logItem, logList.firstChild);
         }
 
         async function initTunnel() {
@@ -243,8 +354,6 @@
 
                     if (requests && requests.length > 0) {
                         for (const req of requests) {
-                            document.getElementById('status').innerText = dict.processing + req.id;
-
                             let targetUrl = `http://localhost:${port}${req.path}`;
                             const queryParams = new URLSearchParams(req.query);
                             if (queryParams.toString()) {
@@ -275,7 +384,12 @@
                                     })
                                 });
 
+                                // 💡 成功將回應回傳給伺服器後，將此紀錄渲染至前端網頁
+                                addRequestLog(req.id, req.method, req.path, localRes.status, bodyText);
+
                             } catch (localErr) {
+                                const errMsg = `WebTNX Proxy Error: Could not fetch. Error: ${localErr.message}`;
+                                
                                 await fetch('/api/res', {
                                     method: 'POST',
                                     headers: { 'Content-Type': 'application/json' },
@@ -283,16 +397,17 @@
                                         requestId: req.id,
                                         status: 502,
                                         headers: { 'content-type': 'text/plain' },
-                                        body: `WebTNX Proxy Error: Could not fetch from localhost. Error: ${localErr.message}`
+                                        body: errMsg
                                     })
                                 });
+
+                                // 💡 連線本地失敗時，也渲染一個 502 的錯誤紀錄框
+                                addRequestLog(req.id, req.method, req.path, 502, errMsg);
                             }
                         }
-                        document.getElementById('status').innerText = dict.polling;
                     }
                 } catch (err) {
-                    document.getElementById('status').innerText = dict.conn_err;
-                    document.getElementById('status').style.color = 'red';
+                    // 心跳與 API 連線失敗時的處理
                 }
             }, 2000);
         }
