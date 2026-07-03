@@ -1,0 +1,12 @@
+{
+  "name": "webtnx",
+  "version": "1.0.0",
+  "description": "Zero-install web-based HTTP tunnel",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
