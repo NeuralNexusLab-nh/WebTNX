@@ -10,10 +10,14 @@
         .logo { font-size: 1.5rem; font-weight: bold; color: #007bff; text-decoration: none; }
         select { padding: 6px 12px; border-radius: 4px; border: 1px solid #ced4da; font-size: 0.9rem; outline: none; cursor: pointer; }
         .main-container { flex: 1; display: flex; justify-content: center; align-items: center; padding: 20px; }
-        .card { background: white; padding: 40px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); width: 100%; max-width: 600px; }
+        .card { background: white; padding: 40px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); width: 100%; max-width: 600px; box-sizing: border-box; }
         h1 { font-size: 1.8rem; color: #28a745; margin-top: 0; margin-bottom: 20px; }
         .alert-danger { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; padding: 15px; border-radius: 5px; margin-bottom: 20px; line-height: 1.5; }
-        .alert-info { background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba; padding: 15px; border-radius: 5px; margin: 20px 0; line-height: 1.5; }
+        
+        /* 警告與說明的專用樣式 */
+        .alert-warning { background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba; padding: 15px; border-radius: 5px; margin: 15px 0; line-height: 1.6; font-size: 0.95rem; }
+        .alert-info { background-color: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; padding: 15px; border-radius: 5px; margin: 15px 0; line-height: 1.6; font-size: 0.95rem; }
+        
         code { background: #e9ecef; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 0.95rem; }
         .btn-back { display: inline-block; background: #dc3545; color: white; text-decoration: none; padding: 10px 20px; border-radius: 4px; font-weight: bold; transition: background 0.2s; border: none; cursor: pointer; }
         .btn-back:hover { background: #bd2130; }
@@ -40,11 +44,14 @@
             <p><span id="txt-local-port">Local service port:</span> <code id="display-port">8080</code></p>
             <p><strong><span id="txt-public-url">Public URL:</span></strong> <a id="public-link" href="#" target="_blank"></a></p>
             
-            <div class="alert-info" id="cors-warning">
-                <strong>⚠️ CORS Setting Required:</strong><br>
-                Please allow CORS for <code>https://webtnx.zone.id</code> in your localhost local app.<br>
-                Example Header: <code>Access-Control-Allow-Origin: https://webtnx.zone.id</code>
-            </div>
+            <!-- ⚠️ 新增：連線維持警告卡 -->
+            <div class="alert-warning" id="keep-alive-warning"></div>
+
+            <!-- 💡 新增：相對路徑改寫說明卡 -->
+            <div class="alert-info" id="rewriting-info"></div>
+
+            <!-- CORS 設定提示 -->
+            <div class="alert-info" id="cors-warning"></div>
 
             <div class="status-box">
                 <strong id="txt-current-status">Current Status:</strong> <span id="status" style="color: green;">Polling...</span>
@@ -66,6 +73,8 @@
                 active_title: "WebTNX Tunnel is Running!",
                 local_port: "Local service port:",
                 public_url: "Public URL:",
+                keep_alive_warning: "<strong>⚠️ Do not refresh or close this tab!</strong><br>This browser page serves as your tunnel agent. Closing, refreshing, or letting your computer fall asleep (or putting this tab to sleep in the background) will immediately disconnect your tunnel.",
+                rewriting_info: "<strong>💡 Auto Path Rewriting Enabled:</strong><br>To ensure resources load properly, WebTNX automatically rewrites absolute and relative paths (e.g. <code>/assets</code>) inside your HTML and JS responses, prefixing them with <code>/{id}/</code>.",
                 cors_warning: "<strong>⚠️ CORS Setting Required:</strong><br>Please allow CORS for <code>https://webtnx.zone.id</code> in your localhost local app.<br>Example Header: <code>Access-Control-Allow-Origin: https://webtnx.zone.id</code>",
                 status_txt: "Current Status:",
                 polling: "Polling...",
@@ -78,6 +87,8 @@
                 active_title: "WebTNX 網頁隧道正在運行中！",
                 local_port: "本機服務 Port：",
                 public_url: "公開存取網址：",
+                keep_alive_warning: "<strong>⚠️ 請勿重新整理（Refresh）或關閉此分頁！</strong><br>本網頁正扮演您的隧道代理。若關閉、重整分頁，或是讓電腦進入休眠狀態（或讓此分頁在背景休眠），隧道連線將會立即中斷。",
+                rewriting_info: "<strong>💡 已啟用相對路徑重寫：</strong><br>為了讓資源正常載入，WebTNX 已自動將 HTML 與 JS 回應內容中的相對與絕對路徑（例如 <code>/assets</code>）重寫並加上了 <code>/{id}/</code> 前綴。",
                 cors_warning: "<strong>⚠️ 必須設定 CORS 允許跨來源請求：</strong><br>請在您的本機程式中啟用 CORS，允許來自 <code>https://webtnx.zone.id</code> 的請求。<br>例 Headers：<code>Access-Control-Allow-Origin: https://webtnx.zone.id</code>",
                 status_txt: "當前狀態：",
                 polling: "正在輪詢...",
@@ -90,6 +101,8 @@
                 active_title: "WebTNX トンネルが稼働しています！",
                 local_port: "ローカルサービスポート：",
                 public_url: "公開URL：",
+                keep_alive_warning: "<strong>⚠️ このタブを更新または閉じないでください！</strong><br>このブラウザページはトンネルエージェントとして機能しています。ページを閉じる・更新する、またはコンピュータがスリープ状態になると、接続が切断されます。",
+                rewriting_info: "<strong>💡 パス自動書き換えが有効：</strong><br>リソースを正常に読み込むため、WebTNXはHTMLおよびJSレスポンス内の相対/絶対パス（例：<code>/assets</code>）の前に自動的に <code>/{id}/</code> を追加します。",
                 cors_warning: "<strong>⚠️ CORS 設定が必要です：</strong><br>ローカルアプリで <code>https://webtnx.zone.id</code> からの CORS を許可してください。<br>ヘッダーの例：<code>Access-Control-Allow-Origin: https://webtnx.zone.id</code>",
                 status_txt: "現在のステータス：",
                 polling: "ポーリング中...",
@@ -102,6 +115,8 @@
                 active_title: "Le tunnel WebTNX est en cours d'exécution !",
                 local_port: "Port du service local :",
                 public_url: "URL publique :",
+                keep_alive_warning: "<strong>⚠️ Ne rafraîchissez pas et ne fermez pas cet onglet !</strong><br>Cette page sert d'agent de tunnel. Fermer, rafraîchir ou laisser l'ordinateur s'endormir coupera immédiatement la connexion.",
+                rewriting_info: "<strong>💡 Réécriture automatique des chemins :</strong><br>Pour charger les ressources correctement, WebTNX réécrit automatiquement les chemins relatifs/absolus (ex: <code>/assets</code>) dans vos fichiers HTML et JS avec le préfixe <code>/{id}/</code>.",
                 cors_warning: "<strong>⚠️ Configuration CORS requise :</strong><br>Veuillez autoriser CORS pour <code>https://webtnx.zone.id</code> dans votre application locale.<br>Exemple d'en-tête : <code>Access-Control-Allow-Origin: https://webtnx.zone.id</code>",
                 status_txt: "Statut actuel :",
                 polling: "Interrogation...",
@@ -114,6 +129,8 @@
                 active_title: "Il tunnel WebTNX è in esecuzione!",
                 local_port: "Porta del servizio locale:",
                 public_url: "URL pubblico:",
+                keep_alive_warning: "<strong>⚠️ Non aggiornare o chiudere questa scheda!</strong><br>Questa pagina funge da agente del tunnel. Chiudere, aggiornare o consentire al computer di andare in standby interromperà la connessione.",
+                rewriting_info: "<strong>💡 Riscrittura automatica dei percorsi :</strong><br>Per caricare correttamente le risorse, WebTNX riscrive automaticamente i percorsi relativi/assoluti (es: <code>/assets</code>) in HTML e JS, aggiungendo il prefisso <code>/{id}/</code>.",
                 cors_warning: "<strong>⚠️ Impostazione CORS richiesta:</strong><br>Consenti CORS per <code>https://webtnx.zone.id</code> nella tua applicazione locale.<br>Esempio di intestazione: <code>Access-Control-Allow-Origin: https://webtnx.zone.id</code>",
                 status_txt: "Stato attuale:",
                 polling: "Verifica...",
@@ -126,6 +143,8 @@
                 active_title: "O túnel WebTNX está em execução!",
                 local_port: "Porta do serviço local:",
                 public_url: "URL pública:",
+                keep_alive_warning: "<strong>⚠️ Não atualize ou feche esta guia!</strong><br>Esta página funciona como o agente do túnel. Fechar, atualizar ou permitir que o computador entre em modo de suspensão desconectará o túnel.",
+                rewriting_info: "<strong>💡 Reesquema de caminhos ativo :</strong><br>Para carregar os recursos corretamente, o WebTNX reescreve caminhos absolutos/relativos (ex: <code>/assets</code>) no HTML e JS, prefixando-os com <code>/{id}/</code>.",
                 cors_warning: "<strong>⚠️ Configuração CORS necessária:</strong><br>Permita CORS para <code>https://webtnx.zone.id</code> em seu aplicativo local.<br>Exemplo de cabeçalho: <code>Access-Control-Allow-Origin: https://webtnx.zone.id</code>",
                 status_txt: "Status atual:",
                 polling: "Interrogando...",
@@ -138,6 +157,8 @@
                 active_title: "WebTNX 터널이 실행 중입니다!",
                 local_port: "로컬 서비스 포트:",
                 public_url: "공개 URL:",
+                keep_alive_warning: "<strong>⚠️ 이 탭을 새로고침하거나 닫지 마세요!</strong><br>이 페이지는 터널 에이전트로 작동합니다. 탭을 닫거나 새로고침하거나, 컴퓨터가 절전 모드로 전환되면 터널 연결이 즉시 끊어집니다.",
+                rewriting_info: "<strong>💡 자동 경로 재작성 활성화 :</strong><br>리소스의 원활한 로딩을 위해 WebTNX는 HTML 및 JS 응답 내의 모든 상대/절대 경로(예: <code>/assets</code>) 앞에 <code>/{id}/</code>를 자동으로 붙여서 재작성합니다.",
                 cors_warning: "<strong>⚠️ CORS 설정 필요:</strong><br>로컬 앱에서 <code>https://webtnx.zone.id</code>의 CORS를 허용해 주세요.<br>헤더 예시: <code>Access-Control-Allow-Origin: https://webtnx.zone.id</code>",
                 status_txt: "현재 상태:",
                 polling: "폴링 중...",
@@ -158,9 +179,15 @@
             document.getElementById('lang-select').value = lang;
             const data = i18n[lang] || i18n['en'];
 
+            // 替換各語系 DOM
             document.getElementById('tunnel-active-title').innerText = data.active_title;
             document.getElementById('txt-local-port').innerText = data.local_port;
             document.getElementById('txt-public-url').innerText = data.public_url;
+            document.getElementById('keep-alive-warning').innerHTML = data.keep_alive_warning;
+            
+            // 將說明卡中的 {id} 動態替換成當前的 tunnelId
+            document.getElementById('rewriting-info').innerHTML = data.rewriting_info.replace(/{id}/g, tunnelId);
+            
             document.getElementById('cors-warning').innerHTML = data.cors_warning;
             document.getElementById('txt-current-status').innerText = data.status_txt;
             document.getElementById('btn-back').innerText = data.btn_back;
@@ -173,7 +200,6 @@
                 return;
             }
 
-            // 1. 向伺服器註冊並驗證 ID
             try {
                 const res = await fetch('/api/register', {
                     method: 'POST',
@@ -183,12 +209,10 @@
                 const result = await res.json();
 
                 if (!result.success) {
-                    // ID 被佔用
                     document.getElementById('error-card').style.display = 'block';
                     return;
                 }
 
-                // ID 啟用成功，顯示控制台
                 document.getElementById('active-card').style.display = 'block';
                 document.getElementById('display-port').innerText = port;
                 
@@ -204,7 +228,6 @@
             }
         }
 
-        // 2. 啟動每 2 秒一次的輪詢
         function startPolling() {
             const lang = localStorage.getItem('webtnx_lang') || 'en';
             const dict = i18n[lang] || i18n['en'];
@@ -222,7 +245,6 @@
                         for (const req of requests) {
                             document.getElementById('status').innerText = dict.processing + req.id;
 
-                            // 組裝本地請求網址
                             let targetUrl = `http://localhost:${port}${req.path}`;
                             const queryParams = new URLSearchParams(req.query);
                             if (queryParams.toString()) {
@@ -242,7 +264,6 @@
                                     resHeaders[key] = val;
                                 });
 
-                                // 將本機的 Response POST 回傳給伺服器
                                 await fetch('/api/res', {
                                     method: 'POST',
                                     headers: { 'Content-Type': 'application/json' },
@@ -255,7 +276,6 @@
                                 });
 
                             } catch (localErr) {
-                                // 當本地沒開、或是 CORS 阻擋
                                 await fetch('/api/res', {
                                     method: 'POST',
                                     headers: { 'Content-Type': 'application/json' },
