@@ -149,9 +149,21 @@ app.all('/:tunnelId/*', (req, res, next) => {
     });
 
     const timeoutSeconds = ids[tunnelId].timeout || 30;
+    
     const tId = setTimeout(() => {
-        if (pendingRequests.has(requestId)) {
-            pendingRequests.delete(requestId);
+        if (pendingResponses.has(requestId)) {
+            pendingResponses.delete(requestId);
+
+            if (fs.existsSync(reqFilePath)) {
+                try {
+                    let currentList = JSON.parse(fs.readFileSync(reqFilePath, 'utf8'));
+                    currentList = currentList.filter(item => item.id !== requestId);
+                    
+                    fs.writeFileSync(reqFilePath, JSON.stringify(currentList, null, 2));
+                } catch (err) {
+                }
+            }
+
             const timeoutHtmlPath = path.join(__dirname, 'pages', 'timeout.html');
             const html = fs.existsSync(timeoutHtmlPath) 
                 ? fs.readFileSync(timeoutHtmlPath, 'utf8') 
@@ -160,7 +172,7 @@ app.all('/:tunnelId/*', (req, res, next) => {
         }
     }, timeoutSeconds * 1000);
 
-    pendingRequests.set(requestId, {
+    pendingResponses.set(requestId, {
         resolve: resolveRequest,
         timeoutId: tId,
         tunnelId: tunnelId
@@ -183,6 +195,7 @@ app.all('/:tunnelId/*', (req, res, next) => {
         res.setHeader('X-Via', 'WebTNX');
         res.setHeader('X-Tunneled-By', 'WebTNX');
         res.setHeader('X-Request-Id', requestId);
+        res.setHeader('X-Website', 'https://webtnx.zone.id/');
 
         res.status(status || 200).send(finalBody);
     });
