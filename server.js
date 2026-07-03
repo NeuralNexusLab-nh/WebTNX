@@ -102,6 +102,10 @@ app.get('/:tunnelId', (req, res, next) => {
         return next();
     }
 
+    if(req.path.endsWith("/")) {
+        return next();
+    }
+
     res.redirect(302, `/${tunnelId}/`);
 });
 
