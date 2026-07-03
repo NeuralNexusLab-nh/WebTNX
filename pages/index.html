@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebTNX - Zero-Install HTTP Tunnel</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: #f8f9fa; color: #333; margin: 0; padding: 0; display: flex; flex-direction: column; min-height: 100vh; }
+        header { display: flex; justify-content: space-between; align-items: center; padding: 20px 40px; background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .logo { font-size: 1.5rem; font-weight: bold; color: #007bff; }
+        select { padding: 6px 12px; border-radius: 4px; border: 1px solid #ced4da; font-size: 0.9rem; outline: none; cursor: pointer; }
+        .hero { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 40px 20px; max-width: 800px; margin: 0 auto; }
+        h1 { font-size: 2.8rem; color: #212529; margin-bottom: 20px; }
+        p { font-size: 1.2rem; line-height: 1.6; color: #6c757d; margin-bottom: 40px; }
+        .btn { display: inline-block; background: #007bff; color: white; text-decoration: none; padding: 14px 28px; border-radius: 6px; font-weight: bold; font-size: 1.1rem; transition: background 0.2s; }
+        .btn:hover { background: #0056b3; }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">WebTNX</div>
+        <select id="lang-select" onchange="changeLanguage(this.value)">
+            <option value="en">English</option>
+            <option value="zh-TW">繁體中文</option>
+            <option value="ja">日本語</option>
+            <option value="fr">Français</option>
+            <option value="it">Italiano</option>
+            <option value="pt">Português</option>
+            <option value="ko">한국어</option>
+        </select>
+    </header>
+    <div class="hero">
+        <h1 id="home-title">WebTNX: Zero-Install HTTP Tunnel</h1>
+        <p id="home-desc">Expose your local development server to the internet. Similar to ngrok, but absolutely free, requires zero installation, and no registration. Just use a browser tab as your tunnel agent.</p>
+        <a href="/create" class="btn" id="btn-create">Create a Tunnel Now</a>
+    </div>
+
+    <script>
+        const i18n = {
+            en: {
+                home_title: "WebTNX: Zero-Install HTTP Tunnel",
+                home_desc: "Expose your local development server to the internet. Similar to ngrok, but absolutely free, requires zero installation, and no registration. Just use a browser tab as your tunnel agent.",
+                btn_create: "Create a Tunnel Now"
+            },
+            "zh-TW": {
+                home_title: "WebTNX：免安裝的 HTTP 內網穿透工具",
+                home_desc: "將您的本地開發伺服器發布到公網。類似 ngrok，但完全免費、免安裝、免註冊，只需打開一個瀏覽器分頁即可充當隧道代理。",
+                btn_create: "立即建立隧道"
+            },
+            ja: {
+                home_title: "WebTNX: インストール不要の HTTP トンネル",
+                home_desc: "ローカル開発サーバーをインターネットに公開します。ngrok に似ていますが、完全に無料で、インストールや登録は不要です。ブラウザのタブをトンネルエージェントとして使用します。",
+                btn_create: "今すぐトンネルを作成"
+            },
+            fr: {
+                home_title: "WebTNX: Tunnel HTTP sans installation",
+                home_desc: "Exposez votre serveur de développement local sur Internet. Similaire à ngrok, mais entièrement gratuit, sans installation ni inscription. Utilisez simplement un onglet de navigateur comme agent.",
+                btn_create: "Créer un tunnel maintenant"
+            },
+            it: {
+                home_title: "WebTNX: Tunnel HTTP senza installazione",
+                home_desc: "Esponi il tuo server di sviluppo locale su Internet. Simile a ngrok, ma completamente gratuito, senza installazione o registrazione. Usa semplicemente una scheda del browser come agente.",
+                btn_create: "Crea un tunnel ora"
+            },
+            pt: {
+                home_title: "WebTNX: Túnel HTTP sem instalação",
+                home_desc: "Exponha seu servidor de desenvolvimento local para a internet. Semelhante ao ngrok, mas totalmente gratuito, sem instalação e sem registro. Use apenas uma guia do navegador como agente.",
+                btn_create: "Criar um túnel agora"
+            },
+            ko: {
+                home_title: "WebTNX: 설치가 필요 없는 HTTP 터널",
+                home_desc: "로컬 개발 서버를 인터넷에 노출하세요. ngrok과 유사하지만 완전 무료이며, 설치나 등록이 필요 없습니다. 브라우저 탭을 터널 에이전트로 사용하기만 하면 됩니다.",
+                btn_create: "지금 터널 생성하기"
+            }
+        };
+
+        function changeLanguage(lang) {
+            localStorage.setItem('webtnx_lang', lang);
+            document.getElementById('lang-select').value = lang;
+            const data = i18n[lang] || i18n['en'];
+            document.getElementById('home-title').innerText = data.home_title;
+            document.getElementById('home-desc').innerText = data.home_desc;
+            document.getElementById('btn-create').innerText = data.btn_create;
+        }
+
+        const savedLang = localStorage.getItem('webtnx_lang') || 'en';
+        changeLanguage(savedLang);
+    </script>
+</body>
+</html>
