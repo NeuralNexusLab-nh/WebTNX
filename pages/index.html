@@ -9,11 +9,39 @@
         header { display: flex; justify-content: space-between; align-items: center; padding: 20px 40px; background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
         .logo { font-size: 1.5rem; font-weight: bold; color: #007bff; }
         select { padding: 6px 12px; border-radius: 4px; border: 1px solid #ced4da; font-size: 0.9rem; outline: none; cursor: pointer; }
-        .hero { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 40px 20px; max-width: 800px; margin: 0 auto; }
+        
+        /* Hero 區塊 */
+        .hero { display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 60px 20px 40px 20px; max-width: 800px; margin: 0 auto; }
         h1 { font-size: 2.8rem; color: #212529; margin-bottom: 20px; }
-        p { font-size: 1.2rem; line-height: 1.6; color: #6c757d; margin-bottom: 40px; }
-        .btn { display: inline-block; background: #007bff; color: white; text-decoration: none; padding: 14px 28px; border-radius: 6px; font-weight: bold; font-size: 1.1rem; transition: background 0.2s; }
+        .hero-desc { font-size: 1.2rem; line-height: 1.6; color: #6c757d; margin-bottom: 30px; }
+        .btn { display: inline-block; background: #007bff; color: white; text-decoration: none; padding: 14px 28px; border-radius: 6px; font-weight: bold; font-size: 1.1rem; transition: background 0.2s; box-shadow: 0 4px 6px rgba(0,123,255,0.15); }
         .btn:hover { background: #0056b3; }
+
+        /* 介紹區塊通用樣式 */
+        .info-container { max-width: 900px; margin: 0 auto; padding: 40px 20px; box-sizing: border-box; }
+        .section-block { background: white; border-radius: 8px; padding: 35px; margin-bottom: 30px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); border: 1px solid #e9ecef; }
+        .section-block h2 { font-size: 1.5rem; color: #343a40; margin-top: 0; margin-bottom: 15px; border-left: 4px solid #007bff; padding-left: 12px; }
+        .section-block p { font-size: 1rem; line-height: 1.7; color: #495057; margin-bottom: 0; }
+        code { background: #f1f3f5; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 0.95rem; }
+
+        /* 步驟排列樣式 */
+        .step-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-top: 25px; }
+        .step-card { background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 6px; padding: 20px; text-align: left; }
+        .step-card h3 { font-size: 1.05rem; margin-top: 0; margin-bottom: 10px; color: #007bff; }
+        .step-card p { font-size: 0.9rem; color: #6c757d; line-height: 1.5; }
+
+        /* 本地端準備清單樣式 */
+        .checklist { list-style: none; padding: 0; margin-top: 20px; }
+        .checklist li { padding-left: 28px; position: relative; margin-bottom: 15px; font-size: 0.95rem; line-height: 1.6; color: #495057; }
+        .checklist li::before { content: "✓"; position: absolute; left: 0; top: 0; color: #28a745; font-weight: bold; font-size: 1.1rem; }
+        .code-box-li { list-style: none !important; padding-left: 28px; margin-bottom: 15px; }
+
+        /* 表格樣式 */
+        .table-responsive { overflow-x: auto; margin-top: 25px; }
+        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.95rem; }
+        th, td { padding: 12px 15px; border-bottom: 1px solid #dee2e6; }
+        th { background-color: #f8f9fa; color: #495057; font-weight: 600; }
+        tr:hover { background-color: #fcfcfc; }
     </style>
 </head>
 <body>
@@ -29,10 +57,104 @@
             <option value="ko">한국어</option>
         </select>
     </header>
+    
+    <!-- Hero 核心操作區 -->
     <div class="hero">
         <h1 id="home-title">WebTNX: Zero-Install HTTP Tunnel</h1>
-        <p id="home-desc">Expose your local development server to the internet. Similar to ngrok, but absolutely free, requires zero installation, and no registration. Just use a browser tab as your tunnel agent.</p>
+        <p class="hero-desc" id="home-desc">Expose your local development server to the internet. Similar to ngrok, but absolutely free, requires zero installation, and no registration. Just use a browser tab as your tunnel agent.</p>
         <a href="/create" class="btn" id="btn-create">Create a Tunnel Now</a>
+    </div>
+
+    <!-- 介紹區塊 -->
+    <div class="info-container">
+        
+        <!-- 1. 什麼是 HTTP 隧道？ -->
+        <div class="section-block">
+            <h2 id="title-what">What is an HTTP Tunnel?</h2>
+            <p id="desc-what">An HTTP tunnel is a technology that allows you to expose a local server (running behind NATs, firewalls, or without a public IP) to the public internet. It assigns a secure public URL to your local project, allowing external users or APIs (like Webhook senders) to connect directly to your local application from anywhere in the world.</p>
+        </div>
+
+        <!-- 2. WebTNX 的運作方式與流程 -->
+        <div class="section-block">
+            <h2 id="title-flow">How WebTNX Works</h2>
+            <div class="step-grid">
+                <div class="step-card">
+                    <h3 id="step1-title">1. Public Request</h3>
+                    <p id="step1-desc">A visitor accesses your custom WebTNX link (e.g. <code>https://webtnx.zone.id/my-app/</code>).</p>
+                </div>
+                <div class="step-card">
+                    <h3 id="step2-title">2. Hold Connection</h3>
+                    <p id="step2-desc">WebTNX server logs the request data into a JSON file and temporarily hangs the visitor's HTTP connection.</p>
+                </div>
+                <div class="step-card">
+                    <h3 id="step3-title">3. Agent Fetch</h3>
+                    <p id="step3-desc">Your active WebTNX browser tab polls our API, retrieves the pending request, and calls your local server.</p>
+                </div>
+                <div class="step-card">
+                    <h3 id="step4-title">4. Return & Respond</h3>
+                    <p id="step4-desc">The browser tab sends your local app's response back to WebTNX, which then delivers it to the visitor.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. 本地端的使用方式與準備 -->
+        <div class="section-block">
+            <h2 id="title-local">Local Setup & Requirements</h2>
+            <ul class="checklist">
+                <li id="local-li1"><strong>Start Local App</strong>: Ensure your web application is running locally and listening on a specific port (e.g. <code>http://localhost:8080</code>).</li>
+                <li id="local-li2"><strong>Enable CORS</strong>: Because WebTNX runs inside a browser sandbox, your local app must accept cross-origin requests from <code>https://webtnx.zone.id</code>.</li>
+                <!-- 💡 解決關鍵：將程式碼區塊與文字區塊徹底分開，不再嵌套 -->
+                <li class="code-box-li">
+                    <span id="cors-example-text">For an Express/Node.js app, easily configure this using the CORS package:</span>
+                    <br><code style="display:block; margin-top:8px; white-space: pre-wrap;">app.use(cors({ origin: 'https://webtnx.zone.id' }));</code>
+                </li>
+                <li id="local-li3"><strong>Keep the Tab Open</strong>: You must keep your WebTNX tunnel page active in your browser. Do not refresh or close it, and ensure your computer does not go to sleep, as this page acts as the bridge.</li>
+            </ul>
+        </div>
+
+        <!-- 4. WebTNX 與傳統隧道代理的差別 -->
+        <div class="section-block">
+            <h2 id="title-vs">WebTNX vs. Traditional Tunnels</h2>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th id="th-feature">Feature</th>
+                            <th id="th-webtnx">WebTNX</th>
+                            <th id="th-traditional">Traditional (e.g. ngrok)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td id="row1-f"><strong>Installation</strong></td>
+                            <td id="row1-w" style="color:#28a745; font-weight:500;">Zero Install (Browser Tab)</td>
+                            <td id="row1-t">Requires CLI binary download</td>
+                        </tr>
+                        <tr>
+                            <td id="row2-f"><strong>Registration</strong></td>
+                            <td id="row2-w" style="color:#28a745; font-weight:500;">None required</td>
+                            <td id="row2-t">Required (Auth Token setup)</td>
+                        </tr>
+                        <tr>
+                            <td id="row3-f"><strong>Firewall Bypass</strong></td>
+                            <td id="row3-w" style="color:#28a745; font-weight:500;">Extremely Effective (Standard HTTPS)</td>
+                            <td id="row3-t">Can be blocked on raw TCP ports</td>
+                        </tr>
+                        <tr>
+                            <td id="row4-f"><strong>Protocol Scope</strong></td>
+                            <td id="row4-w">HTTP/HTTPS Web Traffic</td>
+                            <td id="row4-t" style="color:#28a745; font-weight:500;">Supports TCP, UDP, SSH, databases</td>
+                        </tr>
+                        <tr>
+                            <td id="row5-f"><strong>Server Resources</strong></td>
+                            <td id="row5-w" style="color:#28a745; font-weight:500;">Extremely Low (~30MB RAM)</td>
+                            <td id="row5-t">Medium (Heavy multiplexing client)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
     </div>
 
     <script>
@@ -40,37 +162,214 @@
             en: {
                 home_title: "WebTNX: Zero-Install HTTP Tunnel",
                 home_desc: "Expose your local development server to the internet. Similar to ngrok, but absolutely free, requires zero installation, and no registration. Just use a browser tab as your tunnel agent.",
-                btn_create: "Create a Tunnel Now"
+                btn_create: "Create a Tunnel Now",
+                
+                title_what: "What is an HTTP Tunnel?",
+                desc_what: "An HTTP tunnel is a technology that allows you to expose a local server (running behind NATs, firewalls, or without a public IP) to the public internet. It assigns a secure public URL to your local project, allowing external users or APIs (like Webhook senders) to connect directly to your local application from anywhere in the world.",
+                
+                title_flow: "How WebTNX Works",
+                step1_title: "1. Public Request",
+                step1_desc: "A visitor accesses your custom WebTNX link (e.g. <code>https://webtnx.zone.id/my-app/</code>).",
+                step2_title: "2. Hold Connection",
+                step2_desc: "WebTNX server logs the request data into a JSON file and temporarily hangs the visitor's HTTP connection.",
+                step3_title: "3. Agent Fetch",
+                step3_desc: "Your active WebTNX browser tab polls our API, retrieves the pending request, and calls your local server.",
+                step4_title: "4. Return & Respond",
+                step4_desc: "The browser tab sends your local app's response back to WebTNX, which then delivers it to the visitor.",
+                
+                title_local: "Local Setup & Requirements",
+                local_li1: "<strong>Start Local App</strong>: Ensure your web application is running locally and listening on a specific port (e.g. <code>http://localhost:8080</code>).",
+                local_li2: "<strong>Enable CORS</strong>: Because WebTNX runs inside a browser sandbox, your local app must accept cross-origin requests from <code>https://webtnx.zone.id</code>.",
+                cors_example_text: "For an Express/Node.js app, easily configure this using the CORS package:",
+                local_li3: "<strong>Keep the Tab Open</strong>: You must keep your WebTNX tunnel page active in your browser. Do not refresh or close it, and ensure your computer does not go to sleep, as this page acts as the bridge.",
+                
+                title_vs: "WebTNX vs. Traditional Tunnels",
+                th_feature: "Feature",
+                th_webtnx: "WebTNX",
+                th_traditional: "Traditional (e.g. ngrok)",
+                row1_f: "<strong>Installation</strong>",
+                row1_w: "Zero Install (Browser Tab)",
+                row1_t: "Requires CLI binary download",
+                row2_f: "<strong>Registration</strong>",
+                row2_w: "None required",
+                row2_t: "Required (Auth Token setup)",
+                row3_f: "<strong>Firewall Bypass</strong>",
+                row3_w: "Extremely Effective (Standard HTTPS)",
+                row3_t: "Can be blocked on raw TCP ports",
+                row4_f: "<strong>Protocol Scope</strong>",
+                row4_w: "HTTP/HTTPS Web Traffic",
+                row4_t: "Supports TCP, UDP, SSH, databases",
+                row5_f: "<strong>Server Resources</strong>",
+                row5_w: "Extremely Low (~30MB RAM)",
+                row5_t: "Medium (Heavy multiplexing client)"
             },
             "zh-TW": {
                 home_title: "WebTNX：免安裝的 HTTP 內網穿透工具",
                 home_desc: "將您的本地開發伺服器發布到公網。類似 ngrok，但完全免費、免安裝、免註冊，只需打開一個瀏覽器分頁即可充當隧道代理。",
-                btn_create: "立即建立隧道"
+                btn_create: "立即建立隧道",
+                
+                title_what: "什麼是 HTTP 隧道？",
+                desc_what: "HTTP 隧道技術能讓您將運行在本機（處於 NAT、防火牆後，或沒有公網 IP）的本地伺服器安全地發布到網際網路上。它會提供一個公開的 URL，讓世界上任何地方的人都能直接存取您的本地專案（如測試 Webhook 或向客戶展示網頁）。",
+                
+                title_flow: "WebTNX 的運作方式與流程",
+                step1_title: "1. 訪客發送請求",
+                step1_desc: "外部訪客存取您的專屬 WebTNX 網址（例如：<code>https://webtnx.zone.id/my-app/</code>）。",
+                step2_title: "2. 暫存並掛起連線",
+                step2_desc: "伺服器將請求資料寫入 JSON 暫存檔，並在記憶體中掛起（Hold）訪客的連線。",
+                step3_title: "3. 瀏覽器代理拿取",
+                step3_desc: "您開著的 WebTNX 瀏覽器分頁在背景輪詢拿取該請求，並透過 fetch 呼叫您的本機服務。",
+                step4_title: "4. 回傳結果與回應",
+                step4_desc: "瀏覽器分頁將本機回應傳回 WebTNX 伺服器，伺服器立即解除掛起並回傳給訪客。",
+                
+                title_local: "本地端的使用方式與準備",
+                local_li1: "<strong>啟動本機服務</strong>：確認您的網頁服務或 API 正在本機運行，並監聽特定的 Port（例如：<code>http://localhost:8080</code>）。",
+                local_li2: "<strong>啟用 CORS 設定</strong>：因為 WebTNX 代理端是在網頁沙盒中執行，您的本機程式必須允許來自 <code>https://webtnx.zone.id</code> 的跨來源請求。",
+                cors_example_text: "以 Express/Node.js 本地服務為例，您可以直接使用 cors 套件完成設定：",
+                local_li3: "<strong>保持網頁開啟</strong>：必須保持 WebTNX 隧道頁面一直開著，電腦請不要休眠，這網頁是您本機服務與外網溝通的橋樑。",
+                
+                title_vs: "WebTNX 與傳統隧道代理的差別",
+                th_feature: "特性",
+                th_webtnx: "WebTNX",
+                th_traditional: "傳統工具 (如 ngrok)",
+                row1_f: "<strong>安裝方式</strong>",
+                row1_w: "免安裝 (直接於瀏覽器分頁執行)",
+                row1_t: "需要下載並執行 CLI 程式",
+                row2_f: "<strong>註冊機制</strong>",
+                row2_w: "免註冊，隨開即用",
+                row2_t: "通常需要註冊並設定 Auth Token",
+                row3_f: "<strong>防火牆穿透</strong>",
+                row3_w: "極強 (使用標準 HTTPS 通訊)",
+                row3_t: "可能被企業防火牆封鎖非標準 TCP",
+                row4_f: "<strong>支援協議範圍</strong>",
+                row4_w: "HTTP / HTTPS 網頁流量",
+                row4_t: "支援 TCP, UDP, SSH, 資料庫連線",
+                row5_f: "<strong>硬體資源消耗</strong>",
+                row5_w: "極低 (伺服器記憶體開銷約 ~30MB)",
+                row5_t: "中等 (需在背景持續執行客戶端程序)"
             },
             ja: {
                 home_title: "WebTNX: インストール不要の HTTP トンネル",
                 home_desc: "ローカル開発サーバーをインターネットに公開します。ngrok に似ていますが、完全に無料で、インストールや登録は不要です。ブラウザのタブをトンネルエージェントとして使用します。",
-                btn_create: "今すぐトンネルを作成"
+                btn_create: "今すぐトンネルを作成",
+                title_what: "HTTPトンネルとは何ですか？",
+                desc_what: "HTTPトンネルは、NAT、ファイアウォールの背後にある、またはパブリックIPを持たないローカルサーバーをインターネットに公開するための技術です。",
+                title_flow: "WebTNXの仕組み",
+                step1_title: "1. パブリックリクエスト",
+                step1_desc: "訪問者が WebTNX のカスタムリンクにアクセスします。",
+                step2_title: "2. 接続を保留",
+                step2_desc: "WebTNX サーバーはリクエストを一時的に保留します。",
+                step3_title: "3. エージェント取得",
+                step3_desc: "開いているブラウザタブがリクエストを取得し、ローカルを呼び出します。",
+                step4_title: "4. 応答と返却",
+                step4_desc: "タブがローカルの応答をサーバーに返し、サーバーが訪問者に返却します。",
+                title_local: "ローカル設定と要件",
+                local_li1: "ローカルアプリの起動 (例：localhost:8080)",
+                local_li2: "CORSの許可 (https://webtnx.zone.id から)",
+                cors_example_text: "Express での CORS 設定例：",
+                local_li3: "タブを開いたままにする（PCをスリープさせない）",
+                title_vs: "WebTNX と従来のトンネルの比較",
+                th_feature: "特徴", th_webtnx: "WebTNX", th_traditional: "従来 (ngrokなど)",
+                row1_f: "インストール", row1_w: "不要 (ブラウザ)", row1_t: "CLIダウンロードが必要",
+                row2_f: "登録", row2_w: "不要", row2_t: "必須",
+                row3_f: "ファイアウォール回避", row3_w: "非常に効果的", row3_t: "ブロックされる可能性あり",
+                row4_f: "プロトコル", row4_w: "HTTP/HTTPSのみ", row4_t: "TCP, UDP, SSHなど対応",
+                row5_f: "サーバー負荷", row5_w: "極めて低い", row5_t: "中等"
             },
             fr: {
                 home_title: "WebTNX: Tunnel HTTP sans installation",
                 home_desc: "Exposez votre serveur de développement local sur Internet. Similaire à ngrok, mais entièrement gratuit, sans installation ni inscription. Utilisez simplement un onglet de navigateur comme agent.",
-                btn_create: "Créer un tunnel maintenant"
+                btn_create: "Créer un tunnel maintenant",
+                title_what: "Qu'est-ce qu'un tunnel HTTP?",
+                desc_what: "Un tunnel HTTP permet d'exposer un serveur local au web public sans IP publique.",
+                title_flow: "Comment fonctionne WebTNX",
+                step1_title: "1. Requête publique", step1_desc: "Le visiteur accède à votre lien WebTNX.",
+                step2_title: "2. Mise en attente", step2_desc: "Le serveur WebTNX conserve la connexion du visiteur en suspens.",
+                step3_title: "3. Récupération", step3_desc: "Votre onglet de navigateur récupère la requête et appelle localhost.",
+                step4_title: "4. Réponse", step4_desc: "L'onglet renvoie la réponse au serveur WebTNX pour le visiteur.",
+                title_local: "Configuration locale",
+                local_li1: "Lancez votre appli locale (ex: localhost:8080)",
+                local_li2: "Activer CORS pour https://webtnx.zone.id",
+                cors_example_text: "Exemple de configuration CORS Express :",
+                local_li3: "Gardez l'onglet ouvert (sans veille)",
+                title_vs: "WebTNX vs Tunnels traditionnels",
+                th_feature: "Fonction", th_webtnx: "WebTNX", th_traditional: "Traditionnel (ex: ngrok)",
+                row1_f: "Installation", row1_w: "Aucune (onglet)", row1_t: "Téléchargement CLI requis",
+                row2_f: "Inscription", row2_w: "Aucune", row2_t: "Requise",
+                row3_f: "Contourner pare-feu", row3_w: "Très efficace", row3_t: "Peut être bloqué",
+                row4_f: "Protocoles", row4_w: "HTTP/HTTPS uniquement", row4_t: "Supporte TCP, UDP, SSH",
+                row5_f: "Ressources serveur", row5_w: "Très basses (~30MB)", row5_t: "Moyennes"
             },
             it: {
                 home_title: "WebTNX: Tunnel HTTP senza installazione",
                 home_desc: "Esponi il tuo server di sviluppo locale su Internet. Simile a ngrok, ma completamente gratuito, senza installazione o registrazione. Usa semplicemente una scheda del browser come agente.",
-                btn_create: "Crea un tunnel ora"
+                btn_create: "Crea un tunnel ora",
+                title_what: "Cos'è un tunnel HTTP?",
+                desc_what: "Un tunnel HTTP permette di esporre un server locale a Internet senza IP pubblico.",
+                title_flow: "Come funziona WebTNX",
+                step1_title: "1. Richiesta pubblica", step1_desc: "Un visitatore accede al link WebTNX.",
+                step2_title: "2. Sospensione", step2_desc: "Il server WebTNX tiene la connessione sospesa.",
+                step3_title: "3. Recupero", step3_desc: "La scheda del browser recupera la richiesta e chiama localhost.",
+                step4_title: "4. Risposta", step4_desc: "La scheda invia la risposta a WebTNX per il visitatore.",
+                title_local: "Configurazione locale",
+                local_li1: "Avvia l'app locale (es: localhost:8080)",
+                local_li2: "Abilita CORS per https://webtnx.zone.id",
+                cors_example_text: "Esempio Express CORS:",
+                local_li3: "Tieni la scheda aperta (disabilita standby)",
+                title_vs: "WebTNX vs Tunnel tradizionali",
+                th_feature: "Caratteristica", th_webtnx: "WebTNX", th_traditional: "Tradizionale (es: ngrok)",
+                row1_f: "Installazione", row1_w: "Nessuna (scheda)", row1_t: "Richiesto CLI",
+                row2_f: "Registrazione", row2_w: "Nessuna", row2_t: "Richiesta",
+                row3_f: "Bypass firewall", row3_w: "Molto efficace", row3_t: "Può essere bloccato",
+                row4_f: "Protocollo", row4_w: "Solo HTTP/HTTPS", row4_t: "Supports TCP, UDP, SSH",
+                row5_f: "Risorse", row5_w: "Basse (~30MB)", row5_t: "Medie"
             },
             pt: {
                 home_title: "WebTNX: Túnel HTTP sem instalação",
                 home_desc: "Exponha seu servidor de desenvolvimento local para a internet. Semelhante ao ngrok, mas totalmente gratuito, sem instalação e sem registro. Use apenas uma guia do navegador como agente.",
-                btn_create: "Criar um túnel agora"
+                btn_create: "Criar um túnel agora",
+                title_what: "O que é um túnel HTTP?",
+                desc_what: "Um túnel HTTP permite expor um servidor local na internet sem um IP público.",
+                title_flow: "Como o WebTNX funciona",
+                step1_title: "1. Requisição pública", step1_desc: "Um visitante acessa o link WebTNX.",
+                step2_title: "2. Pausa conexão", step2_desc: "O servidor WebTNX mantém a conexão do visitante suspensa.",
+                step3_title: "3. Coleta agente", step3_desc: "Sua guia coleta a requisição e chama o localhost.",
+                step4_title: "4. Retorna resposta", step4_desc: "A guia envia a resposta para o WebTNX que entrega ao visitante.",
+                title_local: "Configuração local",
+                local_li1: "Inicie sua aplicação local (ex: localhost:8080)",
+                local_li2: "Permita CORS para https://webtnx.zone.id",
+                cors_example_text: "Exemplo de CORS no Express:",
+                local_li3: "Mantenha a guia aberta (sem hibernar)",
+                title_vs: "WebTNX vs Túneis Tradicionais",
+                th_feature: "Funcionalidade", th_webtnx: "WebTNX", th_traditional: "Tradicional (ex: ngrok)",
+                row1_f: "Instalação", row1_w: "Nenhuma (guia)", row1_t: "Requer CLI",
+                row2_f: "Registro", row2_w: "Nenhum", row2_t: "Requerido",
+                row3_f: "Bypass firewall", row3_w: "Altamente eficaz", row3_t: "Pode ser bloqueado",
+                row4_f: "Protocolos", row4_w: "Somente HTTP/HTTPS", row4_t: "Suporta TCP, UDP, SSH",
+                row5_f: "Recursos", row5_w: "Muito baixos (~30MB)", row5_t: "Médios"
             },
             ko: {
                 home_title: "WebTNX: 설치가 필요 없는 HTTP 터널",
-                home_desc: "로컬 개발 서버를 인터넷에 노출하세요. ngrok과 유사하지만 완전 무료이며, 설치나 등록이 필요 없습니다. 브라우저 탭을 터널 에이전트로 사용하기만 하면 됩니다.",
-                btn_create: "지금 터널 생성하기"
+                home_desc: "로컬 개발 서버를 인터넷에 노출하세요. 장치 설정이나 프로그램 설치, 가입이 필요 없습니다.",
+                btn_create: "지금 터널 생성하기",
+                title_what: "HTTP 터널이란 무엇인가요?",
+                desc_what: "HTTP 터널은 NAT나 방화벽 뒤에 있는 로컬 서버를 인터넷에 공개할 수 있는 기술입니다.",
+                title_flow: "WebTNX 작동 방식",
+                step1_title: "1. 외부 요청", step1_desc: "방문자가 WebTNX 링크에 접속합니다.",
+                step2_title: "2. 연결 보류", step2_desc: "WebTNX 서버는 연결을 일시적으로 보류합니다.",
+                step3_title: "3. 에이전트 폴링", step3_desc: "브라우저 탭이 요청을 가져와 localhost를 호출합니다.",
+                step4_title: "4. 응답 및 반환", step4_desc: "브라우저가 응답을 서버로 보내고, 서버가 방문자에게 반환합니다.",
+                title_local: "로컬 설정 방법",
+                local_li1: "로컬 애플리케이션 실행 (예: localhost:8080)",
+                local_li2: "CORS 허용 (https://webtnx.zone.id 대상)",
+                cors_example_text: "Express CORS 설정 예시:",
+                local_li3: "탭을 열어둔 채 유지 (컴퓨터 절전 방지)",
+                title_vs: "WebTNX vs 기존 터널 비교",
+                th_feature: "특징", th_webtnx: "WebTNX", th_traditional: "기존 (ngrok 등)",
+                row1_f: "설치", row1_w: "없음 (브라우저)", row1_t: "CLI 프로그램 다운로드 필요",
+                row2_f: "가입", row2_w: "불필요", row2_t: "필수",
+                row3_f: "방화벽 우회", row3_w: "매우 강력함", row3_t: "차단될 수 있음",
+                row4_f: "프로토콜", row4_w: "HTTP/HTTPS 전용", row4_t: "Supports TCP, UDP, SSH",
+                row5_f: "서버 리소스", row5_w: "매우 낮음 (~30MB)", row5_t: "보통"
             }
         };
 
@@ -78,9 +377,59 @@
             localStorage.setItem('webtnx_lang', lang);
             document.getElementById('lang-select').value = lang;
             const data = i18n[lang] || i18n['en'];
+            
+            // Hero
             document.getElementById('home-title').innerText = data.home_title;
             document.getElementById('home-desc').innerText = data.home_desc;
             document.getElementById('btn-create').innerText = data.btn_create;
+
+            // 1. What
+            document.getElementById('title-what').innerText = data.title_what;
+            document.getElementById('desc-what').innerText = data.desc_what;
+
+            // 2. Flow
+            document.getElementById('title-flow').innerText = data.title_flow;
+            document.getElementById('step1-title').innerText = data.step1_title;
+            document.getElementById('step1-desc').innerHTML = data.step1_desc;
+            document.getElementById('step2-title').innerText = data.step2_title;
+            document.getElementById('step2-desc').innerHTML = data.step2_desc;
+            document.getElementById('step3-title').innerText = data.step3_title;
+            document.getElementById('step3-desc').innerHTML = data.step3_desc;
+            document.getElementById('step4-title').innerText = data.step4_title;
+            document.getElementById('step4-desc').innerHTML = data.step4_desc;
+
+            // 3. Local
+            document.getElementById('title-local').innerText = data.title_local;
+            document.getElementById('local-li1').innerHTML = data.local_li1;
+            document.getElementById('local-li2').innerHTML = data.local_li2;
+            document.getElementById('cors-example-text').innerText = data.cors_example_text;
+            document.getElementById('local-li3').innerHTML = data.local_li3;
+
+            // 4. VS Table
+            document.getElementById('title-vs').innerText = data.title_vs;
+            document.getElementById('th-feature').innerText = data.th_feature;
+            document.getElementById('th-webtnx').innerText = data.th_webtnx;
+            document.getElementById('th-traditional').innerText = data.th_traditional;
+
+            document.getElementById('row1-f').innerHTML = data.row1_f;
+            document.getElementById('row1-w').innerText = data.row1_w;
+            document.getElementById('row1-t').innerText = data.row1_t;
+
+            document.getElementById('row2-f').innerHTML = data.row2_f;
+            document.getElementById('row2-w').innerText = data.row2_w;
+            document.getElementById('row2-t').innerText = data.row2_t;
+
+            document.getElementById('row3-f').innerHTML = data.row3_f;
+            document.getElementById('row3-w').innerText = data.row3_w;
+            document.getElementById('row3-t').innerText = data.row3_t;
+
+            document.getElementById('row4-f').innerHTML = data.row4_f;
+            document.getElementById('row4-w').innerText = data.row4_w;
+            document.getElementById('row4-t').innerText = data.row4_t;
+
+            document.getElementById('row5-f').innerHTML = data.row5_f;
+            document.getElementById('row5-w').innerText = data.row5_w;
+            document.getElementById('row5-t').innerText = data.row5_t;
         }
 
         const savedLang = localStorage.getItem('webtnx_lang') || 'en';
