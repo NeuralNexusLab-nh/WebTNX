@@ -6,6 +6,8 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+app.disable('x-powered-by');
+
 app.use(express.json({ limit: '2mb' }));
 app.use(express.urlencoded({ limit: '2mb', extended: true }));
 app.use(express.text({ limit: '2mb' }));
@@ -26,6 +28,16 @@ app.use(express.static(path.join(__dirname, 'pages')));
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'pages', 'index.html')));
 app.get('/create', (req, res) => res.sendFile(path.join(__dirname, 'pages', 'create.html')));
 app.get('/tunnel', (req, res) => res.sendFile(path.join(__dirname, 'pages', 'tunnel.html')));
+
+function xorDecrypt(base64Text, key) {
+    const encryptedBytes = Buffer.from(base64Text, 'base64');
+    const keyBytes = Buffer.from(key, 'utf8');
+    const decryptedBytes = Buffer.alloc(encryptedBytes.length);
+    for (let i = 0; i < encryptedBytes.length; i++) {
+        decryptedBytes[i] = encryptedBytes[i] ^ keyBytes[i % keyBytes.length];
+    }
+    return decryptedBytes;
+}
 
 function rewriteUrls(content, tunnelId) {
     if (typeof content !== 'string') return content;
@@ -83,14 +95,50 @@ app.post('/api/reqs', (req, res) => {
     res.json({ requests });
 });
 
+app.post('/api/keepalive', (req, res) => {
+    const { requestId } = req.body;
+    const pending = pendingRequests.get(requestId);
+    if (pending) {
+        if (pending.timeoutId) {
+            clearTimeout(pending.timeoutId); 
+            pending.timeoutId = null; 
+        }
+        return res.json({ success: true });
+    }
+    res.status(404).json({ error: 'Request not found' });
+});
+
 app.post('/api/res', (req, res) => {
-    const { requestId, status, headers, body } = req.body;
+    const { requestId, status, headers, body, isBase64, isEncrypted } = req.body;
     const pending = pendingRequests.get(requestId);
     if (!pending) return res.status(404).send('Request expired or not found.');
 
     if (pending.timeoutId) clearTimeout(pending.timeoutId);
 
-    pending.resolve({ status, headers, body });
+    let decryptedData;
+    if (isEncrypted) {
+        const ids = JSON.parse(fs.readFileSync(idsPath, 'utf8'));
+        const tunnelInfo = ids[pending.tunnelId];
+        const secretKey = `${pending.tunnelId}_${tunnelInfo.port}_${tunnelInfo.timeout}`;
+        
+        decryptedData = xorDecrypt(body, secretKey);
+    } else {
+        decryptedData = Buffer.from(body, isBase64 ? 'base64' : 'utf8');
+    }
+
+    let finalBody;
+    
+    if (isBase64) {
+        finalBody = Buffer.from(decryptedData.toString('utf8'), 'base64');
+    } else {
+        finalBody = decryptedData.toString('utf8');
+        const contentType = headers['content-type'] || '';
+        if (contentType.includes('text/html') || contentType.includes('application/javascript')) {
+            finalBody = rewriteUrls(finalBody, pending.tunnelId);
+        }
+    }
+
+    pending.resolve({ status, headers, body: finalBody });
     pendingRequests.delete(requestId);
     res.sendStatus(200);
 });
@@ -179,13 +227,6 @@ app.all('/:tunnelId/*', (req, res, next) => {
     });
 
     promise.then(({ status, headers: resHeaders, body }) => {
-        let finalBody = body;
-        const contentType = resHeaders['content-type'] || '';
-        
-        if (contentType.includes('text/html') || contentType.includes('application/javascript')) {
-            finalBody = rewriteUrls(body, tunnelId);
-        }
-
         Object.keys(resHeaders).forEach(key => {
             if (key.toLowerCase() !== 'transfer-encoding' && key.toLowerCase() !== 'content-length' && key.toLowerCase() !== 'x-powered-by') {
                 res.setHeader(key, resHeaders[key]);
@@ -197,7 +238,7 @@ app.all('/:tunnelId/*', (req, res, next) => {
         res.setHeader('X-Request-Id', requestId);
         res.setHeader('X-Website', 'https://webtnx.zone.id/');
 
-        res.status(status || 200).send(finalBody);
+        res.status(status || 200).send(body);
     });
 });
 
