@@ -19,25 +19,18 @@
         .section-block h2 { font-size: 1.6rem; color: #212529; margin-top: 0; margin-bottom: 15px; border-left: 4px solid #007bff; padding-left: 12px; }
         .section-block p { font-size: 1rem; line-height: 1.7; color: #495057; margin-bottom: 20px; }
         .subtitle-why { font-size: 1.25rem; font-weight: 600; color: #495057; margin-top: 30px; margin-bottom: 15px; text-align: center; }
-        
-        /* 💡 完美的 6 網格排版 */
         .why-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 15px; }
         @media (max-width: 900px) { .why-grid { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 600px) { .why-grid { grid-template-columns: 1fr; } }
-        
         .why-card { background: #fff; border: 1px solid #e9ecef; border-left: 3px solid #ffc107; border-radius: 6px; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.01); }
         .why-card h4 { font-size: 1.05rem; margin-top: 0; margin-bottom: 10px; color: #343a40; }
         .why-card p { font-size: 0.9rem; color: #6c757d; line-height: 1.6; margin: 0; }
-
-        /* 💡 運作流程 6 網格 */
         .step-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 25px; }
         @media (max-width: 900px) { .step-grid { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 600px) { .step-grid { grid-template-columns: 1fr; } }
-        
         .step-card { background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 6px; padding: 20px; text-align: left; }
         .step-card h3 { font-size: 1.05rem; margin-top: 0; margin-bottom: 10px; color: #007bff; }
         .step-card p { font-size: 0.9rem; color: #6c757d; line-height: 1.5; margin: 0; }
-
         .checklist { list-style: none; padding: 0; margin-top: 20px; }
         .checklist li { padding-left: 28px; position: relative; margin-bottom: 20px; font-size: 0.95rem; line-height: 1.7; color: #495057; }
         .checklist li::before { content: "✓"; position: absolute; left: 0; top: 0; color: #28a745; font-weight: bold; font-size: 1.1rem; }
@@ -72,7 +65,6 @@
         <a href="/download" class="btn" id="btn-create">Get Started Now</a>
     </div>
     <div class="info-container">
-        <!-- 什麼是 HTTP 隧道 -->
         <div class="section-block">
             <h2 id="title-what">What is an HTTP Tunnel?</h2>
             <p id="desc-what">An HTTP tunnel is a technology that allows you to expose a local server (running behind NATs, firewalls, or without a public IP) to the public internet. It assigns a secure public URL to your local project, allowing external users or APIs (like Webhook senders) to connect directly to your local application from anywhere in the world.</p>
@@ -87,27 +79,27 @@
                     <p id="why-r2-desc">Routers block unsolicited inbound traffic. To bypass this, you would have to configure 'Port Forwarding' in your router settings, which is tedious, often restricted, and changes dynamically.</p>
                 </div>
                 <div class="why-card">
-                    <h4 id="why-r3-title">Severe Security Vulnerabilities</h4>
-                    <p id="why-r3-desc">Exposing a raw port on your personal computer directly to the internet is extremely dangerous. It exposes your private machine to port scanners, malware, hacking exploits, and DDoS attacks.</p>
+                    <h4 id="why-r3-title">Router Port Limits</h4>
+                    <p id="why-r3-desc">ISPs and local router firewalls block incoming traffic on common ports (like 80, 443, 8080) by default to prevent residential web hosting, making direct exposure impossible.</p>
                 </div>
                 <div class="why-card">
                     <h4 id="why-r4-title">No SSL/HTTPS Encryption</h4>
                     <p id="why-r4-desc">Exposing raw IP usually runs over unencrypted HTTP. Modern web platforms (like Stripe, Line Bot, or browser features like camera access) strictly require HTTPS endpoints to function.</p>
                 </div>
-                <!-- 💡 新增 5：HTTPS & API 限制 -->
+                <!-- 💡 優化後：強悍的資安威脅原因 5 -->
                 <div class="why-card">
-                    <h4 id="why-r5-title">Modern Web API Requirements</h4>
-                    <p id="why-r5-desc">Most modern APIs and integration tools (e.g. GitHub Webhooks, Shopify, Stripe) strictly refuse to send request payloads to unencrypted raw IP addresses due to compliance.</p>
+                    <h4 id="why-r5-title">Global Scanning & Automated Bot Probing</h4>
+                    <p id="why-r5-desc">Malicious botnets scan raw open ports globally within minutes, attempting automated brute-force attacks and executing exploit payloads directly against your machine.</p>
                 </div>
-                <!-- 💡 新增 6：CORS / 同源與 Cookie 阻擋 -->
+                <!-- 💡 優化後：強悍的資安威脅原因 6 -->
                 <div class="why-card">
-                    <h4 id="why-r6-title">Browser CORS & Sandbox Blocks</h4>
-                    <p id="why-r6-desc">Browsers apply strict same-origin and sandbox policies on raw IP addresses. Accessing raw local IPs from public sites will block your HTTP requests, cookie handshakes, and Web APIs.</p>
+                    <h4 id="why-r6-title">Lateral Movement & Intranet Infections</h4>
+                    <p id="why-r6-desc">If your local computer is compromised through an exposed port, hackers can use it as a pivot to move laterally across your home or corporate local network, infecting other connected devices.</p>
                 </div>
             </div>
         </div>
 
-        <!-- 💡 深度精細化的 6 步驟技術流程 -->
+        <!-- 運作流程 -->
         <div class="section-block">
             <h2 id="title-flow">How WebTNX Works</h2>
             <div class="step-grid">
@@ -158,7 +150,7 @@
             </ul>
         </div>
 
-        <!-- 全面擴充版對比表格 -->
+        <!-- 全面擴充版對比表格 (新增 3 個維度) -->
         <div class="section-block">
             <h2 id="title-vs">WebTNX vs. Traditional Tunnels</h2>
             <div class="table-responsive">
@@ -214,6 +206,27 @@
                             <td id="row7-c">HTTP/HTTPS Web Traffic</td>
                             <td id="row7-t" style="color:#28a745; font-weight:500;">Supports TCP, UDP, SSH, databases</td>
                         </tr>
+                        <!-- 💡 新增 9：自訂網域綁定 -->
+                        <tr>
+                            <td class="feature-name" id="row9-f"><strong>Custom Domain</strong></td>
+                            <td id="row9-w">No (Path-based only)</td>
+                            <td id="row9-c">No (Path-based only)</td>
+                            <td id="row9-t" style="color:#28a745; font-weight:500;">Yes (e.g. api.yourproject.com)</td>
+                        </tr>
+                        <!-- 💡 新增 10：反應速度 -->
+                        <tr>
+                            <td class="feature-name" id="row10-f"><strong>Latency</strong></td>
+                            <td id="row10-w" style="color:#dc3545; font-weight:500;">Moderate (~1-2s polling delay)</td>
+                            <td id="row10-c" style="color:#dc3545; font-weight:500;">Moderate (~1-2s polling delay)</td>
+                            <td id="row10-t" style="color:#28a745; font-weight:500;">Extremely Fast (Millisecond-level)</td>
+                        </tr>
+                        <!-- 💡 新增 11：請求內容私密性 -->
+                        <tr>
+                            <td class="feature-name" id="row11-f"><strong>Request Privacy</strong></td>
+                            <td id="row11-w" style="color:#dc3545; font-weight:500;">Low (Requests public if ID guessed)</td>
+                            <td id="row11-c">Medium (XOR encrypted responses)</td>
+                            <td id="row11-t" style="color:#28a745; font-weight:500;">High (E2E encryption, secure socket)</td>
+                        </tr>
                         <tr>
                             <td class="feature-name" id="row8-f"><strong>Local RAM</strong></td>
                             <td id="row8-w">Medium (~50MB browser tab)</td>
@@ -240,14 +253,14 @@
                 why_r1_desc: "Most home broadband providers use Carrier-Grade NAT. You do not actually have a real public IP address, meaning no one on the internet can locate or reach your computer directly.",
                 why_r2_title: "Router & Firewall Blockages",
                 why_r2_desc: "Routers block unsolicited inbound traffic. To bypass this, you would have to configure 'Port Forwarding' in your router settings, which is tedious, often restricted, and changes dynamically.",
-                why_r3_title: "Severe Security Vulnerabilities",
-                why_r3_desc: "Exposing a raw port on your personal computer directly to the internet is extremely dangerous. It exposes your private machine to port scanners, malware, hacking exploits, and DDoS attacks.",
+                why_r3_title: "Router Port Limits",
+                why_r3_desc: "ISPs and local router firewalls block incoming traffic on common ports (like 80, 443, 8080) by default to prevent residential web hosting, making direct exposure impossible.",
                 why_r4_title: "No SSL/HTTPS Encryption",
                 why_r4_desc: "Exposing raw IP usually runs over unencrypted HTTP. Modern web platforms (like Stripe, Line Bot, or browser features like camera access) strictly require HTTPS endpoints to function.",
-                why_r5_title: "Modern Web API Requirements",
-                why_r5_desc: "Modern APIs and platforms require strict SSL (HTTPS) endpoints. Exposing raw HTTP IP cannot pass their webhook validation tests.",
-                why_r6_title: "Browser CORS & Sandbox Blocks",
-                why_r6_desc: "Browsers enforce strict security, blocking public web requests and cookie exchanges with insecure raw local IPs.",
+                why_r5_title: "Global Scanning & Bot Probing",
+                why_r5_desc: "Malicious botnets scan raw open ports globally within minutes, attempting automated brute-force attacks and executing exploit payloads directly against your machine.",
+                why_r6_title: "Lateral Movement & Intranet Infections",
+                why_r6_desc: "If your local computer is compromised through an exposed port, hackers can use it as a pivot to move laterally across your home or corporate local network, infecting other connected devices.",
                 
                 title_flow: "How WebTNX Works",
                 step1_title: "1. Public Request",
@@ -305,7 +318,19 @@
                 row8_f: "<strong>Local RAM</strong>",
                 row8_w: "Medium (~50MB browser tab)",
                 row8_c: "Extremely Low (~10MB Python)",
-                row8_t: "Medium (~30MB persistent client)"
+                row8_t: "Medium (~30MB persistent client)",
+                row9_f: "<strong>Custom Domain</strong>",
+                row9_w: "No (Path-based only)",
+                row9_c: "No (Path-based only)",
+                row9_t: "Yes (e.g. api.yourproject.com)",
+                row10_f: "<strong>Latency</strong>",
+                row10_w: "Moderate (~1-2s polling delay)",
+                row10_c: "Moderate (~1-2s polling delay)",
+                row10_t: "Extremely Fast (Millisecond-level)",
+                row11_f: "<strong>Request Privacy</strong>",
+                row11_w: "Low (Requests public if ID guessed)",
+                row11_c: "Medium (XOR encrypted responses)",
+                row11_t: "High (E2E encryption, secure socket)"
             },
             "zh-TW": {
                 home_title: "WebTNX：免安裝的 HTTP 內網穿透工具",
@@ -318,14 +343,14 @@
                 why_r1_desc: "大多數家庭寬頻業者使用電信級 NAT。您的電腦並沒有真實的公網 IP，這意味著外部網路的任何人，物理上都無法在網路上定位並直接連線到您的電腦。",
                 why_r2_title: "分享器與防火牆的天然阻擋",
                 why_r2_desc: "路由器預設會阻擋所有未經請求的外部連入流量。要繞過它，您必須手動登入分享器設定繁瑣且不穩定的「連接埠映射（Port Forwarding）」。",
-                why_r3_title: "暴露埠帶來的嚴重安全風險",
-                why_r3_desc: "將本機的埠（Port）直接對公網敞開是非常危險的。您的私人電腦將完全暴露在自動化的埠掃描、惡意漏洞攻擊、勒索病毒與 DDoS 洪水攻擊之中。",
+                why_r3_title: "ISP 本地埠限制",
+                why_r3_desc: "網路業者（ISP）通常會限制家用寬頻使用 80、443 或 8080 等標準埠。這代表即使您設定了埠映射，外部訪客依舊無法連入您的本機網站。",
                 why_r4_title: "缺少 SSL/HTTPS 傳輸加密",
                 why_r4_desc: "直接暴露的 IP 通常只提供未加密的 HTTP。然而現代網路服務（如 Stripe、Line 機器人、瀏覽器定位或相機存取）都嚴格要求連線必須是安全的 HTTPS 網址。",
-                why_r5_title: "現代 Web API 的強制限制",
-                why_r5_desc: "多數現代第三方平台（如 GitHub、Stripe、Shopify）在驗證 Webhook 目標時，嚴格拒絕發送資料至未加密的純 HTTP IP 網址。",
-                why_r6_title: "瀏覽器 CORS 與 Cookie 沙盒阻擋",
-                why_r6_desc: "瀏覽器對未加密的實體 IP 存取有著極為嚴格的沙盒限制。公網網頁在發送請求或進行 Cookie 共享時，會直接被同源政策（CORS）無情阻擋。",
+                why_r5_title: "自動化掃描與惡意探針威脅",
+                why_r5_desc: "公網上的惡意機器人會在數分鐘內掃描到您開放的 Port，並自動嘗試暴力破解或利用已知漏洞入侵您的私人開發主機。",
+                why_r6_title: "內網橫向滲透與企業安全威脅",
+                why_r6_desc: "一旦您的本機電腦因為暴露 Port 被入侵，駭客就能以此為跳板，在您的家裡或公司內部網路進行橫向移動，感染同個區域網路下的其他裝置。",
                 
                 title_flow: "WebTNX 的運作方式與流程",
                 step1_title: "1. 訪客發送請求",
@@ -383,7 +408,19 @@
                 row8_f: "<strong>本機記憶體佔用</strong>",
                 row8_w: "中等 (~50MB 瀏覽器分頁開銷)",
                 row8_c: "極低 (~10MB 原生 Python 資源開銷)",
-                row8_t: "中等 (~30MB 後台常駐程序開銷)"
+                row8_t: "中等 (~30MB 後台常駐程序開銷)",
+                row9_f: "<strong>自訂網域綁定</strong>",
+                row9_w: "不支援 (僅能使用帶 Path 的單一 URL)",
+                row9_c: "不支援 (僅能使用帶 Path 的單一 URL)",
+                row9_t: "支援 (付費後可綁定如 api.yourproject.com)",
+                row10_f: "<strong>反應速度與延遲</strong>",
+                row10_w: "中等 (受限於每 2 秒輪詢造成的物理延遲)",
+                row10_c: "中等 (受限於每 2 秒輪詢造成的物理延遲)",
+                row10_t: "極快 (採用長連線多路複用，毫秒級延遲)",
+                row11_f: "<strong>請求內容私密性</strong>",
+                row11_w: "較低 (明文傳遞與暫存，若 ID 被猜到可被盲測)",
+                row11_c: "中等 (回應內容採端到端 XOR 加密，但請求仍在伺服器暫存)",
+                row11_t: "極高 (基於 Socket 的全管道加密傳輸，不留存檔案)"
             },
             ja: {
                 home_title: "WebTNX: インストール不要の HTTP トンネル",
@@ -400,14 +437,14 @@
                 why_r3_desc: "ポートを直接公開すると、DDoSやハッキングの攻撃対象になります。",
                 why_r4_title: "SSL/HTTPS暗報化なし",
                 why_r4_desc: " rawポートはHTTP通信であり、最近のWebAPIが動作しません。",
-                why_r5_title: "現代 Web API 要件",
-                why_r5_desc: "最新のAPIプラットフォームはSSL (HTTPS) 接続を義務付けており、未暗号化IPは利用できません。",
-                why_r6_title: "ブラウザCORS制限",
-                why_r6_desc: "安全でないローカルIPへのWebリクエストやCookieの交換は、ブラウザによって強制的に遮断されます。",
-
+                why_r5_title: "自動スキャン脅威",
+                why_r5_desc: "公開ポートは悪意あるボットに数分でスキャンされ、不正アクセスの対象になります。",
+                why_r6_title: "インフラハッキング脅威",
+                why_r6_desc: "ローカルPCがハッキングされると、同一ローカルネットワーク内の他のデバイスに被害が拡大します。",
+                
                 title_flow: "WebTNXの仕組み",
-                step1_title: "1. 訪問者のリクエスト", step1_desc: "訪問者が WebTNX のカスタムリンクにアクセスします。",
-                step2_title: "2. 接続の保留", step2_desc: "サーバーは 32-byte Request ID を生成し、接続を一時的に保留します。",
+                step1_title: "1. リクエスト", step1_desc: "訪問者が WebTNX リンクにアクセスします。",
+                step2_title: "2. 保留", step2_desc: "サーバーは 32-byte Request ID を生成し、接続を一時的に保留します。",
                 step3_title: "3. api/reqs のポーリング", step3_desc: "エージェントが 2 秒ごとにリクエストを取得し、JSONファイルを即座に消去します。",
                 step4_title: "4. キープアライブと取得", step4_desc: "キープアライブを送信してサーバー接続を維持し、ローカルを呼び出します。",
                 step5_title: "5. XOR暗号化", step5_desc: "ローカルの応答を取得し、動的秘密鍵を使用して UTF-8 XOR 暗号化を行います。",
@@ -428,7 +465,10 @@
                 row5_f: "ルーター設定", row5_w: "不要", row5_c: "不要", row5_t: "不要",
                 row6_f: "HTTPS", row6_w: "標準対応", row6_c: "標準対応", row6_t: "有料カスタム",
                 row7_f: "プロトコル", row7_w: "HTTPのみ", row7_c: "HTTPのみ", row7_t: "TCP, SSHなど",
-                row8_f: "ローカルメモリ", row8_w: "中等 (~50MB)", row8_c: "極小 (~10MB)", row8_t: "中等 (~30MB)"
+                row8_f: "ローカルメモリ", row8_w: "中等 (~50MB)", row8_c: "極小 (~10MB)", row8_t: "中等 (~30MB)",
+                row9_f: "カスタムドメイン", row9_w: "非対応 (パスベースのみ)", row9_c: "非対応 (パスベースのみ)", row9_t: "対応 (有料)",
+                row10_f: "反応速度", row10_w: "中等 (2秒ポーリング遅延)", row10_c: "中等 (2秒ポーリング遅延)", row10_t: "極めて高速 (ミリ秒単位)",
+                row11_f: "プライバシー", row11_w: "低い (平文リクエスト)", row11_c: "中等 (XOR暗号化応答、サーバー一時保存)", row11_t: "高い (E2E暗号化、Socket)"
             },
             fr: {
                 home_title: "WebTNX: Tunnel HTTP sans installation",
@@ -441,15 +481,15 @@
                 why_r1_desc: "Le CGNAT vous empêche d'avoir une adresse IP publique routable.",
                 why_r2_title: "Blocage de pare-feu",
                 why_r2_desc: "Les routeurs bloquent le trafic entrant; la redirection de port est complexe.",
-                why_r3_title: "Risques de sécurité",
-                why_r3_desc: "Exposer un port brut invite les logiciels malveillants et attaques DDoS.",
+                why_r3_title: "Limites de ports ISP",
+                why_r3_desc: "Les FAI bloquent souvent les ports standard (80, 443) pour empêcher l'auto-hébergement résidentiel.",
                 why_r4_title: "Pas de chiffrement SSL",
                 why_r4_desc: "Les webhooks modernes nécessitent impérativement des URL sécurisées HTTPS.",
-                why_r5_title: "Exigences modernes des API",
-                why_r5_desc: "Les plateformes API modernes exigent des connexions SSL (HTTPS) strictes; les IP non chiffrées ne peuvent pas être utilisées.",
-                why_r6_title: "Restrictions CORS du navigateur",
-                why_r6_desc: "Les requêtes Web et l'échange de cookies vers des IP locales non chiffrées sont bloqués par le navigateur.",
-
+                why_r5_title: "Scans automatisés globaux",
+                why_r5_desc: "Les botnets malveillants scannent les ports ouverts en quelques minutes pour tenter des attaques.",
+                why_r6_title: "Infection du réseau local",
+                why_r6_desc: "Si votre ordinateur est compromis, les pirates peuvent se déplacer latéralement et infecter d'autres appareils.",
+                
                 title_flow: "Comment fonctionne WebTNX",
                 step1_title: "1. Requête du visiteur", step1_desc: "Le visiteur accède à votre lien personnalisé.",
                 step2_title: "2. Hold Connexion", step2_desc: "Le serveur génère un ID de 32-byte et suspend la connexion.",
@@ -473,7 +513,10 @@
                 row5_f: "Redirection port", row5_w: "Non requise", row5_c: "Non requise", row5_t: "Non requise",
                 row6_f: "HTTPS", row6_w: "Inclus", row6_c: "Inclus", row6_t: "Payant pour custom",
                 row7_f: "Protocoles", row7_w: "HTTP uniquement", row7_c: "HTTP uniquement", row7_t: "Supporte TCP, UDP, SSH",
-                row8_f: "Mémoire locale", row8_w: "Moyen (~50MB)", row8_c: "Trés bas (~10MB)", row8_t: "Moyen (~30MB)"
+                row8_f: "Serveur", row8_w: "Trés bas (~30MB)", row8_c: "Moyen",
+                row9_f: "Nom de domaine personnalisé", row9_w: "Non (uniquement via chemin)", row9_c: "Non (uniquement via chemin)", row9_t: "Oui (payant)",
+                row10_f: "Vitesse / Latence", row10_w: "Moyenne (polling 2s)", row10_c: "Moyenne (polling 2s)", row10_t: "Très rapide (millisecondes)",
+                row11_f: "Confidentialité des requêtes", row11_w: "Basse (requêtes en clair)", row11_c: "Moyenne (réponses cryptées XOR, requêtes stockées)", row11_t: "Haute (chiffrement E2E, Socket)"
             },
             it: {
                 home_title: "WebTNX: Tunnel HTTP senza installazione",
@@ -486,14 +529,14 @@
                 why_r1_desc: "Senza IP pubblico reale la tua macchina non è rintracciabile da internet.",
                 why_r2_title: "Blocco del Firewall",
                 why_r2_desc: "Il router blocca il traffico esterno; configurare la porta è difficile.",
-                why_r3_title: "Vulnerabilità di sicurezza",
-                why_r3_desc: "Portare la porta all'esterno espone il tuo PC a scansioni e attacchi hacker.",
+                why_r3_title: "Limiti di porta ISP",
+                why_r3_desc: "I provider internet spesso bloccano le porte standard (80, 443) per prevenire l'hosting domestico.",
                 why_r4_title: "Nessuna crittografia SSL",
                 why_r4_desc: "I webhook moderni richiedono necessariamente endpoint sicuri HTTPS.",
-                why_r5_title: "Requisiti API moderne",
-                why_r5_desc: "Le moderne piattaforme API richiedono connessioni SSL (HTTPS) e gli IP non cifrati non possono essere utilizzati.",
-                why_r6_title: "Limitazioni CORS",
-                why_r6_desc: "Le richieste Web e lo scambio di cookie verso IP locali non cifrati sono bloccati dal browser.",
+                why_r5_title: "Scansioni automatizzate globali",
+                why_r5_desc: "Botnet maligne scansionano le porte aperte in pochi minuti per tentare attacchi e intrusioni.",
+                why_r6_title: "Infezione della rete locale",
+                why_r6_desc: "Se il tuo PC viene compromesso, gli hacker possono muoversi lateralmente e infettare altri dispositivi della rete locale.",
 
                 title_flow: "Come funziona WebTNX",
                 step1_title: "1. Richiesta del visitatore", step1_desc: "Il visitatore accede al tuo link personalizzato.",
@@ -518,7 +561,10 @@
                 row5_f: "Port forwarding", row5_w: "Non richiesto", row5_c: "Non richiesto", row5_t: "Non richiesto",
                 row6_f: "HTTPS", row6_w: "Incluso", row6_c: "Incluso", row6_t: "Payant per custom",
                 row7_f: "Protocolli", row7_w: "Solo HTTP", row7_c: "Solo HTTP", row7_t: "Supporta TCP, UDP, SSH",
-                row8_f: "Risorse", row8_w: "Medie (~50MB)", row8_c: "Basse (~10MB)", row8_t: "Medie (~30MB)"
+                row8_f: "Risorse", row8_w: "Medie (~50MB)", row8_c: "Basse (~10MB)", row8_t: "Medie (~30MB)",
+                row9_f: "Dominio personalizzato", row9_w: "No (solo basato su percorso)", row9_c: "No (solo basato su percorso)", row9_t: "Sì (a pagamento)",
+                row10_f: "Vantaggio di latenza", row10_w: "Media (polling 2s)", row10_c: "Media (polling 2s)", row10_t: "Molto rapida (millisecondi)",
+                row11_f: "Privacy delle richieste", row11_w: "Bassa (richieste in chiaro)", row11_c: "Media (risposte cifrate XOR, richieste temporanee)", row11_t: "Alta (cifratura E2E, Socket)"
             },
             pt: {
                 home_title: "WebTNX: Túnel HTTP sem instalação",
@@ -531,14 +577,14 @@
                 why_r1_desc: "Sua operadora não fornece um IP público roteável para sua casa.",
                 why_r2_title: "Bloqueio do Roteador",
                 why_r2_desc: "Roteadores bloqueiam conexões; o redirecionamento de portas é instável.",
-                why_r3_title: "Risco de segurança",
-                why_r3_desc: "Abrir uma porta expõe sua máquina a varreduras e ataques DDoS.",
+                why_r3_title: "Limitações de portas de ISP",
+                why_r3_desc: "As operadoras bloqueiam portas padrão (80, 443) para impedir hospedagem residencial de sites.",
                 why_r4_title: "Sem criptografia SSL",
                 why_r4_desc: "APIs e webhooks modernos exigem obrigatoriamente URLs seguras HTTPS.",
-                why_r5_title: "Requisitos de APIs modernas",
-                why_r5_desc: "As modernas plataformas de API exigem conexões seguras SSL (HTTPS), impossibilitando o uso de IPs não criptografados.",
-                why_r6_title: "Restrições de CORS no navegador",
-                why_r6_desc: "Requisições Web e compartilhamento de cookies para IPs locais não criptografados são bloqueados pelo navegador.",
+                why_r5_title: "Varredura automatizada global",
+                why_r5_desc: "Botnets malignos varrem portas abertas em minutos tentando força bruta e exploração de vulnerabilidades.",
+                why_r6_title: "Infecção de rede interna",
+                why_r6_desc: "Se o seu PC for invadido através da porta aberta, hackers podem infectar outros dispositivos na mesma rede local.",
 
                 title_flow: "Como o WebTNX funciona",
                 step1_title: "1. Solicitação do visitante", step1_desc: "O visitante acessa o seu link personalizado.",
@@ -563,7 +609,10 @@
                 row5_f: "Port forwarding", row5_w: "Não requerido", row5_c: "Não requerido", row5_t: "Não requerido",
                 row6_f: "HTTPS", row6_w: "Incluso grátis", row6_c: "Incluso grátis", row6_t: "Pago para domínio próprio",
                 row7_f: "Protocolos", row7_w: "Apenas HTTP", row7_c: "Apenas HTTP", row7_t: "Suporta TCP, UDP, SSH",
-                row8_f: "Recursos", row8_w: "Médios (~50MB)", row8_c: "Baixos (~10MB)", row8_t: "Médios (~30MB)"
+                row8_f: "Recursos", row8_w: "Médios (~50MB)", row8_c: "Baixos (~10MB)", row8_t: "Médios (~30MB)",
+                row9_f: "Domínio próprio", row9_w: "Não (apenas via caminho)", row9_c: "Não (apenas via caminho)", row9_t: "Sim (pago)",
+                row10_f: "Velocidade / Latência", row10_w: "Média (polling 2s)", row10_c: "Média (polling 2s)", row10_t: "Muito rápida (milissegundos)",
+                row11_f: "Privacidade das requisições", row11_w: "Baixa (requisições em claro)", row11_c: "Média (respostas criptografadas XOR, requisições salvas)", row11_t: "Alta (criptografia E2E, Socket)"
             },
             ko: {
                 home_title: "WebTNX: 설치가 필요 없는 HTTP 터널",
@@ -576,18 +625,18 @@
                 why_r1_desc: "대부분의 홈 인터넷은 CGNAT를 사용하므로, 외부에서 직접 PC에 접근할 수 없습니다.",
                 why_r2_title: "라우터 및 방화벽 차단",
                 why_r2_desc: "공유기가 외부 접근을 차단하므로 복잡한 포트포워딩 설정이 필요합니다.",
-                why_r3_title: "심각한 보안 취약점",
-                why_r3_desc: "포트를 직접 열어두면 DDoS, 해킹, 포트 스캔 등의 공격에 완전히 노출됩니다.",
+                why_r3_title: "ISP 포트 제한",
+                why_r3_desc: "인터넷 제공업체(ISP)는 주거용 웹 호스팅을 방지하기 위해 80, 443 등의 표준 포트를 차단하여 직접 노출을 불가능하게 만듭니다.",
                 why_r4_title: "SSL/HTTPS 암호화 없음",
                 why_r4_desc: "raw 포트는 보안 암호화가 없어 최신 Web API 연동이 불가능합니다.",
-                why_r5_title: "최신 Web API 규정 사항",
-                why_r5_desc: "최신 API 플랫폼은 SSL (HTTPS) 연결을 강제하며, 암호화되지 않은 IP 주소는 웹훅 유효성 검사를 통과할 수 없습니다.",
-                why_r6_title: "브라우저 CORS 제한",
-                why_r6_desc: "보안이 확보되지 않은 로컬 IP로의 웹 요청이나 쿠키 전송은 브라우저에 의해 강제로 차단됩니다.",
-
+                why_r5_title: "글로벌 포트 스캔 및 자동 봇 탐침",
+                why_r5_desc: "악성 봇넷이 몇 분 안에 전 세계의 열려 있는 포트를 스캔하여 자동 무차별 대입 공격 및 악성 익스플로잇 코드를 직접 실행합니다.",
+                why_r6_title: "내부망 횡적 이동 및 감염 위협",
+                why_r6_desc: "열린 포트를 통해 로컬 컴퓨터가 해킹당하면, 해커가 이 기기를 거점으로 삼아 동일 망의 다른 컴퓨터나 주변 장치까지 횡적 이동하여 감염을 확산시킵니다.",
+                
                 title_flow: "How WebTNX Works",
                 step1_title: "1. 방문자 요청", step1_desc: "방문자가 WebTNX 링크에 접속합니다.",
-                step2_title: "2. 연결 보류", step2_desc: "서버는 32-byte Request ID를 생성하고 연결을 보류합니다.",
+                step2_title: "2. 연결 보류", step2_desc: "서버는 32-byte Request ID를 생성하고 연결을 일시적으로 보류합니다.",
                 step3_title: "3. api/reqs 폴링", step3_desc: "에이전트가 2초마다 요청을 가져가고, JSON 파일을 즉시 비웁니다.",
                 step4_title: "4. Keep-Alive와 가져오기", step4_desc: "Keep-Alive를 전송하여 서버 연결을 유지한 뒤 localhost를 호출합니다.",
                 step5_title: "5. XOR 암호화", step5_desc: "로컬 응답을 받은 뒤, 동적 비밀 키를 사용하여 UTF-8 XOR 암호화를 수행합니다.",
@@ -608,7 +657,11 @@
                 row5_f: "포트 포워딩", row5_w: "불필요", row5_c: "불필요", row5_t: "불필요",
                 row6_f: "HTTPS", row6_w: "표준 제공", row6_c: "표준 제공", row6_t: "유료 커스텀",
                 row7_f: "프로토콜", row7_w: "HTTP/HTTPS만", row7_c: "HTTP/HTTPS만", row7_t: "TCP, UDP, SSH 등",
-                row8_f: "로컬 리소스", row8_w: "보통 (~50MB 탭)", row8_c: "매우 낮음 (~10MB)", row8_t: "보통 (~30MB)"
+                row8_f: "로컬 리소스", row8_w: "보통 (~50MB 탭)", row8_c: "매우 낮음 (~10MB)", row8_t: "보통 (~30MB)",
+                row9_f: "커스텀 도메인", row9_w: "지원하지 않음 (경로 기반만 지원)", row9_c: "지원하지 않음 (경로 기반만 지원)", row9_t: "지원 (유료 결제 시)",
+                row10_f: "반응 속도", row10_w: "보통 (2초 폴링에 따른 물리 지연)", row10_c: "보통 (2초 폴링에 따른 물리 지연)", row10_t: "매우 빠름 (지속성 소켓, 밀리초 단위)",
+                row11_f: "요청 프라이버시", row11_w: "낮음 (평문 요청 전송, ID가 노출되면 탈취 가능)", row11_c: "보통 (응답은 XOR 암호화되나 요청은 서버에 임시 기록됨)",
+                row11_t: "매우 높음 (소켓 기반 전구간 암호화, 파일 비저장)"
             }
         };
 
@@ -709,6 +762,21 @@
             document.getElementById('row8-w').innerText = data.row8_w;
             document.getElementById('row8-c').innerText = data.row8_c;
             document.getElementById('row8-t').innerText = data.row8_t;
+
+            document.getElementById('row9-f').innerHTML = data.row9_f;
+            document.getElementById('row9-w').innerText = data.row9_w;
+            document.getElementById('row9-c').innerText = data.row9_c;
+            document.getElementById('row9-t').innerText = data.row9_t;
+
+            document.getElementById('row10-f').innerHTML = data.row10_f;
+            document.getElementById('row10-w').innerText = data.row10_w;
+            document.getElementById('row10-c').innerText = data.row10_c;
+            document.getElementById('row10-t').innerText = data.row10_t;
+
+            document.getElementById('row11-f').innerHTML = data.row11_f;
+            document.getElementById('row11-w').innerText = data.row11_w;
+            document.getElementById('row11-c').innerText = data.row11_c;
+            document.getElementById('row11-t').innerText = data.row11_t;
         }
 
         const savedLang = localStorage.getItem('webtnx_lang') || 'en';
