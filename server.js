@@ -52,9 +52,28 @@ function rewriteUrls(content, tunnelId) {
     return rewritten;
 }
 
+function isValidTunnelId(id) {
+    if (!id || typeof id !== 'string') return false;
+    const safeIdRegex = /^[a-zA-Z0-9-_]+$/;
+    if (!safeIdRegex.test(id)) {
+        return false;
+    }
+    const reservedIds = [
+        'api', 'create', 'tunnel', 'timeout', 'license', 
+        'index', 'requests', 'ids', 'data', 'favicon', 'static'
+    ];
+    if (reservedIds.includes(id.toLowerCase())) {
+        return false;
+    }
+    return true;
+}
+
 app.post('/api/register', (req, res) => {
     const { id, port, timeout } = req.body;
     if (!id || !port) return res.status(400).json({ success: false, reason: 'invalid' });
+    if (!isValidTunnelId(id)) {
+        return res.status(400).json({ success: false, reason: 'malicious_or_reserved_id' });
+    }
 
     const ids = JSON.parse(fs.readFileSync(idsPath, 'utf8'));
     const now = Date.now();
