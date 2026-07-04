@@ -37,30 +37,43 @@ def send_post(url, data_dict):
             return json.loads(raw_res.decode('utf-8'))
         except Exception:
             return {"success": True, "raw": raw_res.decode('utf-8')}
+def show_usage():
+    is_windows = platform.system().lower() == "windows"
+    print(f"{RED}[USAGE]{RESET} WebTNX CLI Client")
+    if is_windows:
+        print("Run command:\n  webtnx.exe <tunnel_id> <local_port> [timeout_seconds]\nOR:\n  python webtnx.py <tunnel_id> <local_port> [timeout_seconds]")
+        print("\nExamples:\n  webtnx.exe my-app 8080 15\n  python webtnx.py my-app 3000 30")
+    else:
+        print("Run command:\n  ./webtnx <tunnel_id> <local_port> [timeout_seconds]\nOR:\n  python3 webtnx.py <tunnel_id> <local_port> [timeout_seconds]")
+        print("\nExamples:\n  ./webtnx my-app 8080 15\n  python3 webtnx.py my-app 3000 30")
+    print("\nParameters:\n  <tunnel_id>      : The unique subdomain/name for your public URL (e.g., https://webtnx.zone.id/my-app/)\n  <local_port>     : The port your local server is running on (e.g., 8080, 3000)\n  [timeout_seconds]: Optional. Maximum seconds to wait for a local response before timing out (Default: 15)")
 def main():
-    if len(sys.argv) < 3:
-        is_windows = platform.system().lower() == "windows"
-        print(f"{RED}[USAGE]{RESET} WebTNX CLI Client")
-        if is_windows:
-            print("Run command:\n  webtnx.exe <tunnel_id> <local_port> [timeout_seconds]\nOR:\n  python webtnx.py <tunnel_id> <local_port> [timeout_seconds]")
-            print("\nExamples:\n  webtnx.exe my-app 8080 15\n  python webtnx.py my-app 3000 30")
-        else:
-            print("Run command:\n  ./webtnx <tunnel_id> <local_port> [timeout_seconds]\nOR:\n  python3 webtnx.py <tunnel_id> <local_port> [timeout_seconds]")
-            print("\nExamples:\n  ./webtnx my-app 8080 15\n  python3 webtnx.py my-app 3000 30")
-        print("\nParameters:\n  <tunnel_id>      : The unique subdomain/name for your public URL (e.g., https://webtnx.zone.id/my-app/)\n  <local_port>     : The port your local server is running on (e.g., 8080, 3000)\n  [timeout_seconds]: Optional. Maximum seconds to wait for a local response before timing out (Default: 15)")
-        exit_with_pause(1)
-    tunnel_id = sys.argv[1].strip().lower()
-    port = sys.argv[2].strip()
-    timeout = sys.argv[3].strip() if len(sys.argv) > 3 else "15"
-    secret_key = f"{tunnel_id}_{port}_{timeout}"
-    logo = f"{BLUE}{BOLD} _ _ _         _   _______ _   _ __  __ \n| | | | ___  | | |__   __| \\ | |\\ \\/ / \n| | |  / _ \\| '_ \\| |  |  \\| | \\  /  \n| | | \\  __/| |_) || |  | . ` | /  \\  \n|_____/\\___||_.__/ |_|  |_|\\_|_/_/\\_\\ {RESET}"
-    print(logo)
+    print(f"{BLUE}{BOLD}WebTNX - HTTP Tunnel")
     print(f"{BLUE}===================================================={RESET}")
     print(f"{GREEN}[INFO]{RESET} Starting WebTNX CLI Client...")
-    print(f"{GREEN}[LINK]{RESET} Public URL   : {CYAN}{SERVER_URL}/{tunnel_id}/{RESET}")
-    print(f"{GREEN}[HOST]{RESET} Local Target : {CYAN}http://localhost:{port}{RESET}")
-    print(f"{GREEN}[KEYS]{RESET} Secure Key   : {YELLOW}{secret_key} (Encrypted){RESET}")
     print(f"{GREEN}[COPY]{RESET} Copyright (c) 2026 {BOLD}NeuralNexusLab{RESET}. All Rights Reserved.")
+    print(f"{BLUE}===================================================={RESET}")
+    if len(sys.argv) >= 3:
+        tunnel_id = sys.argv[1].strip().lower()
+        port = sys.argv[2].strip()
+        timeout = sys.argv[3].strip() if len(sys.argv) > 3 else "15"
+    else:
+        try:
+            tunnel_id = input(f"{CYAN}1. Enter App ID (Tunnel ID): {RESET}").strip().lower()
+            port = input(f"{CYAN}2. Enter Local Port (e.g. 8080): {RESET}").strip()
+            timeout = input(f"{CYAN}3. Enter Timeout (Seconds, default 15): {RESET}").strip() or "15"
+        except (KeyboardInterrupt, EOFError):
+            print(f"\n{RED}[ABORT]{RESET} Process terminated by user.")
+            sys.exit(1)
+    if not tunnel_id or not port:
+        print(f"\n{RED}[ERROR]{RESET} Tunnel ID and Local Port cannot be empty.")
+        show_usage()
+        exit_with_pause(1)
+    secret_key = f"{tunnel_id}_{port}_{timeout}"
+    print(f"\n{GREEN}[RUN]{RESET} App Name     : {CYAN}{tunnel_id}{RESET}")
+    print(f"{GREEN}[RUN]{RESET} Public URL   : {CYAN}{SERVER_URL}/{tunnel_id}/{RESET}")
+    print(f"{GREEN}[RUN]{RESET} Local Server : {CYAN}http://localhost:{port}{RESET}")
+    print(f"{GREEN}[RUN]{RESET} Secure Key   : {YELLOW}{secret_key} (Encrypted){RESET}")
     print(f"{BLUE}===================================================={RESET}")
     try:
         reg_res = send_post(f"{SERVER_URL}/api/register", {"id": tunnel_id, "port": int(port), "timeout": int(timeout)})
