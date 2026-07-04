@@ -9,13 +9,22 @@
         header { display: flex; justify-content: space-between; align-items: center; padding: 20px 40px; background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
         .logo { font-size: 1.5rem; font-weight: bold; color: #007bff; text-decoration: none; }
         select { padding: 6px 12px; border-radius: 4px; border: 1px solid #ced4da; font-size: 0.9rem; outline: none; cursor: pointer; }
-        .main-container { flex: 1; max-width: 1000px; margin: 0 auto; padding: 40px 20px; box-sizing: border-box; text-align: center; }
+        .main-container { flex: 1; max-width: 1100px; width: 100%; margin: 0 auto; padding: 40px 20px; box-sizing: border-box; text-align: center; }
         h1 { font-size: 2.2rem; color: #212529; margin-bottom: 10px; }
         .subtitle { font-size: 1.1rem; color: #6c757d; margin-bottom: 40px; }
-        .agent-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-top: 20px; }
-        .agent-card { background: white; border: 1px solid #e9ecef; border-radius: 8px; padding: 30px 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.02); display: flex; flex-direction: column; justify-content: space-between; text-align: left; transition: transform 0.2s, box-shadow 0.2s; }
+        
+        /* 💡 類別大標題樣式 */
+        .section-category { font-size: 1.4rem; font-weight: bold; color: #343a40; text-align: left; margin: 35px 0 15px 0; padding-bottom: 8px; border-bottom: 2px solid #dee2e6; }
+        
+        /* 💡 完美控制寬度的響應式網格 (避免單卡成行，極力維持橫向排列) */
+        .agent-grid-single { display: grid; grid-template-columns: 1fr; max-width: 450px; margin: 0 auto; }
+        .agent-grid-multi { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        @media (max-width: 900px) { .agent-grid-multi { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 600px) { .agent-grid-multi { grid-template-columns: 1fr; } }
+
+        .agent-card { background: white; border: 1px solid #e9ecef; border-radius: 8px; padding: 30px 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.02); display: flex; flex-direction: column; justify-content: space-between; text-align: left; transition: transform 0.2s, box-shadow 0.2s; box-sizing: border-box; }
         .agent-card:hover { transform: translateY(-4px); box-shadow: 0 8px 16px rgba(0,0,0,0.05); }
-        .agent-icon { font-size: 2.5rem; margin-bottom: 15px; }
+        .agent-icon { margin-bottom: 15px; display: block; }
         .agent-title { font-size: 1.25rem; font-weight: bold; color: #212529; margin-bottom: 5px; }
         .agent-badge { display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; margin-bottom: 15px; }
         .badge-green { background: #e8f5e9; color: #2e7d32; }
@@ -23,7 +32,7 @@
         .agent-desc { font-size: 0.9rem; color: #6c757d; line-height: 1.6; margin-bottom: 20px; flex-grow: 1; }
         .agent-desc ul { padding-left: 18px; margin: 10px 0 0 0; }
         .agent-desc li { margin-bottom: 6px; }
-        .btn-action { display: block; text-align: center; background: #007bff; color: white; text-decoration: none; padding: 10px; border-radius: 4px; font-weight: bold; font-size: 0.95rem; transition: background 0.2s; }
+        .btn-action { display: block; text-align: center; background: #007bff; color: white; text-decoration: none; padding: 12px; border-radius: 4px; font-weight: bold; font-size: 0.95rem; transition: background 0.2s; }
         .btn-action:hover { background: #0056b3; }
         .btn-web { background: #28a745; }
         .btn-web:hover { background: #218838; }
@@ -46,11 +55,17 @@
         <h1 id="dl-title">Choose Your WebTNX Agent</h1>
         <div class="subtitle" id="dl-subtitle">Pick the best tunneling method for your workflow.</div>
         
-        <div class="agent-grid">
-            <!-- 1. Web Agent -->
+        <!-- 💡 類別 A：網頁版代理 -->
+        <div class="section-category" id="sec-web-title">Web-Based Version (Zero Install)</div>
+        <div class="agent-grid-single">
             <div class="agent-card">
                 <div>
-                    <div class="agent-icon">🌐</div>
+                    <!-- Pure SVG Web Logo -->
+                    <svg class="agent-icon" viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="#28a745" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="2" y1="12" x2="22" y2="12"></line>
+                        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                    </svg>
                     <div class="agent-title" id="card1-title">Web Agent</div>
                     <div class="agent-badge badge-green" id="card1-badge">Zero Install / Sandbox</div>
                     <div class="agent-desc" id="card1-desc">
@@ -64,11 +79,18 @@
                 </div>
                 <a href="/create" class="btn-action btn-web" id="card1-btn">Launch Web Agent</a>
             </div>
+        </div>
 
-            <!-- 2. Windows Executable -->
+        <!-- 💡 類別 B：命令列版代理 -->
+        <div class="section-category" id="sec-cli-title">Command-Line (CLI) Versions (CORS Bypassed)</div>
+        <div class="agent-grid-multi">
+            <!-- Windows Exe -->
             <div class="agent-card">
                 <div>
-                    <div class="agent-icon">🪟</div>
+                    <!-- Pure SVG Windows Logo -->
+                    <svg class="agent-icon" viewBox="0 0 24 24" width="44" height="44" fill="#1565c0">
+                        <path d="M0 3.449L9.75 2.1v9.45H0V3.449zM0 12.45h9.75v9.45L0 20.551v-8.101zM10.8 1.95L24 0v11.55H10.8V1.95zM10.8 12.45H24v11.55l-13.2-1.95v-9.6z"/>
+                    </svg>
                     <div class="agent-title" id="card2-title">Windows Exe</div>
                     <div class="agent-badge badge-blue" id="card2-badge">Native CLI / No CORS</div>
                     <div class="agent-desc" id="card2-desc">
@@ -83,10 +105,14 @@
                 <a href="/download/windows" class="btn-action" id="card2-btn">Download Windows CLI</a>
             </div>
 
-            <!-- 3. Unix Shell Script -->
+            <!-- Unix Shell -->
             <div class="agent-card">
                 <div>
-                    <div class="agent-icon">🐧</div>
+                    <!-- Pure SVG Terminal/Unix Logo -->
+                    <svg class="agent-icon" viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="#1565c0" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="4 17 10 11 4 5"></polyline>
+                        <line x1="12" y1="19" x2="20" y2="19"></line>
+                    </svg>
                     <div class="agent-title" id="card3-title">Linux / macOS</div>
                     <div class="agent-badge badge-blue" id="card3-badge">Native CLI / No CORS</div>
                     <div class="agent-desc" id="card3-desc">
@@ -101,10 +127,13 @@
                 <a href="/download/unix" class="btn-action" id="card3-btn">Download Shell Script</a>
             </div>
 
-            <!-- 4. Python Source Code -->
+            <!-- Python Source -->
             <div class="agent-card">
                 <div>
-                    <div class="agent-icon">🐍</div>
+                    <!-- Pure SVG Python Logo -->
+                    <svg class="agent-icon" viewBox="0 0 24 24" width="44" height="44" fill="#1565c0">
+                        <path d="M12.11 2.01c-1.39 0-2.6.1-3.41.31-2.1.53-2.15 1.74-2.15 3.32v1.54h5.68c1.32 0 2.45 1.07 2.45 2.38v2.45h1.9c1.58 0 3.06-.05 3.59-2.15.53-2.1.53-3.42 0-5.52-.53-2.1-1.96-2.33-3.54-2.33h-4.52zm-1.89.84c.38 0 .69.31.69.69s-.31.69-.69.69-.69-.31-.69-.69.31-.69.69-.69zM11.89 21.99c1.39 0 2.6-.1 3.41-.31 2.1-.53 2.15-1.74 2.15-3.32v-1.54h-5.68c-1.32 0-2.45-1.07-2.45-2.38v-2.45h-1.9c-1.58 0-3.06.05-3.59 2.15-.53 2.1-.53 3.42 0 5.52.53 2.1 1.96 2.33 3.54 2.33h4.52zm1.89-.84c-.38 0-.69-.31-.69-.69s.31-.69.69-.69.69.31.69.69-.31.69-.69.69z"/>
+                    </svg>
                     <div class="agent-title" id="card4-title">Python Source</div>
                     <div class="agent-badge badge-blue" id="card4-badge">Native CLI / No CORS</div>
                     <div class="agent-desc" id="card4-desc">
@@ -126,6 +155,8 @@
             en: {
                 dl_title: "Choose Your WebTNX Agent",
                 dl_subtitle: "Pick the best tunneling method for your workflow.",
+                sec_web_title: "Web-Based Version (Zero Install)",
+                sec_cli_title: "Command-Line (CLI) Versions (CORS Bypassed)",
                 card1_title: "Web Agent",
                 card1_badge: "Zero Install / Sandbox",
                 card1_desc: "Best for quick API/Webhook tests on any device.<ul><li>No software download required</li><li>Runs in secure browser sandbox</li><li>⚠️ Requires configuring local CORS</li></ul>",
@@ -146,6 +177,8 @@
             "zh-TW": {
                 dl_title: "選擇您的 WebTNX 代理端",
                 dl_subtitle: "挑選最適合您日常開發與調試工作流的穿透模式。",
+                sec_web_title: "網頁版代理（免安裝、即開即用）",
+                sec_cli_title: "命令列 CLI 版代理（原生免除 CORS 限制）",
                 card1_title: "網頁代理 (Web)",
                 card1_badge: "免安裝 / 瀏覽器安全防護",
                 card1_desc: "適合任何裝置快速測試 API 接口或接收 Webhook。<ul><li>完全免下載任何檔案</li><li>受瀏覽器嚴格安全沙盒保護</li><li>⚠️ 本機專案需要配置 CORS 允許連線</li></ul>",
@@ -156,7 +189,7 @@
                 card2_btn: "下載 Windows CLI",
                 card3_title: "Linux / macOS 腳本",
                 card3_badge: "作業系統進程 / 豁免 CORS",
-                card3_desc: "專為 Linux、macOS 或各類 Unix 伺服器終端環境優化。<ul><li>原生繞過 CORS 跨來源安全性限制</li><li>賦權後即可直接執行的 Shell 指令</li><li>⚠️ 未受瀏覽器沙盒保護，執行原生程序</li></ul>",
+                card3_desc: "專為 Linux、macOS 或各類 Unix 伺服器終端環境優化。<ul><li>原生繞過 CORS 跨來源安全性限制</li><li>鎖定執行權限後即可執行的 Shell 指令</li><li>⚠️ 未受瀏覽器沙盒保護，執行原生程序</li></ul>",
                 card3_btn: "下載 Shell 腳本",
                 card4_title: "Python 原始碼",
                 card4_badge: "作業系統進程 / 豁免 CORS",
@@ -166,6 +199,8 @@
             ja: {
                 dl_title: "WebTNX エージェントの選択",
                 dl_subtitle: "ワークフローに最適なトンネリング方法を選択してください。",
+                sec_web_title: "ウェブ代理版 (インストール不要)",
+                sec_cli_title: "CLIエージェント版 (CORS不要)",
                 card1_title: "ウェブ代理 (Web)", card1_badge: "インストール不要 / 砂箱",
                 card1_desc: "任意のデバイスでの迅速なAPIテストに最適。<ul><li>ダウンロード不要</li><li>ブラウザ安全砂箱内で実行</li><li>⚠️ ローカルCORS設定が必要</li></ul>",
                 card1_btn: "ウェブ代理を起動",
@@ -182,6 +217,8 @@
             fr: {
                 dl_title: "Choisissez votre Agent WebTNX",
                 dl_subtitle: "Sélectionnez la meilleure méthode de tunnel pour votre flux de travail.",
+                sec_web_title: "Version Web (Sans installation)",
+                sec_cli_title: "Versions CLI (Sans CORS)",
                 card1_title: "Agent Web", card1_badge: "Sans installation / Sandbox",
                 card1_desc: "Idéal pour les tests rapides d'API/Webhook.<ul><li>Aucun téléchargement requis</li><li>Sûr dans la sandbox du navigateur</li><li>⚠️ Nécessite la configuration CORS</li></ul>",
                 card1_btn: "Lancer l'Agent Web",
@@ -198,6 +235,8 @@
             it: {
                 dl_title: "Scegli il tuo Agente WebTNX",
                 dl_subtitle: "Scegli il miglior metodo di tunneling per il tuo lavoro.",
+                sec_web_title: "Versione Web (Senza installazione)",
+                sec_cli_title: "Versioni CLI (Senza CORS)",
                 card1_title: "Agente Web", card1_badge: "Senza installazione / Sandbox",
                 card1_desc: "Ideale per test rapidi di API/Webhook.<ul><li>Nessun download richiesto</li><li>Sicuro nella sandbox del browser</li><li>⚠️ Richiede configurazione CORS</li></ul>",
                 card1_btn: "Avvia Agente Web",
@@ -214,6 +253,8 @@
             pt: {
                 dl_title: "Escolha seu Agente WebTNX",
                 dl_subtitle: "Escolha o melhor método de túnel para seu fluxo de trabalho.",
+                sec_web_title: "Versão Web (Sem instalação)",
+                sec_cli_title: "Versões CLI (Sem CORS)",
                 card1_title: "Agente Web", card1_badge: "Sem instalação / Sandbox",
                 card1_desc: "Ideal para testes rápidos de API/Webhook.<ul><li>Nenhum download necessário</li><li>Seguro no sandbox do navegador</li><li>⚠️ Requer configuração CORS</li></ul>",
                 card1_btn: "Iniciar Agente Web",
@@ -230,6 +271,8 @@
             ko: {
                 dl_title: "WebTNX 에이전트 선택",
                 dl_subtitle: "워크플로우에 가장 적합한 터널링 방식을 선택하세요.",
+                sec_web_title: "웹 기반 에이전트 (설치 불필요)",
+                sec_cli_title: "CLI 기반 에이전트 (CORS 우회)",
                 card1_title: "웹 에이전트", card1_badge: "설치 없음 / 브라우저 보호",
                 card1_desc: "모든 기기에서 빠른 API/Webhook 테스트에 최적.<ul><li>소프트웨어 다운로드 불필요</li><li>안전한 브라우저 샌드박스 실행</li><li>⚠️ 로컬 CORS 설정 필수</li></ul>",
                 card1_btn: "웹 에이전트 시작",
@@ -252,6 +295,8 @@
 
             document.getElementById('dl-title').innerText = data.dl_title;
             document.getElementById('dl-subtitle').innerText = data.dl_subtitle;
+            document.getElementById('sec-web-title').innerText = data.sec_web_title;
+            document.getElementById('sec-cli-title').innerText = data.sec_cli_title;
 
             document.getElementById('card1-title').innerText = data.card1_title;
             document.getElementById('card1-badge').innerText = data.card1_badge;
