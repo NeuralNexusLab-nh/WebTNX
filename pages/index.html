@@ -18,15 +18,26 @@
         .section-block { background: white; border-radius: 8px; padding: 35px; margin-bottom: 30px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); border: 1px solid #e9ecef; }
         .section-block h2 { font-size: 1.6rem; color: #212529; margin-top: 0; margin-bottom: 15px; border-left: 4px solid #007bff; padding-left: 12px; }
         .section-block p { font-size: 1rem; line-height: 1.7; color: #495057; margin-bottom: 20px; }
-        .subtitle-why { font-size: 1.25rem; font-weight: 600; color: #495057; margin-top: 30px; margin-bottom: 15px; }
-        .why-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; margin-top: 15px; }
+        .subtitle-why { font-size: 1.25rem; font-weight: 600; color: #495057; margin-top: 30px; margin-bottom: 15px; text-align: center; }
+        
+        /* 💡 完美的 6 網格排版 */
+        .why-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 15px; }
+        @media (max-width: 900px) { .why-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 600px) { .why-grid { grid-template-columns: 1fr; } }
+        
         .why-card { background: #fff; border: 1px solid #e9ecef; border-left: 3px solid #ffc107; border-radius: 6px; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.01); }
         .why-card h4 { font-size: 1.05rem; margin-top: 0; margin-bottom: 10px; color: #343a40; }
         .why-card p { font-size: 0.9rem; color: #6c757d; line-height: 1.6; margin: 0; }
-        .step-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-top: 25px; }
+
+        /* 💡 運作流程 6 網格 */
+        .step-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 25px; }
+        @media (max-width: 900px) { .step-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 600px) { .step-grid { grid-template-columns: 1fr; } }
+        
         .step-card { background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 6px; padding: 20px; text-align: left; }
         .step-card h3 { font-size: 1.05rem; margin-top: 0; margin-bottom: 10px; color: #007bff; }
         .step-card p { font-size: 0.9rem; color: #6c757d; line-height: 1.5; margin: 0; }
+
         .checklist { list-style: none; padding: 0; margin-top: 20px; }
         .checklist li { padding-left: 28px; position: relative; margin-bottom: 20px; font-size: 0.95rem; line-height: 1.7; color: #495057; }
         .checklist li::before { content: "✓"; position: absolute; left: 0; top: 0; color: #28a745; font-weight: bold; font-size: 1.1rem; }
@@ -58,7 +69,6 @@
     <div class="hero">
         <h1 id="home-title">WebTNX: Zero-Install HTTP Tunnel</h1>
         <p class="hero-desc" id="home-desc">Expose your local development server to the internet. Similar to ngrok, but absolutely free, requires zero installation, and no registration. Just use a browser tab as your tunnel agent.</p>
-        <!-- 💡 修改點：按鈕指向 /download 頁面 -->
         <a href="/download" class="btn" id="btn-create">Get Started Now</a>
     </div>
     <div class="info-container">
@@ -66,7 +76,7 @@
         <div class="section-block">
             <h2 id="title-what">What is an HTTP Tunnel?</h2>
             <p id="desc-what">An HTTP tunnel is a technology that allows you to expose a local server (running behind NATs, firewalls, or without a public IP) to the public internet. It assigns a secure public URL to your local project, allowing external users or APIs (like Webhook senders) to connect directly to your local application from anywhere in the world.</p>
-            <div class="subtitle-why" id="subtitle-why">Why can't I just expose my local IP:Port directly?</div>
+            <div class="subtitle-why" id="subtitle-why">Why can't I just expose my local IP directly?</div>
             <div class="why-grid">
                 <div class="why-card">
                     <h4 id="why-r1-title">No Public IP (NAT/CGNAT)</h4>
@@ -82,12 +92,22 @@
                 </div>
                 <div class="why-card">
                     <h4 id="why-r4-title">No SSL/HTTPS Encryption</h4>
-                    <p id="why-r4-desc">Exposing raw IP:Port usually runs over unencrypted HTTP. Modern web platforms (like Stripe, Line Bot, or browser features like camera access) strictly require HTTPS endpoints to function.</p>
+                    <p id="why-r4-desc">Exposing raw IP usually runs over unencrypted HTTP. Modern web platforms (like Stripe, Line Bot, or browser features like camera access) strictly require HTTPS endpoints to function.</p>
+                </div>
+                <!-- 💡 新增 5：HTTPS & API 限制 -->
+                <div class="why-card">
+                    <h4 id="why-r5-title">Modern Web API Requirements</h4>
+                    <p id="why-r5-desc">Most modern APIs and integration tools (e.g. GitHub Webhooks, Shopify, Stripe) strictly refuse to send request payloads to unencrypted raw IP addresses due to compliance.</p>
+                </div>
+                <!-- 💡 新增 6：CORS / 同源與 Cookie 阻擋 -->
+                <div class="why-card">
+                    <h4 id="why-r6-title">Browser CORS & Sandbox Blocks</h4>
+                    <p id="why-r6-desc">Browsers apply strict same-origin and sandbox policies on raw IP addresses. Accessing raw local IPs from public sites will block your HTTP requests, cookie handshakes, and Web APIs.</p>
                 </div>
             </div>
         </div>
 
-        <!-- 運作流程 -->
+        <!-- 💡 深度精細化的 6 步驟技術流程 -->
         <div class="section-block">
             <h2 id="title-flow">How WebTNX Works</h2>
             <div class="step-grid">
@@ -96,16 +116,24 @@
                     <p id="step1-desc">A visitor accesses your custom WebTNX link (e.g. <code>https://webtnx.zone.id/my-app/</code>).</p>
                 </div>
                 <div class="step-card">
-                    <h3 id="step2-title">2. Hold Connection</h3>
-                    <p id="step2-desc">WebTNX server logs the request data into a JSON file and temporarily hangs the visitor's HTTP connection.</p>
+                    <h3 id="step2-title">2. Queue Request</h3>
+                    <p id="step2-desc">The WebTNX server generates a random 32-byte Request ID, saves it in a JSON queue, and holds the visitor's HTTP connection open.</p>
                 </div>
                 <div class="step-card">
-                    <h3 id="step3-title">3. Agent Fetch</h3>
-                    <p id="step3-desc">Your active WebTNX browser tab polls our API, retrieves the pending request, and calls your local server.</p>
+                    <h3 id="step3-title">3. Poll api/reqs</h3>
+                    <p id="step3-desc">Your active WebTNX agent (Web or CLI) polls <code>POST /api/reqs</code> every 2 seconds, fetches the pending request, and wipes the JSON file immediately.</p>
                 </div>
                 <div class="step-card">
-                    <h3 id="step4-title">4. Return & Respond</h3>
-                    <p id="step4-desc">The browser tab sends your local app's response back to WebTNX, which then delivers it to the visitor.</p>
+                    <h3 id="step4-title">4. Keep-Alive & Fetch</h3>
+                    <p id="step4-desc">The agent immediately sends <code>POST /api/keepalive</code> to hold the server connection open, then fetches from your local server (e.g. port 8080).</p>
+                </div>
+                <div class="step-card">
+                    <h3 id="step5-title">5. XOR Encryption</h3>
+                    <p id="step5-desc">The agent reads the local response, converts binary files to Base64, and encrypts the payload using a dynamic Secret Key via UTF-8 XOR bitwise coding.</p>
+                </div>
+                <div class="step-card">
+                    <h3 id="step6-title">6. Postback api/res</h3>
+                    <p id="step6-desc">The encrypted data is sent to <code>POST /api/res</code>. WebTNX server reconstructs the Secret Key, decrypts the body, and responds to the visitor.</p>
                 </div>
             </div>
         </div>
@@ -130,7 +158,7 @@
             </ul>
         </div>
 
-        <!-- 💡 根據全新代理機制深度擴充的對比表格 -->
+        <!-- 全面擴充版對比表格 -->
         <div class="section-block">
             <h2 id="title-vs">WebTNX vs. Traditional Tunnels</h2>
             <div class="table-responsive">
@@ -184,7 +212,7 @@
                             <td class="feature-name" id="row7-f"><strong>Protocol Scope</strong></td>
                             <td id="row7-w">HTTP/HTTPS Web Traffic</td>
                             <td id="row7-c">HTTP/HTTPS Web Traffic</td>
-                            <td id="row7-t" style="color:#28a745; font-weight:500;">TCP, UDP, SSH, databases</td>
+                            <td id="row7-t" style="color:#28a745; font-weight:500;">Supports TCP, UDP, SSH, databases</td>
                         </tr>
                         <tr>
                             <td class="feature-name" id="row8-f"><strong>Local RAM</strong></td>
@@ -207,7 +235,7 @@
                 btn_create: "Get Started Now",
                 title_what: "What is an HTTP Tunnel?",
                 desc_what: "An HTTP tunnel is a technology that allows you to expose a local server (running behind NATs, firewalls, or without a public IP) to the public internet. It assigns a secure public URL to your local project, allowing external users or APIs (like Webhook senders) to connect directly to your local application from anywhere in the world.",
-                subtitle_why: "Why can't I just expose my local IP:Port directly?",
+                subtitle_why: "Why can't I just expose my local IP directly?",
                 why_r1_title: "No Public IP (NAT/CGNAT)",
                 why_r1_desc: "Most home broadband providers use Carrier-Grade NAT. You do not actually have a real public IP address, meaning no one on the internet can locate or reach your computer directly.",
                 why_r2_title: "Router & Firewall Blockages",
@@ -215,16 +243,26 @@
                 why_r3_title: "Severe Security Vulnerabilities",
                 why_r3_desc: "Exposing a raw port on your personal computer directly to the internet is extremely dangerous. It exposes your private machine to port scanners, malware, hacking exploits, and DDoS attacks.",
                 why_r4_title: "No SSL/HTTPS Encryption",
-                why_r4_desc: "Exposing raw IP:Port usually runs over unencrypted HTTP. Modern web platforms (like Stripe, Line Bot, or browser features like camera access) strictly require HTTPS endpoints to function.",
+                why_r4_desc: "Exposing raw IP usually runs over unencrypted HTTP. Modern web platforms (like Stripe, Line Bot, or browser features like camera access) strictly require HTTPS endpoints to function.",
+                why_r5_title: "Modern Web API Requirements",
+                why_r5_desc: "Modern APIs and platforms require strict SSL (HTTPS) endpoints. Exposing raw HTTP IP cannot pass their webhook validation tests.",
+                why_r6_title: "Browser CORS & Sandbox Blocks",
+                why_r6_desc: "Browsers enforce strict security, blocking public web requests and cookie exchanges with insecure raw local IPs.",
+                
                 title_flow: "How WebTNX Works",
                 step1_title: "1. Public Request",
                 step1_desc: "A visitor accesses your custom WebTNX link (e.g. <code>https://webtnx.zone.id/my-app/</code>).",
-                step2_title: "2. Hold Connection",
-                step2_desc: "WebTNX server logs the request data into a JSON file and temporarily hangs the visitor's HTTP connection.",
-                step3_title: "3. Agent Fetch",
-                step3_desc: "Your active WebTNX browser tab polls our API, retrieves the pending request, and calls your local server.",
-                step4_title: "4. Return & Respond",
-                step4_desc: "The browser tab sends your local app's response back to WebTNX, which then delivers it to the visitor.",
+                step2_title: "2. Queue Request",
+                step2_desc: "The WebTNX server generates a random 32-byte Request ID, saves it in a JSON queue, and holds the visitor's HTTP connection open.",
+                step3_title: "3. Poll api/reqs",
+                step3_desc: "Your active WebTNX agent (Web or CLI) polls <code>POST /api/reqs</code> every 2 seconds, fetches the pending request, and wipes the JSON file immediately.",
+                step4_title: "4. Keep-Alive & Fetch",
+                step4_desc: "The agent immediately sends <code>POST /api/keepalive</code> to hold the server connection open, then fetches from your local server (e.g. port 8080).",
+                step5_title: "5. XOR Encryption",
+                step5_desc: "The agent reads the local response, converts binary files to Base64, and encrypts the payload using a dynamic Secret Key via UTF-8 XOR bitwise coding.",
+                step6_title: "6. Postback api/res",
+                step6_desc: "The encrypted data is sent to <code>POST /api/res</code>. WebTNX server reconstructs the Secret Key, decrypts the body, and responds to the visitor.",
+
                 title_local: "Local Setup & Requirements",
                 local_li1: "<strong>Start Local App</strong>: Ensure your web application is running locally and listening on a specific port (e.g. <code>http://localhost:8080</code>).",
                 local_li2: "<strong>Enable CORS (Web Agent Only)</strong>: If using the Web-based Agent, your local app must accept cross-origin requests from <code>https://webtnx.zone.id</code>. (Native CLI clients do not have this restriction).",
@@ -275,7 +313,7 @@
                 btn_create: "立即開始體驗",
                 title_what: "什麼是 HTTP 隧道？",
                 desc_what: "HTTP 隧道技術能讓您將運行在本機（處於 NAT、防火牆後，或沒有公網 IP）的本地伺服器安全地發布到網際網路上。它會提供一個公開的 URL，讓世界上任何地方的人都能直接存取您的本地專案（如測試 Webhook、調試 API 或向客戶展示網頁）。",
-                subtitle_why: "為什麼不能、或不應該直接公開本機的 IP:Port？",
+                subtitle_why: "為什麼不能、或不應該直接公開本機的 IP？",
                 why_r1_title: "沒有公網 IP (寬頻 NAT / CGNAT 限制)",
                 why_r1_desc: "大多數家庭寬頻業者使用電信級 NAT。您的電腦並沒有真實的公網 IP，這意味著外部網路的任何人，物理上都無法在網路上定位並直接連線到您的電腦。",
                 why_r2_title: "分享器與防火牆的天然阻擋",
@@ -283,18 +321,28 @@
                 why_r3_title: "暴露埠帶來的嚴重安全風險",
                 why_r3_desc: "將本機的埠（Port）直接對公網敞開是非常危險的。您的私人電腦將完全暴露在自動化的埠掃描、惡意漏洞攻擊、勒索病毒與 DDoS 洪水攻擊之中。",
                 why_r4_title: "缺少 SSL/HTTPS 傳輸加密",
-                why_r4_desc: "直接暴露的 IP:Port 通常只提供未加密的 HTTP。然而現代網路服務（如 Stripe、Line 機器人、瀏覽器定位或相機存取）都嚴格要求連線必須是安全的 HTTPS 網址。",
+                why_r4_desc: "直接暴露的 IP 通常只提供未加密的 HTTP。然而現代網路服務（如 Stripe、Line 機器人、瀏覽器定位或相機存取）都嚴格要求連線必須是安全的 HTTPS 網址。",
+                why_r5_title: "現代 Web API 的強制限制",
+                why_r5_desc: "多數現代第三方平台（如 GitHub、Stripe、Shopify）在驗證 Webhook 目標時，嚴格拒絕發送資料至未加密的純 HTTP IP 網址。",
+                why_r6_title: "瀏覽器 CORS 與 Cookie 沙盒阻擋",
+                why_r6_desc: "瀏覽器對未加密的實體 IP 存取有著極為嚴格的沙盒限制。公網網頁在發送請求或進行 Cookie 共享時，會直接被同源政策（CORS）無情阻擋。",
+                
                 title_flow: "WebTNX 的運作方式與流程",
                 step1_title: "1. 訪客發送請求",
                 step1_desc: "外部訪客存取您的專屬 WebTNX 網址（例如：<code>https://webtnx.zone.id/my-app/</code>）。",
                 step2_title: "2. 暫存並掛起連線",
-                step2_desc: "伺服器將請求資料寫入 JSON 暫存檔，並在記憶體中掛起（Hold）訪客的連線。",
-                step3_title: "3. 瀏覽器代理端拿取",
-                step3_desc: "您的 WebTNX 瀏覽器分頁在背景每 2 秒輪詢並拿取該請求，隨後在本機向 localhost 發起 fetch。",
-                step4_title: "4. 回傳結果與回應",
-                step4_desc: "瀏覽器分頁將本機回應傳回 WebTNX 伺服器，伺服器立即解除掛起並回傳給訪客。",
+                step2_desc: "伺服器生成 32-byte 隨機 Request ID，將請求資料寫入 JSON 暫存檔，並在記憶體中掛起（Hold）訪客的連線。",
+                step3_title: "3. 輪詢 api/reqs",
+                step3_desc: "您的 WebTNX 代理（網頁或 CLI）每 2 秒輪詢 <code>POST /api/reqs</code> 拿取該請求，伺服器隨即清空暫存 JSON 檔案。",
+                step4_title: "4. 不休眠與本地 fetch",
+                step4_desc: "代理端立即發送 <code>POST /api/keepalive</code> 告知伺服器不要逾時（不休眠），隨後在本機向本地伺服器發起 fetch 請求。",
+                step5_title: "5. 本地 XOR 安全加密",
+                step5_desc: "代理端讀取本地回應（二進位檔案轉為 Base64），並利用 `id_port_timeout` 重組金鑰，進行 UTF-8 安全位元組 XOR 加密。",
+                step6_title: "6. 回傳 api/res 與解密",
+                step6_desc: "加密資料發送至 <code>POST /api/res</code>。WebTNX 伺服器動態重組金鑰解密回應體，解除掛起並回傳資料給訪客。",
+
                 title_local: "本地端的使用方式與準備",
-                local_li1: "<strong>啟動本機服務</strong>：確認您的網頁服務或 API 正在本機運行（例如：<code>http://localhost:8080</code>）。",
+                local_li1: "<strong>啟動本機服務</strong>：確認您的網頁服務或 API 正在本機運行，並監聽特定的 Port（例如：<code>http://localhost:8080</code>）。",
                 local_li2: "<strong>啟用 CORS 設定 (僅限網頁代理)</strong>：如果使用的是網頁代理（Web Agent），您的本機程式必須允許來自 <code>https://webtnx.zone.id</code> 的跨來源請求。（原生 CLI 客戶端不受此限制）。",
                 cors_node_title: "Node.js (Express) CORS 設定範例：",
                 cors_python_title: "Python (FastAPI) CORS 設定範例：",
@@ -343,7 +391,7 @@
                 btn_create: "今すぐ体験",
                 title_what: "HTTPトンネルとは何ですか？",
                 desc_what: "HTTPトンネルは、NAT、ファイアウォールの背後にあるローカルサーバーをインターネットに公開するための技術です。",
-                subtitle_why: "ローカルのIP:Portを直接公開できない理由は何ですか？",
+                subtitle_why: "ローカルのIPを直接公開できない理由は何ですか？",
                 why_r1_title: "パブリックIPがない (CGNAT)",
                 why_r1_desc: "ほとんどのブロードバンドはCGNATを使用しており、パブリックIPを持っていません。",
                 why_r2_title: "ルーターとファイアウォール",
@@ -352,11 +400,19 @@
                 why_r3_desc: "ポートを直接公開すると、DDoSやハッキングの攻撃対象になります。",
                 why_r4_title: "SSL/HTTPS暗報化なし",
                 why_r4_desc: " rawポートはHTTP通信であり、最近のWebAPIが動作しません。",
+                why_r5_title: "現代 Web API 要件",
+                why_r5_desc: "最新のAPIプラットフォームはSSL (HTTPS) 接続を義務付けており、未暗号化IPは利用できません。",
+                why_r6_title: "ブラウザCORS制限",
+                why_r6_desc: "安全でないローカルIPへのWebリクエストやCookieの交換は、ブラウザによって強制的に遮断されます。",
+
                 title_flow: "WebTNXの仕組み",
-                step1_title: "1. リクエスト", step1_desc: "訪問者が WebTNX リンクにアクセスします。",
-                step2_title: "2. 保留", step2_desc: "WebTNX サーバーは接続を保留します。",
-                step3_title: "3. 取得", step3_desc: "ブラウザタブがローカルを呼び出します。",
-                step4_title: "4. 応答", step4_desc: "ローカルの応答を訪問者に返却します。",
+                step1_title: "1. 訪問者のリクエスト", step1_desc: "訪問者が WebTNX のカスタムリンクにアクセスします。",
+                step2_title: "2. 接続の保留", step2_desc: "サーバーは 32-byte Request ID を生成し、接続を一時的に保留します。",
+                step3_title: "3. api/reqs のポーリング", step3_desc: "エージェントが 2 秒ごとにリクエストを取得し、JSONファイルを即座に消去します。",
+                step4_title: "4. キープアライブと取得", step4_desc: "キープアライブを送信してサーバー接続を維持し、ローカルを呼び出します。",
+                step5_title: "5. XOR暗号化", step5_desc: "ローカルの応答を取得し、動的秘密鍵を使用して UTF-8 XOR 暗号化を行います。",
+                step6_title: "6. api/res への返却", step6_desc: "暗号化データをサーバーに返却し、サーバーが解読して訪問者に返します。",
+
                 title_local: "ローカル設定",
                 local_li1: "アプリの起動 (localhost:8080)",
                 local_li2: "CORSの許可 (Web代理のみ必要)",
@@ -380,7 +436,7 @@
                 btn_create: "Démarrer maintenant",
                 title_what: "Qu'est-ce qu'un tunnel HTTP?",
                 desc_what: "Un tunnel HTTP permet d'exposer un serveur local au web public sans IP publique.",
-                subtitle_why: "Pourquoi ne pas simplement exposer mon IP:Port?",
+                subtitle_why: "Pourquoi ne pas simplement exposer mon IP?",
                 why_r1_title: "Pas d'IP publique (CGNAT)",
                 why_r1_desc: "Le CGNAT vous empêche d'avoir une adresse IP publique routable.",
                 why_r2_title: "Blocage de pare-feu",
@@ -389,11 +445,19 @@
                 why_r3_desc: "Exposer un port brut invite les logiciels malveillants et attaques DDoS.",
                 why_r4_title: "Pas de chiffrement SSL",
                 why_r4_desc: "Les webhooks modernes nécessitent impérativement des URL sécurisées HTTPS.",
+                why_r5_title: "Exigences modernes des API",
+                why_r5_desc: "Les plateformes API modernes exigent des connexions SSL (HTTPS) strictes; les IP non chiffrées ne peuvent pas être utilisées.",
+                why_r6_title: "Restrictions CORS du navigateur",
+                why_r6_desc: "Les requêtes Web et l'échange de cookies vers des IP locales non chiffrées sont bloqués par le navigateur.",
+
                 title_flow: "Comment fonctionne WebTNX",
-                step1_title: "1. Requête publique", step1_desc: "Le visiteur accède au lien WebTNX.",
-                step2_title: "2. Attente", step2_desc: "WebTNX suspend la connexion du visiteur.",
-                step3_title: "3. Récupération", step3_desc: "Votre onglet appelle localhost.",
-                step4_title: "4. Réponse", step4_desc: "L'onglet renvoie la réponse au visiteur.",
+                step1_title: "1. Requête du visiteur", step1_desc: "Le visiteur accède à votre lien personnalisé.",
+                step2_title: "2. Hold Connexion", step2_desc: "Le serveur génère un ID de 32-byte et suspend la connexion.",
+                step3_title: "3. Interrogation api/reqs", step3_desc: "L'agent interroge l'API toutes les 2s pour récupérer la requête et efface le JSON.",
+                step4_title: "4. Keep-Alive et Récupération", step4_desc: "Envoie un Keep-Alive pour maintenir la connexion ouverte, puis appelle localhost.",
+                step5_title: "5. Chiffrement XOR", step5_desc: "Récupère la réponse locale et effectue un chiffrement XOR UTF-8 à l'aide d'une clé secrète.",
+                step6_title: "6. Retour api/res", step6_desc: "Renvoie les données cryptées, le serveur les décrypte et les renvoie au visiteur.",
+
                 title_local: "Configuration locale",
                 local_li1: "Lancez votre appli (ex: localhost:8080)",
                 local_li2: "Activer CORS (Web Agent uniquement)",
@@ -417,7 +481,7 @@
                 btn_create: "Inizia ora",
                 title_what: "Cos'è un tunnel HTTP?",
                 desc_what: "Un tunnel HTTP permette di esporre un server locale a Internet senza IP pubblico.",
-                subtitle_why: "Perché non posso semplicemente esporre IP:Porta?",
+                subtitle_why: "Perché non posso semplicemente esporre l'IP?",
                 why_r1_title: "Nessun IP pubblico (CGNAT)",
                 why_r1_desc: "Senza IP pubblico reale la tua macchina non è rintracciabile da internet.",
                 why_r2_title: "Blocco del Firewall",
@@ -426,11 +490,19 @@
                 why_r3_desc: "Portare la porta all'esterno espone il tuo PC a scansioni e attacchi hacker.",
                 why_r4_title: "Nessuna crittografia SSL",
                 why_r4_desc: "I webhook moderni richiedono necessariamente endpoint sicuri HTTPS.",
+                why_r5_title: "Requisiti API moderne",
+                why_r5_desc: "Le moderne piattaforme API richiedono connessioni SSL (HTTPS) e gli IP non cifrati non possono essere utilizzati.",
+                why_r6_title: "Limitazioni CORS",
+                why_r6_desc: "Le richieste Web e lo scambio di cookie verso IP locali non cifrati sono bloccati dal browser.",
+
                 title_flow: "Come funziona WebTNX",
-                step1_title: "1. Richiesta", step1_desc: "Un visitatore accede al link WebTNX.",
-                step2_title: "2. Sospensione", step2_desc: "Il server tiene la connessione sospesa.",
-                step3_title: "3. Recupero", step3_desc: "La scheda del browser chiama localhost.",
-                step4_title: "4. Risposta", step4_desc: "La scheda invia la risposta al visitatore.",
+                step1_title: "1. Richiesta del visitatore", step1_desc: "Il visitatore accede al tuo link personalizzato.",
+                step2_title: "2. Sospensione", step2_desc: "Il server genera un ID a 32-byte e tiene la connessione sospesa.",
+                step3_title: "3. Polling api/reqs", step3_desc: "L'agente interroga l'API ogni 2 secondi per recuperare la richiesta e cancella il JSON.",
+                step4_title: "4. Keep-Alive e Recupero", step4_desc: "Invia un Keep-Alive per mantenere la connessione aperta, quindi chiama localhost.",
+                step5_title: "5. Cifratura XOR", step5_desc: "Ottiene la risposta locale ed effettua una cifratura XOR UTF-8 usando una chiave segreta.",
+                step6_title: "6. Ritorno api/res", step6_desc: "Invia i dati crittografati, il server li decrittografa e li rimanda al visitatore.",
+
                 title_local: "Configurazione locale",
                 local_li1: "Avvia l'app (es: localhost:8080)",
                 local_li2: "Abilita CORS (solo per l'agente Web)",
@@ -454,7 +526,7 @@
                 btn_create: "Começar agora",
                 title_what: "O que é um túnel HTTP?",
                 desc_what: "Um túnel HTTP permite expor um servidor local na internet sem um IP público.",
-                subtitle_why: "Por que não expor meu IP:Porta diretamente?",
+                subtitle_why: "Por que não expor meu IP diretamente?",
                 why_r1_title: "Sem IP público (CGNAT)",
                 why_r1_desc: "Sua operadora não fornece um IP público roteável para sua casa.",
                 why_r2_title: "Bloqueio do Roteador",
@@ -463,11 +535,19 @@
                 why_r3_desc: "Abrir uma porta expõe sua máquina a varreduras e ataques DDoS.",
                 why_r4_title: "Sem criptografia SSL",
                 why_r4_desc: "APIs e webhooks modernos exigem obrigatoriamente URLs seguras HTTPS.",
+                why_r5_title: "Requisitos de APIs modernas",
+                why_r5_desc: "As modernas plataformas de API exigem conexões seguras SSL (HTTPS), impossibilitando o uso de IPs não criptografados.",
+                why_r6_title: "Restrições de CORS no navegador",
+                why_r6_desc: "Requisições Web e compartilhamento de cookies para IPs locais não criptografados são bloqueados pelo navegador.",
+
                 title_flow: "Como o WebTNX funciona",
-                step1_title: "1. Requisição", step1_desc: "Um visitante acessa o link WebTNX.",
-                step2_title: "2. Pausa", step2_desc: "O servidor mantém a conexão suspensa.",
-                step3_title: "3. Coleta", step3_desc: "Sua guia coleta a requisição e chama o localhost.",
-                step4_title: "4. Resposta", step4_desc: "A guia envia a resposta de volta ao visitante.",
+                step1_title: "1. Solicitação do visitante", step1_desc: "O visitante acessa o seu link personalizado.",
+                step2_title: "2. Retenção da conexão", step2_desc: "O servidor gera um ID de 32-byte e mantém a conexão suspensa.",
+                step3_title: "3. Polling de api/reqs", step3_desc: "O agente faz o polling a cada 2s para buscar as requisições e limpa o JSON.",
+                step4_title: "4. Keep-Alive e Coleta", step4_desc: "Envia um Keep-Alive para manter a conexão aberta e chama o localhost.",
+                step5_title: "5. Criptografia XOR", step5_desc: "Coleta a resposta e realiza criptografia XOR UTF-8 por meio de chave secreta.",
+                step6_title: "6. Retorno de api/res", step6_desc: "Envia os dados criptografados, o servidor decifra e envia ao visitante.",
+
                 title_local: "Configuração local",
                 local_li1: "Inicie o app local (ex: localhost:8080)",
                 local_li2: "Permita CORS (apenas para o Agente Web)",
@@ -491,7 +571,7 @@
                 btn_create: "지금 바로 시작하기",
                 title_what: "HTTP 터널이란 무엇인가요?",
                 desc_what: "HTTP 터널은 NAT나 방화벽 뒤에 있는 로컬 서버를 인터넷에 공개할 수 있는 기술입니다.",
-                subtitle_why: "로컬 IP:Port를 직접 공개하면 안 되는 이유는 무엇인가요?",
+                subtitle_why: "로컬 IP를 직접 공개하면 안 되는 이유는 무엇인가요?",
                 why_r1_title: "공인 IP 없음 (CGNAT)",
                 why_r1_desc: "대부분의 홈 인터넷은 CGNAT를 사용하므로, 외부에서 직접 PC에 접근할 수 없습니다.",
                 why_r2_title: "라우터 및 방화벽 차단",
@@ -500,11 +580,19 @@
                 why_r3_desc: "포트를 직접 열어두면 DDoS, 해킹, 포트 스캔 등의 공격에 완전히 노출됩니다.",
                 why_r4_title: "SSL/HTTPS 암호화 없음",
                 why_r4_desc: "raw 포트는 보안 암호화가 없어 최신 Web API 연동이 불가능합니다.",
-                title_flow: "WebTNX 작동 방식",
-                step1_title: "1. 외부 요청", step1_desc: "방문자가 WebTNX 링크에 접속합니다.",
-                step2_title: "2. 연결 보류", step2_desc: "WebTNX 서버는 연결을 일시적으로 보류합니다.",
-                step3_title: "3. 에이전트 폴링", step3_desc: "브라우저 탭이 요청을 가져와 localhost를 호출합니다.",
-                step4_title: "4. 응답 및 반환", step4_desc: "브라우저가 응답을 서버로 보내고, 서버가 방문자에게 반환합니다.",
+                why_r5_title: "최신 Web API 규정 사항",
+                why_r5_desc: "최신 API 플랫폼은 SSL (HTTPS) 연결을 강제하며, 암호화되지 않은 IP 주소는 웹훅 유효성 검사를 통과할 수 없습니다.",
+                why_r6_title: "브라우저 CORS 제한",
+                why_r6_desc: "보안이 확보되지 않은 로컬 IP로의 웹 요청이나 쿠키 전송은 브라우저에 의해 강제로 차단됩니다.",
+
+                title_flow: "How WebTNX Works",
+                step1_title: "1. 방문자 요청", step1_desc: "방문자가 WebTNX 링크에 접속합니다.",
+                step2_title: "2. 연결 보류", step2_desc: "서버는 32-byte Request ID를 생성하고 연결을 보류합니다.",
+                step3_title: "3. api/reqs 폴링", step3_desc: "에이전트가 2초마다 요청을 가져가고, JSON 파일을 즉시 비웁니다.",
+                step4_title: "4. Keep-Alive와 가져오기", step4_desc: "Keep-Alive를 전송하여 서버 연결을 유지한 뒤 localhost를 호출합니다.",
+                step5_title: "5. XOR 암호화", step5_desc: "로컬 응답을 받은 뒤, 동적 비밀 키를 사용하여 UTF-8 XOR 암호화를 수행합니다.",
+                step6_title: "6. api/res 전송 및 디코딩", step6_desc: "암호화된 데이터를 서버로 보내면, 서버가 디코딩하여 방문자에게 반환합니다.",
+
                 title_local: "로컬 설정 방법",
                 local_li1: "로컬 애플리케이션 실행 (예: localhost:8080)",
                 local_li2: "CORS 허용 (웹 에이전트만 필요)",
@@ -547,6 +635,10 @@
             document.getElementById('why-r3-desc').innerText = data.why_r3_desc;
             document.getElementById('why-r4-title').innerText = data.why_r4_title;
             document.getElementById('why-r4-desc').innerText = data.why_r4_desc;
+            document.getElementById('why-r5-title').innerText = data.why_r5_title;
+            document.getElementById('why-r5-desc').innerText = data.why_r5_desc;
+            document.getElementById('why-r6-title').innerText = data.why_r6_title;
+            document.getElementById('why-r6-desc').innerText = data.why_r6_desc;
 
             // 2. Flow
             document.getElementById('title-flow').innerText = data.title_flow;
@@ -558,6 +650,10 @@
             document.getElementById('step3-desc').innerHTML = data.step3_desc;
             document.getElementById('step4-title').innerText = data.step4_title;
             document.getElementById('step4-desc').innerHTML = data.step4_desc;
+            document.getElementById('step5-title').innerText = data.step5_title;
+            document.getElementById('step5-desc').innerHTML = data.step5_desc;
+            document.getElementById('step6-title').innerText = data.step6_title;
+            document.getElementById('step6-desc').innerHTML = data.step6_desc;
 
             // 3. Local
             document.getElementById('title-local').innerText = data.title_local;
