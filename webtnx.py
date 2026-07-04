@@ -6,6 +6,7 @@ import base64
 import urllib.request
 import urllib.error
 import urllib.parse
+import platform
 SERVER_URL = "https://webtnx.zone.id"
 GREEN = '\033[92m'
 BLUE = '\033[94m'
@@ -14,6 +15,12 @@ CYAN = '\033[96m'
 RED = '\033[91m'
 BOLD = '\033[1m'
 RESET = '\033[0m'
+def exit_with_pause(code=1):
+    try:
+        input(f"\n{YELLOW}[PROMPT]{RESET} Press ENTER to exit...")
+    except (KeyboardInterrupt, EOFError):
+        pass
+    sys.exit(code)
 def xor_encrypt(text_str, key_str):
     text_bytes = text_str.encode('utf-8')
     key_bytes = key_str.encode('utf-8')
@@ -32,9 +39,16 @@ def send_post(url, data_dict):
             return {"success": True, "raw": raw_res.decode('utf-8')}
 def main():
     if len(sys.argv) < 3:
-        print("Usage: python webtnx.py <tunnel_id> <local_port> [timeout_seconds]")
-        print("Example: python webtnx.py my-app 8080 15")
-        sys.exit(1)
+        is_windows = platform.system().lower() == "windows"
+        print(f"{RED}[USAGE]{RESET} WebTNX CLI Client")
+        if is_windows:
+            print("Run command:\n  webtnx.exe <tunnel_id> <local_port> [timeout_seconds]\nOR:\n  python webtnx.py <tunnel_id> <local_port> [timeout_seconds]")
+            print("\nExamples:\n  webtnx.exe my-app 8080 15\n  python webtnx.py my-app 3000 30")
+        else:
+            print("Run command:\n  ./webtnx <tunnel_id> <local_port> [timeout_seconds]\nOR:\n  python3 webtnx.py <tunnel_id> <local_port> [timeout_seconds]")
+            print("\nExamples:\n  ./webtnx my-app 8080 15\n  python3 webtnx.py my-app 3000 30")
+        print("\nParameters:\n  <tunnel_id>      : The unique subdomain/name for your public URL (e.g., https://webtnx.zone.id/my-app/)\n  <local_port>     : The port your local server is running on (e.g., 8080, 3000)\n  [timeout_seconds]: Optional. Maximum seconds to wait for a local response before timing out (Default: 15)")
+        exit_with_pause(1)
     tunnel_id = sys.argv[1].strip().lower()
     port = sys.argv[2].strip()
     timeout = sys.argv[3].strip() if len(sys.argv) > 3 else "15"
@@ -52,11 +66,11 @@ def main():
         reg_res = send_post(f"{SERVER_URL}/api/register", {"id": tunnel_id, "port": int(port), "timeout": int(timeout)})
         if not reg_res.get("success"):
             print(f"{RED}[ERROR]{RESET} ID '{tunnel_id}' is already in use or reserved.")
-            sys.exit(1)
+            exit_with_pause(1)
         print(f"{GREEN}[OK]{RESET} Tunnel registered successfully. Keep this terminal open.\n")
     except Exception as e:
         print(f"{RED}[ERROR]{RESET} Network Error during registration: {e}")
-        sys.exit(1)
+        exit_with_pause(1)
     print(f"{YELLOW}[LOG]{RESET} Polling tunnel requests active...")
     while True:
         try:
@@ -78,11 +92,16 @@ def main():
                 if req_query:
                     query_str = urllib.parse.urlencode(req_query)
                     target_url += f"?{query_str}"
+                headers_to_remove = ['host', 'connection', 'accept-encoding', 'content-length']
+                cleaned_headers = {}
+                for k, v in req_headers.items():
+                    if k.lower() not in headers_to_remove:
+                        cleaned_headers[k] = v
                 try:
-                    local_req = urllib.request.Request(target_url, headers=req_headers, method=req_method)
+                    local_req = urllib.request.Request(target_url, headers=cleaned_headers, method=req_method)
                     with urllib.request.urlopen(local_req) as local_res:
-                        local_status = local_res.status
-                        content_type = local_res.headers.get('content-type', '')
+                        local_status = getattr(local_res, 'status', None) or local_res.getcode()
+                        content_type = (local_res.headers.get('content-type') or '').lower()
                         res_headers = {}
                         for key, val in local_res.headers.items():
                             res_headers[key.lower()] = val
