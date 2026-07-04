@@ -21,9 +21,6 @@
         .btn-back { display: inline-block; background: #dc3545; color: white; text-decoration: none; padding: 10px 20px; border-radius: 4px; font-weight: bold; transition: background 0.2s; border: none; cursor: pointer; }
         .btn-back:hover { background: #bd2130; }
 
-        /* ==========================================
-           紀錄框框設計（Log Box UI）
-           ========================================== */
         .history-box { margin-top: 25px; border-top: 1px solid #dee2e6; padding-top: 20px; }
         .history-title { font-size: 1.1rem; font-weight: 600; color: #495057; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
         .pulse-dot { width: 8px; height: 8px; background-color: #28a745; border-radius: 50%; display: inline-block; animation: pulse 1.5s infinite; }
@@ -36,30 +33,16 @@
         .log-list { display: flex; flex-direction: column; gap: 10px; max-height: 320px; overflow-y: auto; padding-right: 5px; }
         .no-reqs { text-align: center; color: #adb5bd; padding: 20px 0; font-size: 0.9rem; font-style: italic; }
 
-        /* 單個紀錄框框的外觀 */
-        .log-item { 
-            border: 1px solid #dee2e6; 
-            border-radius: 6px; 
-            overflow: hidden; 
-            background: #fff; 
-            font-size: 0.85rem; 
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02); 
-            
-            /* 💡 關鍵：強制防止此元素在 Flex 容器中被垂直擠壓，維持其本來的完整高度 */
-            flex-shrink: 0; 
-        }        
-        /* 上半段：ID, Method, Path */
+        .log-item { border: 1px solid #dee2e6; border-radius: 6px; overflow: hidden; background: #fff; font-size: 0.85rem; box-shadow: 0 2px 4px rgba(0,0,0,0.02); flex-shrink: 0; }
         .log-header { padding: 8px 12px; background: #f8f9fa; border-bottom: 1px solid #dee2e6; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
         .log-path { font-family: monospace; font-weight: 600; color: #212529; word-break: break-all; flex: 1; text-align: left; }
         .log-id { font-size: 0.75rem; color: #868e96; font-family: monospace; flex-shrink: 0; }
         
-        /* HTTP Method Badges */
         .badge { padding: 3px 6px; border-radius: 4px; font-weight: bold; font-size: 0.7rem; color: #fff; flex-shrink: 0; text-transform: uppercase; }
         .badge-get { background-color: #007bff; }
         .badge-post { background-color: #28a745; }
         .badge-other { background-color: #6c757d; }
 
-        /* 下半段：Status, Body */
         .log-body-section { padding: 10px 12px; display: flex; align-items: center; justify-content: space-between; gap: 15px; }
         .status-indicator { font-weight: bold; }
         .status-success { color: #28a745; }
@@ -81,20 +64,16 @@
         </select>
     </header>
     <div class="main-container">
-        <!-- 正常運作視窗 -->
         <div class="card" id="active-card" style="display:none;">
             <h1 id="tunnel-active-title">WebTNX Tunnel is Running!</h1>
             <p><span id="txt-local-port">Local service port:</span> <code id="display-port">8080</code></p>
             <p><strong><span id="txt-public-url">Public URL:</span></strong> <a id="public-link" href="#" target="_blank"></a></p>
             
-            <!-- 警告與路徑說明 -->
             <div class="alert-warning" id="keep-alive-warning"></div>
-            <!-- 💡 新增：必須允許連線至本地網站的警告容器 -->
             <div class="alert-warning" id="allow-local-warning"></div>
             <div class="alert-info" id="rewriting-info"></div>
             <div class="alert-info" id="cors-warning"></div>
 
-            <!-- ⚠️ 新增：漂亮的動態請求紀錄區 -->
             <div class="history-box">
                 <div class="history-title">
                     <span id="txt-history-title">Request History</span>
@@ -106,7 +85,6 @@
             </div>
         </div>
 
-        <!-- ID 佔用錯誤視窗 -->
         <div class="card" id="error-card" style="display:none;">
             <div class="alert-danger" id="err-message">
                 This ID is already in use. Please choose another one.
@@ -122,7 +100,6 @@
                 local_port: "Local service port:",
                 public_url: "Public URL:",
                 keep_alive_warning: "<strong>⚠️ Do not refresh or close this tab!</strong><br>This browser page serves as your tunnel agent. Closing, refreshing, or letting your computer fall asleep (or putting this tab to sleep in the background) will immediately disconnect your tunnel.",
-                // 💡 新增：允許本地連線的警告 (英文)
                 allow_local_warning: "<strong>⚠️ Permission Required: Allow Local Network Access</strong><br>Please make sure your browser permits this website to connect to your local website. If your browser displays a 'Private Network Access' prompt or any security warning, you must choose 'Allow' or 'Trust', otherwise the tunnel will not be able to communicate with your localhost.",
                 rewriting_info: "<strong>💡 Auto Path Rewriting Enabled:</strong><br>To ensure resources load properly, WebTNX automatically rewrites absolute and relative paths (e.g. <code>/assets</code>) inside your HTML and JS responses, prefixing them with <code>/{id}/</code>.",
                 cors_warning: "<strong>⚠️ CORS Setting Required:</strong><br>Please allow CORS for <code>https://webtnx.zone.id</code> in your localhost local app.<br>Example Header: <code>Access-Control-Allow-Origin: https://webtnx.zone.id</code>",
@@ -139,7 +116,6 @@
                 local_port: "本機服務 Port：",
                 public_url: "公開存取網址：",
                 keep_alive_warning: "<strong>⚠️ 請勿重新整理（Refresh）或關閉此分頁！</strong><br>本網頁正扮演您的隧道代理。若關閉、重整分頁，或是讓電腦進入休眠狀態（或讓此分頁在背景休眠），隧道連線將會立即中斷。",
-                // 💡 新增：允許本地連線的警告 (繁中)
                 allow_local_warning: "<strong>⚠️ 必要權限：請允許此網站存取本地網路</strong><br>請確保您的瀏覽器已授權並允許此網站連線至您的本地網站（Local Website）。若瀏覽器彈出『私有網路存取（Private Network Access）』或安全性提示，請務必選擇『允許』或『信賴』，否則隧道將無法正常與您的 localhost 通訊。",
                 rewriting_info: "<strong>💡 已啟用相對路徑重寫：</strong><br>為了讓資源正常載入，WebTNX 已自動將 HTML 與 JS 回應內容中的相對與絕對路徑（例如 <code>/assets</code>）重寫並加上了 <code>/{id}/</code> 前綴。",
                 cors_warning: "<strong>⚠️ 必須設定 CORS 允許跨來源請求：</strong><br>請在您的本機程式中啟用 CORS，允許來自 <code>https://webtnx.zone.id</code> 的請求。<br>例 Headers：<code>Access-Control-Allow-Origin: https://webtnx.zone.id</code>",
@@ -156,7 +132,6 @@
                 local_port: "ローカルサービスポート：",
                 public_url: "公開URL：",
                 keep_alive_warning: "<strong>⚠️ このタブを更新または閉じないでください！</strong><br>このブラウザページはトンネルエージェントとして機能しています。ページを閉じる・更新する、またはコンピュータがスリープ状態になると、接続が切断されます。",
-                // 💡 新增：允許本地連線的警告 (日文)
                 allow_local_warning: "<strong>⚠️ アクセス許可が必要：ローカルネットワーク接続の許可</strong><br>このブラウザがローカルウェブサイトへの接続を許可していることを確認してください。ブラウザに「プライベートネットワークアクセス」やセキュリティの警告が表示された場合は、必ず「許可」または「信頼」を選択してください。そうしないと、トンネルは localhost と通信できません。",
                 rewriting_info: "<strong>💡 パス自動書き換えが有効：</strong><br>リソースを正常に読み込むため、WebTNXはHTMLおよびJSレスポンス内の相対/絶対パス（例：<code>/assets</code>）の前に自動的に <code>/{id}/</code> を追加します。",
                 cors_warning: "<strong>⚠️ CORS 設定が必要です：</strong><br>ローカルアプリで <code>https://webtnx.zone.id</code> からの CORS を許可してください。<br>ヘッダーの例：<code>Access-Control-Allow-Origin: https://webtnx.zone.id</code>",
@@ -173,7 +148,6 @@
                 local_port: "Port du service local :",
                 public_url: "URL publique :",
                 keep_alive_warning: "<strong>⚠️ Ne rafraîchissez pas et ne fermez pas cet onglet !</strong><br>Cette page sert d'agent de tunnel. Fermer, rafraîchir ou laisser l'ordinateur s'endormir coupera immédiatement la connexion.",
-                // 💡 新增：允許本地連線的警告 (法文)
                 allow_local_warning: "<strong>⚠️ Autorisation requise : Autoriser l'accès au réseau local</strong><br>Veuillez vous assurer que votre navigateur autorise ce site à se connecter à votre site local. Si une invite 'Private Network Access' ou un avertissement de sécurité apparaît, vous devez choisir 'Autoriser' ou 'Faire confiance', sinon le tunnel ne pourra pas communiquer avec votre localhost.",
                 rewriting_info: "<strong>💡 Réécriture automatique des chemins :</strong><br>Pour charger les ressources correctement, WebTNX réécrit automatiquement les chemins relatifs/absolus (ex: <code>/assets</code>) dans vos fichiers HTML et JS avec le préfixe <code>/{id}/</code>.",
                 cors_warning: "<strong>⚠️ Configuration CORS requise :</strong><br>Veuillez autoriser CORS pour <code>https://webtnx.zone.id</code> dans votre application locale.<br>Exemple d'en-tête : <code>Access-Control-Allow-Origin: https://webtnx.zone.id</code>",
@@ -189,11 +163,8 @@
                 active_title: "Il tunnel WebTNX è in esecuzione!",
                 local_port: "Porta del servizio locale:",
                 public_url: "URL pubblico:",
-                keep_alive_warning: "<strong>⚠️ Non aggiornare o chiudere questa scheda!</strong><br>Questa pagina funge da agente del tunnel. Chiudere, aggiornare o consentire al computer di andare in standby interromperà la connessione.",
-                rewriting_info: "<strong>💡 Riscrittura automatica dei percorsi :</strong><br>Per caricare correttamente le risorse, WebTNX riscrive automaticamente i percorsi relativi/assoluti (es: <code>/assets</code>) in HTML e JS, aggiungendo il prefisso <code>/{id}/</code>.",
-                // 💡 新增：允許本地端連線
-                keep_alive_warning: "<strong>⚠️ Non aggiornare o chiudere questa scheda!</strong><br>Questa pagina funge da agente del tunnel. Chiudere, aggiornare o consentire al computer di andare in standby interromperà la connessione.",
                 allow_local_warning: "<strong>⚠️ Autorizzazione richiesta: Consenti accesso alla rete locale</strong><br>Assicurati che il tuo browser consenta a questo sito di connettersi al tuo sito locale. Se compare un avviso di 'Accesso alla rete privata' (Private Network Access) o di sicurezza, devi scegliere 'Consenti' o 'Affidabile', altrimenti il tunnel non comunicherà con localhost.",
+                rewriting_info: "<strong>💡 Riscrittura automatica dei percorsi :</strong><br>Per caricare correttamente le risorse, WebTNX riscrive automaticamente i percorsi relativi/assoluti (es: <code>/assets</code>) in HTML e JS, aggiungendo il prefisso <code>/{id}/</code>.",
                 cors_warning: "<strong>⚠️ Impostazione CORS richiesta:</strong><br>Consenti CORS per <code>https://webtnx.zone.id</code> nella tua applicazione locale.<br>Esempio di intestazione: <code>Access-Control-Allow-Origin: https://webtnx.zone.id</code>",
                 error_in_use: "Questo ID è già in uso. Scegline un altro.",
                 btn_back: "Torna alla configurazione",
@@ -208,7 +179,6 @@
                 local_port: "Porta do serviço local:",
                 public_url: "URL pública:",
                 keep_alive_warning: "<strong>⚠️ Não atualize ou feche esta guia!</strong><br>Esta página funciona como o agente do túnel. Fechar, atualizar ou permitir que o computador entre em modo de suspensão desconectará o túnel.",
-                // 💡 新增：允許本地端連線 (葡萄牙文)
                 allow_local_warning: "<strong>⚠️ Permissão necessária: Permitir acesso à rede local</strong><br>Certifique-se de que seu navegador permite que este site se conecte ao seu site local. Se aparecer um aviso de 'Acesso à Rede Privada' (Private Network Access) ou segurança, você deve escolher 'Permitir' ou 'Confiar', caso contrário, o túnel não poderá se comunicar com o localhost.",
                 rewriting_info: "<strong>💡 Reesquema de caminhos ativo :</strong><br>Para carregar os recursos corretamente, o WebTNX reescreve caminhos absolutos/relativos (ex: <code>/assets</code>) no HTML e JS, prefixando-os com <code>/{id}/</code>.",
                 cors_warning: "<strong>⚠️ Configuração CORS necessária:</strong><br>Permita CORS para <code>https://webtnx.zone.id</code> em seu aplicativo local.<br>Exemplo de cabeçalho: <code>Access-Control-Allow-Origin: https://webtnx.zone.id</code>",
@@ -225,7 +195,6 @@
                 local_port: "로컬 서비스 포트:",
                 public_url: "공개 URL:",
                 keep_alive_warning: "<strong>⚠️ 이 탭을 새로고침하거나 닫지 마세요!</strong><br>이 페이지는 터널 에이전트로 작동합니다. 탭을 닫거나 새로고침하거나, 컴퓨터가 절전 모드로 전환되면 터널 연결이 즉시 끊어집니다.",
-                // 💡 新增：允許本地端連線 (韓文)
                 allow_local_warning: "<strong>⚠️ 권한 필요: 로컬 네트워크 액세스 허용</strong><br>브라우저가 이 웹사이트에서 로컬 웹사이트로의 연결을 허용하도록 설정되어 있는지 확인해 주세요. 브라우저에 '사설 네트워크 액세스(Private Network Access)' 또는 보안 경고가 표시되는 경우, 반드시 '허용' 또는 '신뢰'를 선택해야 터널이 localhost와 원활히 통신할 수 있습니다.",
                 rewriting_info: "<strong>💡 자동 경로 재작성 활성화 :</strong><br>리소스의 원활한 로딩을 위해 WebTNX는 HTML 및 JS 응답 내의 모든 상대/절대 경로(예: <code>/assets</code>) 앞에 <code>/{id}/</code>를 자동으로 붙여서 재작성합니다.",
                 cors_warning: "<strong>⚠️ CORS 설정 필요:</strong><br>로컬 앱에서 <code>https://webtnx.zone.id</code>의 CORS를 허용해 주세요.<br>헤더 예시: <code>Access-Control-Allow-Origin: https://webtnx.zone.id</code>",
@@ -244,6 +213,8 @@
         const port = params.get('port') || '8080';
         const timeout = params.get('timeout') || '15';
 
+        const secretKey = `${tunnelId}_${port}_${timeout}`;
+
         function changeLanguage(lang) {
             localStorage.setItem('webtnx_lang', lang);
             document.getElementById('lang-select').value = lang;
@@ -254,7 +225,6 @@
             document.getElementById('txt-public-url').innerText = data.public_url;
             document.getElementById('keep-alive-warning').innerHTML = data.keep_alive_warning;
             
-            // 💡 套用語言到新增的允許本地網站警告
             document.getElementById('allow-local-warning').innerHTML = data.allow_local_warning;
             
             document.getElementById('rewriting-info').innerHTML = data.rewriting_info.replace(/{id}/g, tunnelId);
@@ -262,7 +232,6 @@
             document.getElementById('btn-back').innerText = data.btn_back;
             document.getElementById('err-message').innerText = data.error_in_use;
 
-            // 更新新增的紀錄標題與佔位符
             document.getElementById('txt-history-title').innerText = data.txt_history_title;
             const placeholder = document.getElementById('no-reqs-placeholder');
             if (placeholder) {
@@ -270,9 +239,31 @@
             }
         }
 
-        // ==========================================
-        // 💡 渲染單個漂亮的請求紀錄框框
-        // ==========================================
+        function xorEncrypt(text, key) {
+            const utf8Encoder = new TextEncoder();
+            const bytes = utf8Encoder.encode(text);
+            const keyEncoder = new TextEncoder();
+            const keyBytes = keyEncoder.encode(key);
+            
+            const encryptedBytes = new Uint8Array(bytes.length);
+            for (let i = 0; i < bytes.length; i++) {
+                encryptedBytes[i] = bytes[i] ^ keyBytes[i % keyBytes.length];
+            }
+            return btoa(String.fromCharCode(...encryptedBytes));
+        }
+
+        function blobToBase64(blob) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    const base64String = reader.result.split(',')[1];
+                    resolve(base64String);
+                };
+                reader.onerror = reject;
+                reader.readAsDataURL(blob);
+            });
+        }
+
         function addRequestLog(reqId, method, path, status, body) {
             const logList = document.getElementById('log-list');
             const placeholder = document.getElementById('no-reqs-placeholder');
@@ -281,7 +272,6 @@
                 placeholder.style.display = 'none';
             }
 
-            // 限制最多只顯示 10 筆，避免瀏覽器耗費太多 RAM
             if (logList.children.length >= 10) {
                 logList.removeChild(logList.lastChild);
             }
@@ -289,16 +279,13 @@
             const logItem = document.createElement('div');
             logItem.className = 'log-item';
 
-            // 判斷 HTTP Method 的標籤顏色
             let badgeClass = 'badge-other';
             if (method === 'GET') badgeClass = 'badge-get';
             else if (method === 'POST') badgeClass = 'badge-post';
 
-            // 安全轉義 HTML 避免內容破圖
             const escapedPath = path.replace(/</g, '&lt;').replace(/>/g, '&gt;');
             const safeBody = (body || '').replace(/</g, '&lt;').replace(/>/g, '&gt;');
             
-            // 限制 body 只顯示前 20 字，超出以 ... 表示
             const bodyPreview = safeBody.length > 20 
                 ? safeBody.substring(0, 20) + '...' 
                 : (safeBody || '(Empty)');
@@ -308,7 +295,6 @@
             const lang = localStorage.getItem('webtnx_lang') || 'en';
             const dict = i18n[lang] || i18n['en'];
 
-            // 縮寫長 request id
             const shortId = reqId.length > 10 ? reqId.substring(0, 10) + '..' : reqId;
 
             logItem.innerHTML = `
@@ -323,7 +309,6 @@
                 </div>
             `;
 
-            // 最新處理的請求排在最上面 (置頂)
             logList.insertBefore(logItem, logList.firstChild);
         }
 
@@ -376,6 +361,12 @@
 
                     if (requests && requests.length > 0) {
                         for (const req of requests) {
+                            await fetch('/api/keepalive', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ requestId: req.id })
+                            });
+
                             let targetUrl = `http://localhost:${port}${req.path}`;
                             const queryParams = new URLSearchParams(req.query);
                             if (queryParams.toString()) {
@@ -388,8 +379,26 @@
                                     headers: req.headers
                                 });
 
-                                const bodyText = await localRes.text();
-                                
+                                // 💡 2. 判斷本機回傳的是否為二進位檔案 (圖片 / ICO / 字型等)
+                                const contentType = localRes.headers.get('content-type') || '';
+                                const isBinary = !contentType.includes('text/') && 
+                                                 !contentType.includes('application/json') && 
+                                                 !contentType.includes('application/javascript') && 
+                                                 !contentType.includes('application/xml');
+
+                                let rawBodyData;
+                                let isBase64 = false;
+
+                                if (isBinary) {
+                                    const blob = await localRes.blob();
+                                    rawBodyData = await blobToBase64(blob);
+                                    isBase64 = true;
+                                } else {
+                                    rawBodyData = await localRes.text();
+                                }
+
+                                const encryptedBody = xorEncrypt(rawBodyData, secretKey);
+
                                 const resHeaders = {};
                                 localRes.headers.forEach((val, key) => {
                                     resHeaders[key] = val;
@@ -402,16 +411,18 @@
                                         requestId: req.id,
                                         status: localRes.status,
                                         headers: resHeaders,
-                                        body: bodyText
+                                        body: encryptedBody,
+                                        isBase64: isBase64,
+                                        isEncrypted: true 
                                     })
                                 });
 
-                                // 💡 成功將回應回傳給伺服器後，將此紀錄渲染至前端網頁
-                                addRequestLog(req.id, req.method, req.path, localRes.status, bodyText);
+                                addRequestLog(req.id, req.method, req.path, localRes.status, isBinary ? `(Binary File: ${contentType})` : rawBodyData);
 
                             } catch (localErr) {
                                 const errMsg = `WebTNX Proxy Error: Could not fetch. Error: ${localErr.message}`;
-                                
+                                const encryptedErr = xorEncrypt(errMsg, secretKey);
+
                                 await fetch('/api/res', {
                                     method: 'POST',
                                     headers: { 'Content-Type': 'application/json' },
@@ -419,17 +430,17 @@
                                         requestId: req.id,
                                         status: 502,
                                         headers: { 'content-type': 'text/plain' },
-                                        body: errMsg
+                                        body: encryptedErr,
+                                        isBase64: false,
+                                        isEncrypted: true
                                     })
                                 });
 
-                                // 💡 連線本地失敗時，也渲染一個 502 的錯誤紀錄框
                                 addRequestLog(req.id, req.method, req.path, 502, errMsg);
                             }
                         }
                     }
                 } catch (err) {
-                    // 心跳與 API 連線失敗時的處理
                 }
             }, 2000);
         }
