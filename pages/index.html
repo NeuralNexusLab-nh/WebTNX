@@ -3,15 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WebTNX - Zero-Install HTTP Tunnel</title>
+    <title>WebTNX - Convenient & Lightweight HTTP Tunnel</title>
     <style>
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: #f8f9fa; color: #333; margin: 0; padding: 0; display: flex; flex-direction: column; min-height: 100vh; }
         header { display: flex; justify-content: space-between; align-items: center; padding: 20px 40px; background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
         .logo { font-size: 1.5rem; font-weight: bold; color: #007bff; }
+        .nav-right { display: flex; align-items: center; gap: 15px; }
+        .docs-btn { display: inline-block; text-decoration: none; background: #e9ecef; color: #495057; padding: 6px 14px; border-radius: 4px; font-size: 0.9rem; font-weight: 500; transition: background 0.2s; }
+        .docs-btn:hover { background: #dee2e6; }
         select { padding: 6px 12px; border-radius: 4px; border: 1px solid #ced4da; font-size: 0.9rem; outline: none; cursor: pointer; }
         .hero { display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 60px 20px 40px 20px; max-width: 800px; margin: 0 auto; }
         h1 { font-size: 2.8rem; color: #212529; margin-bottom: 20px; }
-        .hero-desc { font-size: 1.2rem; line-height: 1.6; color: #6c757d; margin-bottom: 30px; }
+        .hero-desc { font-size: 1.2rem; line-height: 1.6; color: #6c757d; margin-bottom: 40px; }
         .btn { display: inline-block; background: #007bff; color: white; text-decoration: none; padding: 14px 28px; border-radius: 6px; font-weight: bold; font-size: 1.1rem; transition: background 0.2s; box-shadow: 0 4px 6px rgba(0,123,255,0.15); }
         .btn:hover { background: #0056b3; }
         .info-container { max-width: 950px; margin: 0 auto; padding: 20px; box-sizing: border-box; }
@@ -34,9 +37,6 @@
         .checklist { list-style: none; padding: 0; margin-top: 20px; }
         .checklist li { padding-left: 28px; position: relative; margin-bottom: 20px; font-size: 0.95rem; line-height: 1.7; color: #495057; }
         .checklist li::before { content: "✓"; position: absolute; left: 0; top: 0; color: #28a745; font-weight: bold; font-size: 1.1rem; }
-        .code-block-wrapper { background: #f1f3f5; border-radius: 6px; padding: 15px; margin: 15px 0 15px 28px; font-size: 0.85rem; border-left: 3px solid #6c757d; }
-        .code-title { font-weight: bold; color: #495057; margin-bottom: 8px; font-family: monospace; }
-        code { font-family: monospace; font-size: 0.9rem; white-space: pre-wrap; word-break: break-all; color: #c7254e; }
         .table-responsive { overflow-x: auto; margin-top: 25px; }
         table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.95rem; }
         th, td { padding: 12px 15px; border-bottom: 1px solid #dee2e6; }
@@ -49,22 +49,26 @@
 <body>
     <header>
         <div class="logo">WebTNX</div>
-        <select id="lang-select" onchange="changeLanguage(this.value)">
-            <option value="en">English</option>
-            <option value="zh-TW">繁體中文</option>
-            <option value="ja">日本語</option>
-            <option value="fr">Français</option>
-            <option value="it">Italiano</option>
-            <option value="pt">Português</option>
-            <option value="ko">한국어</option>
-        </select>
+        <div class="nav-right">
+            <a href="/docs" id="nav-docs" class="docs-btn">Documentation</a>
+            <select id="lang-select" onchange="changeLanguage(this.value)">
+                <option value="en">English</option>
+                <option value="zh-TW">繁體中文</option>
+                <option value="ja">日本語</option>
+                <option value="fr">Français</option>
+                <option value="it">Italiano</option>
+                <option value="pt">Português</option>
+                <option value="ko">한국어</option>
+            </select>
+        </div>
     </header>
     <div class="hero">
-        <h1 id="home-title">WebTNX: Zero-Install HTTP Tunnel</h1>
-        <p class="hero-desc" id="home-desc">Expose your local development server to the internet. Similar to ngrok, but absolutely free, requires zero installation, and no registration. Just use a browser tab as your tunnel agent.</p>
+        <h1 id="home-title">WebTNX: Convenient & Lightweight HTTP Tunnel</h1>
+        <p class="hero-desc" id="home-desc">Expose your local development server to the internet. Similar to ngrok, but absolutely free, extremely convenient, and requires no registration. Just use a browser tab or a simple command as your tunnel agent.</p>
         <a href="/download" class="btn" id="btn-create">Get Started Now</a>
     </div>
     <div class="info-container">
+        <!-- 什麼是 HTTP 隧道 -->
         <div class="section-block">
             <h2 id="title-what">What is an HTTP Tunnel?</h2>
             <p id="desc-what">An HTTP tunnel is a technology that allows you to expose a local server (running behind NATs, firewalls, or without a public IP) to the public internet. It assigns a secure public URL to your local project, allowing external users or APIs (like Webhook senders) to connect directly to your local application from anywhere in the world.</p>
@@ -86,12 +90,10 @@
                     <h4 id="why-r4-title">No SSL/HTTPS Encryption</h4>
                     <p id="why-r4-desc">Exposing raw IP usually runs over unencrypted HTTP. Modern web platforms (like Stripe, Line Bot, or browser features like camera access) strictly require HTTPS endpoints to function.</p>
                 </div>
-                <!-- 💡 優化後：強悍的資安威脅原因 5 -->
                 <div class="why-card">
-                    <h4 id="why-r5-title">Global Scanning & Automated Bot Probing</h4>
+                    <h4 id="why-r5-title">Global Scanning & Bot Probing</h4>
                     <p id="why-r5-desc">Malicious botnets scan raw open ports globally within minutes, attempting automated brute-force attacks and executing exploit payloads directly against your machine.</p>
                 </div>
-                <!-- 💡 優化後：強悍的資安威脅原因 6 -->
                 <div class="why-card">
                     <h4 id="why-r6-title">Lateral Movement & Intranet Infections</h4>
                     <p id="why-r6-desc">If your local computer is compromised through an exposed port, hackers can use it as a pivot to move laterally across your home or corporate local network, infecting other connected devices.</p>
@@ -109,48 +111,46 @@
                 </div>
                 <div class="step-card">
                     <h3 id="step2-title">2. Queue Request</h3>
-                    <p id="step2-desc">The WebTNX server generates a random 32-byte Request ID, saves it in a JSON queue, and holds the visitor's HTTP connection open.</p>
+                    <p id="step2-desc">The WebTNX server generates a secure transaction Request ID, logs it into a temporary queue, and holds the visitor's connection open.</p>
                 </div>
                 <div class="step-card">
-                    <h3 id="step3-title">3. Poll api/reqs</h3>
-                    <p id="step3-desc">Your active WebTNX agent (Web or CLI) polls <code>POST /api/reqs</code> every 2 seconds, fetches the pending request, and wipes the JSON file immediately.</p>
+                    <h3 id="step3-title">3. Agent Polling</h3>
+                    <p id="step3-desc">Your active WebTNX agent (Web or CLI) polls the server periodically, fetches the pending request, and wipes the server file instantly.</p>
                 </div>
                 <div class="step-card">
-                    <h3 id="step4-title">4. Keep-Alive & Fetch</h3>
-                    <p id="step4-desc">The agent immediately sends <code>POST /api/keepalive</code> to hold the server connection open, then fetches from your local server (e.g. port 8080).</p>
+                    <h3 id="step4-title">4. Keep-Alive & Local Call</h3>
+                    <p id="step4-desc">The agent instantly signals the server to sustain the open connection, then forwards the request locally to your localhost.</p>
                 </div>
                 <div class="step-card">
-                    <h3 id="step5-title">5. XOR Encryption</h3>
-                    <p id="step5-desc">The agent reads the local response, converts binary files to Base64, and encrypts the payload using a dynamic Secret Key via UTF-8 XOR bitwise coding.</p>
+                    <h3 id="step5-title">5. Dynamic Encryption</h3>
+                    <p id="step5-desc">The agent reads the local response (binary files are safely converted to base64) and encrypts the payload symmetrically using a private security key.</p>
                 </div>
                 <div class="step-card">
-                    <h3 id="step6-title">6. Postback api/res</h3>
-                    <p id="step6-desc">The encrypted data is sent to <code>POST /api/res</code>. WebTNX server reconstructs the Secret Key, decrypts the body, and responds to the visitor.</p>
+                    <h3 id="step6-title">6. Secure Return</h3>
+                    <p id="step6-desc">The encrypted payload is safely transmitted back. The WebTNX server decrypts it and returns the plaintext content to the visitor.</p>
                 </div>
             </div>
         </div>
 
-        <!-- 本地準備與要求 -->
+        <!-- CORS 標頭要求說明 -->
         <div class="section-block">
             <h2 id="title-local">Local Setup & Requirements</h2>
             <ul class="checklist">
                 <li id="local-li1"><strong>Start Local App</strong>: Ensure your web application is running locally and listening on a specific port (e.g. <code>http://localhost:8080</code>).</li>
-                <li id="local-li2"><strong>Enable CORS (Web Agent Only)</strong>: If using the Web-based Agent, your local app must accept cross-origin requests from <code>https://webtnx.zone.id</code>. (Native CLI clients do not have this restriction).</li>
-            </ul>
-            <div class="code-block-wrapper">
-                <div class="code-title" id="cors-node-title">Node.js (Express) Configuration Example:</div>
-                <code>app.use(cors({ origin: 'https://webtnx.zone.id' }));</code>
-            </div>
-            <div class="code-block-wrapper">
-                <div class="code-title" id="cors-python-title">Python (FastAPI) Configuration Example:</div>
-                <code>app.add_middleware(CORSMiddleware, allow_origins=["https://webtnx.zone.id"])</code>
-            </div>
-            <ul class="checklist" style="margin-top:0;">
+                <li id="local-li2"><strong>Enable CORS (Web Agent Only)</strong>: If using the Web-based Agent, your local app must accept cross-origin requests from <code>https://webtnx.zone.id</code>.</li>
+                <li id="local-li-headers" style="list-style:none; padding-left:28px; margin-bottom:15px; color:#495057;">
+                    <span id="cors-headers-desc">To allow connection, your localhost server must return the following HTTP headers:</span>
+                    <ul style="margin-top:8px; line-height:1.6;">
+                        <li><code>Access-Control-Allow-Origin: https://webtnx.zone.id</code></li>
+                        <li><code>Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE</code></li>
+                        <li><code>Access-Control-Allow-Headers: Content-Type, Authorization</code></li>
+                    </ul>
+                </li>
                 <li id="local-li3"><strong>Keep Connected</strong>: If using Web Agent, keep the tab open and prevent sleep mode. If using CLI, keep the terminal running.</li>
             </ul>
         </div>
 
-        <!-- 全面擴充版對比表格 (新增 3 個維度) -->
+        <!-- 全面擴充版對比表格 -->
         <div class="section-block">
             <h2 id="title-vs">WebTNX vs. Traditional Tunnels</h2>
             <div class="table-responsive">
@@ -206,21 +206,18 @@
                             <td id="row7-c">HTTP/HTTPS Web Traffic</td>
                             <td id="row7-t" style="color:#28a745; font-weight:500;">Supports TCP, UDP, SSH, databases</td>
                         </tr>
-                        <!-- 💡 新增 9：自訂網域綁定 -->
                         <tr>
                             <td class="feature-name" id="row9-f"><strong>Custom Domain</strong></td>
                             <td id="row9-w">No (Path-based only)</td>
                             <td id="row9-c">No (Path-based only)</td>
                             <td id="row9-t" style="color:#28a745; font-weight:500;">Yes (e.g. api.yourproject.com)</td>
                         </tr>
-                        <!-- 💡 新增 10：反應速度 -->
                         <tr>
                             <td class="feature-name" id="row10-f"><strong>Latency</strong></td>
                             <td id="row10-w" style="color:#dc3545; font-weight:500;">Moderate (~1-2s polling delay)</td>
                             <td id="row10-c" style="color:#dc3545; font-weight:500;">Moderate (~1-2s polling delay)</td>
                             <td id="row10-t" style="color:#28a745; font-weight:500;">Extremely Fast (Millisecond-level)</td>
                         </tr>
-                        <!-- 💡 新增 11：請求內容私密性 -->
                         <tr>
                             <td class="feature-name" id="row11-f"><strong>Request Privacy</strong></td>
                             <td id="row11-w" style="color:#dc3545; font-weight:500;">Low (Requests public if ID guessed)</td>
@@ -243,9 +240,10 @@
     <script>
         const i18n = {
             en: {
-                home_title: "WebTNX: Zero-Install HTTP Tunnel",
-                home_desc: "Expose your local development server to the internet. Similar to ngrok, but absolutely free, requires zero installation, and no registration. Just use a browser tab as your tunnel agent.",
+                home_title: "WebTNX: Convenient & Lightweight HTTP Tunnel",
+                home_desc: "Expose your local development server to the internet. Similar to ngrok, but absolutely free, extremely convenient, and requires no registration. Just use a browser tab or a simple command as your tunnel agent.",
                 btn_create: "Get Started Now",
+                nav_docs: "Documentation",
                 title_what: "What is an HTTP Tunnel?",
                 desc_what: "An HTTP tunnel is a technology that allows you to expose a local server (running behind NATs, firewalls, or without a public IP) to the public internet. It assigns a secure public URL to your local project, allowing external users or APIs (like Webhook senders) to connect directly to your local application from anywhere in the world.",
                 subtitle_why: "Why can't I just expose my local IP directly?",
@@ -266,21 +264,20 @@
                 step1_title: "1. Public Request",
                 step1_desc: "A visitor accesses your custom WebTNX link (e.g. <code>https://webtnx.zone.id/my-app/</code>).",
                 step2_title: "2. Queue Request",
-                step2_desc: "The WebTNX server generates a random 32-byte Request ID, saves it in a JSON queue, and holds the visitor's HTTP connection open.",
-                step3_title: "3. Poll api/reqs",
-                step3_desc: "Your active WebTNX agent (Web or CLI) polls <code>POST /api/reqs</code> every 2 seconds, fetches the pending request, and wipes the JSON file immediately.",
-                step4_title: "4. Keep-Alive & Fetch",
-                step4_desc: "The agent immediately sends <code>POST /api/keepalive</code> to hold the server connection open, then fetches from your local server (e.g. port 8080).",
-                step5_title: "5. XOR Encryption",
-                step5_desc: "The agent reads the local response, converts binary files to Base64, and encrypts the payload using a dynamic Secret Key via UTF-8 XOR bitwise coding.",
-                step6_title: "6. Postback api/res",
-                step6_desc: "The encrypted data is sent to <code>POST /api/res</code>. WebTNX server reconstructs the Secret Key, decrypts the body, and responds to the visitor.",
+                step2_desc: "The WebTNX server generates a secure transaction Request ID, logs it into a temporary queue, and holds the visitor's connection open.",
+                step3_title: "3. Agent Polling",
+                step3_desc: "Your active WebTNX agent (Web or CLI) polls the server periodically, fetches the pending request, and wipes the server file instantly.",
+                step4_title: "4. Keep-Alive & Local Call",
+                step4_desc: "The agent instantly signals the server to sustain the open connection, then forwards the request locally to your localhost.",
+                step5_title: "5. Dynamic Encryption",
+                step5_desc: "The agent reads the local response (binary files are safely converted to base64) and encrypts the payload symmetrically using a private security key.",
+                step6_title: "6. Secure Return",
+                step6_desc: "The encrypted payload is safely transmitted back. The WebTNX server decrypts it and returns the plaintext content to the visitor.",
 
                 title_local: "Local Setup & Requirements",
                 local_li1: "<strong>Start Local App</strong>: Ensure your web application is running locally and listening on a specific port (e.g. <code>http://localhost:8080</code>).",
-                local_li2: "<strong>Enable CORS (Web Agent Only)</strong>: If using the Web-based Agent, your local app must accept cross-origin requests from <code>https://webtnx.zone.id</code>. (Native CLI clients do not have this restriction).",
-                cors_node_title: "Node.js (Express) Configuration Example:",
-                cors_python_title: "Python (FastAPI) Configuration Example:",
+                local_li2: "<strong>Enable CORS (Web Agent Only)</strong>: If using the Web-based Agent, your local app must accept cross-origin requests from <code>https://webtnx.zone.id</code>.",
+                cors_headers_desc: "To allow connection, your localhost server must return the following HTTP headers:",
                 local_li3: "<strong>Keep Connected</strong>: If using Web Agent, keep the tab open and prevent sleep mode. If using CLI, keep the terminal running.",
                 title_vs: "WebTNX vs. Traditional Tunnels",
                 th_feature: "Feature",
@@ -333,9 +330,10 @@
                 row11_t: "High (E2E encryption, secure socket)"
             },
             "zh-TW": {
-                home_title: "WebTNX：免安裝的 HTTP 內網穿透工具",
-                home_desc: "將您的本地開發伺服器發布到公網。類似 ngrok，但完全免費、免安裝、免註冊，只需打開一個瀏覽器分頁即可充當隧道代理。",
+                home_title: "WebTNX：便利且輕量的 HTTP 內網穿透工具",
+                home_desc: "將您的本地開發伺服器發布到公網。類似 ngrok，但完全免費、便利、輕量，不需註冊。只需打開一個瀏覽器分頁或一條簡單指令即可充當隧道代理。",
                 btn_create: "立即開始體驗",
+                nav_docs: "技術文件",
                 title_what: "什麼是 HTTP 隧道？",
                 desc_what: "HTTP 隧道技術能讓您將運行在本機（處於 NAT、防火牆後，或沒有公網 IP）的本地伺服器安全地發布到網際網路上。它會提供一個公開的 URL，讓世界上任何地方的人都能直接存取您的本地專案（如測試 Webhook、調試 API 或向客戶展示網頁）。",
                 subtitle_why: "為什麼不能、或不應該直接公開本機的 IP？",
@@ -356,21 +354,20 @@
                 step1_title: "1. 訪客發送請求",
                 step1_desc: "外部訪客存取您的專屬 WebTNX 網址（例如：<code>https://webtnx.zone.id/my-app/</code>）。",
                 step2_title: "2. 暫存並掛起連線",
-                step2_desc: "伺服器生成 32-byte 隨機 Request ID，將請求資料寫入 JSON 暫存檔，並在記憶體中掛起（Hold）訪客的連線。",
-                step3_title: "3. 輪詢 api/reqs",
-                step3_desc: "您的 WebTNX 代理（網頁或 CLI）每 2 秒輪詢 <code>POST /api/reqs</code> 拿取該請求，伺服器隨即清空暫存 JSON 檔案。",
+                step2_desc: "伺服器生成安全的交易 Request ID，將請求資料寫入臨時佇列，並在記憶體中掛起（Hold）訪客的連線。",
+                step3_title: "3. 代理端輪詢拿取",
+                step3_desc: "您的 WebTNX 代理（網頁或 CLI）定期向伺服器輪詢請求，拿取待處理任務，並在拿取後立刻抹除伺服器檔案。",
                 step4_title: "4. 不休眠與本地 fetch",
-                step4_desc: "代理端立即發送 <code>POST /api/keepalive</code> 告知伺服器不要逾時（不休眠），隨後在本機向本地伺服器發起 fetch 請求。",
-                step5_title: "5. 本地 XOR 安全加密",
-                step5_desc: "代理端讀取本地回應（二進位檔案轉為 Base64），並利用 `id_port_timeout` 重組金鑰，進行 UTF-8 安全位元組 XOR 加密。",
-                step6_title: "6. 回傳 api/res 與解密",
-                step6_desc: "加密資料發送至 <code>POST /api/res</code>。WebTNX 伺服器動態重組金鑰解密回應體，解除掛起並回傳資料給訪客。",
+                step4_desc: "代理端立即通知伺服器保持連線（不休眠），隨後在本機向 localhost 服務發起 fetch 請求。",
+                step5_title: "5. 本地安全加密",
+                step5_desc: "代理端讀取本地回應（二進位檔案轉為 Base64），並利用私鑰對回應體進行 UTF-8 安全位元組 XOR 運算加密。",
+                step6_title: "6. 安全回傳與解除掛起",
+                step6_desc: "加密後的資料傳回伺服器。WebTNX 伺服器解碼回應體，並隨即解除掛起，將內容回傳給訪客。",
 
                 title_local: "本地端的使用方式與準備",
                 local_li1: "<strong>啟動本機服務</strong>：確認您的網頁服務或 API 正在本機運行，並監聽特定的 Port（例如：<code>http://localhost:8080</code>）。",
                 local_li2: "<strong>啟用 CORS 設定 (僅限網頁代理)</strong>：如果使用的是網頁代理（Web Agent），您的本機程式必須允許來自 <code>https://webtnx.zone.id</code> 的跨來源請求。（原生 CLI 客戶端不受此限制）。",
-                cors_node_title: "Node.js (Express) CORS 設定範例：",
-                cors_python_title: "Python (FastAPI) CORS 設定範例：",
+                cors_headers_desc: "要允許瀏覽器代理正常連線，本機伺服器必須回傳以下 HTTP Headers 標頭：",
                 local_li3: "<strong>保持連線狀態</strong>：若使用網頁代理，請保持分頁開啟並防止休眠。若使用 CLI，請保持終端機持續執行。",
                 title_vs: "WebTNX 與傳統隧道代理的差別",
                 th_feature: "特性",
@@ -421,247 +418,6 @@
                 row11_w: "較低 (明文傳遞與暫存，若 ID 被猜到可被盲測)",
                 row11_c: "中等 (回應內容採端到端 XOR 加密，但請求仍在伺服器暫存)",
                 row11_t: "極高 (基於 Socket 的全管道加密傳輸，不留存檔案)"
-            },
-            ja: {
-                home_title: "WebTNX: インストール不要の HTTP トンネル",
-                home_desc: "ローカル開発サーバーをインターネットに公開します。ngrok に似ていますが、インストールや登録は不要です。",
-                btn_create: "今すぐ体験",
-                title_what: "HTTPトンネルとは何ですか？",
-                desc_what: "HTTPトンネルは、NAT、ファイアウォールの背後にあるローカルサーバーをインターネットに公開するための技術です。",
-                subtitle_why: "ローカルのIPを直接公開できない理由は何ですか？",
-                why_r1_title: "パブリックIPがない (CGNAT)",
-                why_r1_desc: "ほとんどのブロードバンドはCGNATを使用しており、パブリックIPを持っていません。",
-                why_r2_title: "ルーターとファイアウォール",
-                why_r2_desc: "ルーターが外部接続をブロックするため、ポート開放が必要です。",
-                why_r3_title: "重大なセキュリティリスク",
-                why_r3_desc: "ポートを直接公開すると、DDoSやハッキングの攻撃対象になります。",
-                why_r4_title: "SSL/HTTPS暗報化なし",
-                why_r4_desc: " rawポートはHTTP通信であり、最近のWebAPIが動作しません。",
-                why_r5_title: "自動スキャン脅威",
-                why_r5_desc: "公開ポートは悪意あるボットに数分でスキャンされ、不正アクセスの対象になります。",
-                why_r6_title: "インフラハッキング脅威",
-                why_r6_desc: "ローカルPCがハッキングされると、同一ローカルネットワーク内の他のデバイスに被害が拡大します。",
-                
-                title_flow: "WebTNXの仕組み",
-                step1_title: "1. リクエスト", step1_desc: "訪問者が WebTNX リンクにアクセスします。",
-                step2_title: "2. 保留", step2_desc: "サーバーは 32-byte Request ID を生成し、接続を一時的に保留します。",
-                step3_title: "3. api/reqs のポーリング", step3_desc: "エージェントが 2 秒ごとにリクエストを取得し、JSONファイルを即座に消去します。",
-                step4_title: "4. キープアライブと取得", step4_desc: "キープアライブを送信してサーバー接続を維持し、ローカルを呼び出します。",
-                step5_title: "5. XOR暗号化", step5_desc: "ローカルの応答を取得し、動的秘密鍵を使用して UTF-8 XOR 暗号化を行います。",
-                step6_title: "6. api/res への返却", step6_desc: "暗号化データをサーバーに返却し、サーバーが解読して訪問者に返します。",
-
-                title_local: "ローカル設定",
-                local_li1: "アプリの起動 (localhost:8080)",
-                local_li2: "CORSの許可 (Web代理のみ必要)",
-                cors_node_title: "Express CORS設定例:",
-                cors_python_title: "FastAPI CORS設定例:",
-                local_li3: "Web代理の場合はタブを開いたままにします。CLIの場合はターミナルを起動したままにします。",
-                title_vs: "WebTNX と従来の比較",
-                th_feature: "特徴", th_web: "WebTNX (Web)", th_cli: "WebTNX (CLI)", th_traditional: "従来 (ngrok)",
-                row1_f: "インストール", row1_w: "不要 (ブラウザ)", row1_c: "軽量CLI / スクリプト", row1_t: "CLIが必要",
-                row2_f: "登録", row2_w: "不要", row2_c: "不要", row2_t: "必須",
-                row3_f: "CORS", row3_w: "必要", row3_c: "不要", row3_t: "不要",
-                row4_f: "ブラウザ砂箱", row4_w: "安全保護あり", row4_c: "なし", row4_t: "なし",
-                row5_f: "ルーター設定", row5_w: "不要", row5_c: "不要", row5_t: "不要",
-                row6_f: "HTTPS", row6_w: "標準対応", row6_c: "標準対応", row6_t: "有料カスタム",
-                row7_f: "プロトコル", row7_w: "HTTPのみ", row7_c: "HTTPのみ", row7_t: "TCP, SSHなど",
-                row8_f: "ローカルメモリ", row8_w: "中等 (~50MB)", row8_c: "極小 (~10MB)", row8_t: "中等 (~30MB)",
-                row9_f: "カスタムドメイン", row9_w: "非対応 (パスベースのみ)", row9_c: "非対応 (パスベースのみ)", row9_t: "対応 (有料)",
-                row10_f: "反応速度", row10_w: "中等 (2秒ポーリング遅延)", row10_c: "中等 (2秒ポーリング遅延)", row10_t: "極めて高速 (ミリ秒単位)",
-                row11_f: "プライバシー", row11_w: "低い (平文リクエスト)", row11_c: "中等 (XOR暗号化応答、サーバー一時保存)", row11_t: "高い (E2E暗号化、Socket)"
-            },
-            fr: {
-                home_title: "WebTNX: Tunnel HTTP sans installation",
-                home_desc: "Exposez votre serveur de développement local sur Internet. Similaire à ngrok, mais entièrement gratuit, sans installation ni inscription.",
-                btn_create: "Démarrer maintenant",
-                title_what: "Qu'est-ce qu'un tunnel HTTP?",
-                desc_what: "Un tunnel HTTP permet d'exposer un serveur local au web public sans IP publique.",
-                subtitle_why: "Pourquoi ne pas simplement exposer mon IP?",
-                why_r1_title: "Pas d'IP publique (CGNAT)",
-                why_r1_desc: "Le CGNAT vous empêche d'avoir une adresse IP publique routable.",
-                why_r2_title: "Blocage de pare-feu",
-                why_r2_desc: "Les routeurs bloquent le trafic entrant; la redirection de port est complexe.",
-                why_r3_title: "Limites de ports ISP",
-                why_r3_desc: "Les FAI bloquent souvent les ports standard (80, 443) pour empêcher l'auto-hébergement résidentiel.",
-                why_r4_title: "Pas de chiffrement SSL",
-                why_r4_desc: "Les webhooks modernes nécessitent impérativement des URL sécurisées HTTPS.",
-                why_r5_title: "Scans automatisés globaux",
-                why_r5_desc: "Les botnets malveillants scannent les ports ouverts en quelques minutes pour tenter des attaques.",
-                why_r6_title: "Infection du réseau local",
-                why_r6_desc: "Si votre ordinateur est compromis, les pirates peuvent se déplacer latéralement et infecter d'autres appareils.",
-                
-                title_flow: "Comment fonctionne WebTNX",
-                step1_title: "1. Requête du visiteur", step1_desc: "Le visiteur accède à votre lien personnalisé.",
-                step2_title: "2. Hold Connexion", step2_desc: "Le serveur génère un ID de 32-byte et suspend la connexion.",
-                step3_title: "3. Interrogation api/reqs", step3_desc: "L'agent interroge l'API toutes les 2s pour récupérer la requête et efface le JSON.",
-                step4_title: "4. Keep-Alive et Récupération", step4_desc: "Envoie un Keep-Alive pour maintenir la connexion ouverte, puis appelle localhost.",
-                step5_title: "5. Chiffrement XOR", step5_desc: "Récupère la réponse locale et effectue un chiffrement XOR UTF-8 à l'aide d'une clé secrète.",
-                step6_title: "6. Retour api/res", step6_desc: "Renvoie les données cryptées, le serveur les décrypte et les renvoie au visiteur.",
-
-                title_local: "Configuration locale",
-                local_li1: "Lancez votre appli (ex: localhost:8080)",
-                local_li2: "Activer CORS (Web Agent uniquement)",
-                cors_node_title: "Exemple Express CORS:",
-                cors_python_title: "Exemple FastAPI CORS:",
-                local_li3: "Pour l'Agent Web, gardez l'onglet ouvert. Pour le CLI, gardez le terminal actif.",
-                title_vs: "WebTNX vs Tunnels traditionnels",
-                th_feature: "Fonction", th_web: "WebTNX (Web)", th_cli: "WebTNX (CLI)", th_traditional: "Traditionnel (ngrok)",
-                row1_f: "Installation", row1_w: "Aucune (onglet)", row1_c: "CLI léger / Script", row1_t: "Téléchargement CLI requis",
-                row2_f: "Inscription", row2_w: "Aucune", row2_c: "Aucune", row2_t: "Requise",
-                row3_f: "CORS", row3_w: "Requis", row3_c: "Aucun", row3_t: "Aucun",
-                row4_f: "Sandbox Navigateur", row4_w: "Protégé", row4_c: "Aucun", row4_t: "Aucun",
-                row5_f: "Redirection port", row5_w: "Non requise", row5_c: "Non requise", row5_t: "Non requise",
-                row6_f: "HTTPS", row6_w: "Inclus", row6_c: "Inclus", row6_t: "Payant pour custom",
-                row7_f: "Protocoles", row7_w: "HTTP uniquement", row7_c: "HTTP uniquement", row7_t: "Supporte TCP, UDP, SSH",
-                row8_f: "Serveur", row8_w: "Trés bas (~30MB)", row8_c: "Moyen",
-                row9_f: "Nom de domaine personnalisé", row9_w: "Non (uniquement via chemin)", row9_c: "Non (uniquement via chemin)", row9_t: "Oui (payant)",
-                row10_f: "Vitesse / Latence", row10_w: "Moyenne (polling 2s)", row10_c: "Moyenne (polling 2s)", row10_t: "Très rapide (millisecondes)",
-                row11_f: "Confidentialité des requêtes", row11_w: "Basse (requêtes en clair)", row11_c: "Moyenne (réponses cryptées XOR, requêtes stockées)", row11_t: "Haute (chiffrement E2E, Socket)"
-            },
-            it: {
-                home_title: "WebTNX: Tunnel HTTP senza installazione",
-                home_desc: "Esponi il tuo server locale su Internet. Simile a ngrok, ma gratuito e senza installazione.",
-                btn_create: "Inizia ora",
-                title_what: "Cos'è un tunnel HTTP?",
-                desc_what: "Un tunnel HTTP permette di esporre un server locale a Internet senza IP pubblico.",
-                subtitle_why: "Perché non posso semplicemente esporre l'IP?",
-                why_r1_title: "Nessun IP pubblico (CGNAT)",
-                why_r1_desc: "Senza IP pubblico reale la tua macchina non è rintracciabile da internet.",
-                why_r2_title: "Blocco del Firewall",
-                why_r2_desc: "Il router blocca il traffico esterno; configurare la porta è difficile.",
-                why_r3_title: "Limiti di porta ISP",
-                why_r3_desc: "I provider internet spesso bloccano le porte standard (80, 443) per prevenire l'hosting domestico.",
-                why_r4_title: "Nessuna crittografia SSL",
-                why_r4_desc: "I webhook moderni richiedono necessariamente endpoint sicuri HTTPS.",
-                why_r5_title: "Scansioni automatizzate globali",
-                why_r5_desc: "Botnet maligne scansionano le porte aperte in pochi minuti per tentare attacchi e intrusioni.",
-                why_r6_title: "Infezione della rete locale",
-                why_r6_desc: "Se il tuo PC viene compromesso, gli hacker possono muoversi lateralmente e infettare altri dispositivi della rete locale.",
-
-                title_flow: "Come funziona WebTNX",
-                step1_title: "1. Richiesta del visitatore", step1_desc: "Il visitatore accede al tuo link personalizzato.",
-                step2_title: "2. Sospensione", step2_desc: "Il server genera un ID a 32-byte e tiene la connessione sospesa.",
-                step3_title: "3. Polling api/reqs", step3_desc: "L'agente interroga l'API ogni 2 secondi per recuperare la richiesta e cancella il JSON.",
-                step4_title: "4. Keep-Alive e Recupero", step4_desc: "Invia un Keep-Alive per mantenere la connessione aperta, quindi chiama localhost.",
-                step5_title: "5. Cifratura XOR", step5_desc: "Ottiene la risposta locale ed effettua una cifratura XOR UTF-8 usando una chiave segreta.",
-                step6_title: "6. Ritorno api/res", step6_desc: "Invia i dati crittografati, il server li decrittografa e li rimanda al visitatore.",
-
-                title_local: "Configurazione locale",
-                local_li1: "Avvia l'app (es: localhost:8080)",
-                local_li2: "Abilita CORS (solo per l'agente Web)",
-                cors_node_title: "Esempio Express CORS:",
-                cors_python_title: "Esempio FastAPI CORS:",
-                local_li3: "Per l'Agente Web tieni aperta la scheda. Per la CLI mantieni attivo il terminale.",
-                title_vs: "WebTNX vs Tunnel tradizionali",
-                th_feature: "Caratteristica", th_web: "WebTNX (Web)", th_cli: "WebTNX (CLI)", th_traditional: "Tradizionale (ngrok)",
-                row1_f: "Installazione", row1_w: "Nessuna (scheda)", row1_c: "CLI leggero / Script", row1_t: "Richiesto CLI",
-                row2_f: "Registrazione", row2_w: "Nessuna", row2_c: "Nessuna", row2_t: "Richiesta",
-                row3_f: "CORS", row3_w: "Richiesto", row3_c: "Nessuno", row3_t: "Nessuno",
-                row4_f: "Sandbox Browser", row4_w: "Protetto", row4_c: "Nessuno", row4_t: "Nessuno",
-                row5_f: "Port forwarding", row5_w: "Non richiesto", row5_c: "Non richiesto", row5_t: "Non richiesto",
-                row6_f: "HTTPS", row6_w: "Incluso", row6_c: "Incluso", row6_t: "Payant per custom",
-                row7_f: "Protocolli", row7_w: "Solo HTTP", row7_c: "Solo HTTP", row7_t: "Supporta TCP, UDP, SSH",
-                row8_f: "Risorse", row8_w: "Medie (~50MB)", row8_c: "Basse (~10MB)", row8_t: "Medie (~30MB)",
-                row9_f: "Dominio personalizzato", row9_w: "No (solo basato su percorso)", row9_c: "No (solo basato su percorso)", row9_t: "Sì (a pagamento)",
-                row10_f: "Vantaggio di latenza", row10_w: "Media (polling 2s)", row10_c: "Media (polling 2s)", row10_t: "Molto rapida (millisecondi)",
-                row11_f: "Privacy delle richieste", row11_w: "Bassa (richieste in chiaro)", row11_c: "Media (risposte cifrate XOR, richieste temporanee)", row11_t: "Alta (cifratura E2E, Socket)"
-            },
-            pt: {
-                home_title: "WebTNX: Túnel HTTP sem instalação",
-                home_desc: "Exponha seu servidor local para a internet. Semelhante ao ngrok, mas gratuito e sem instalação.",
-                btn_create: "Começar agora",
-                title_what: "O que é um túnel HTTP?",
-                desc_what: "Um túnel HTTP permite expor um servidor local na internet sem um IP público.",
-                subtitle_why: "Por que não expor meu IP diretamente?",
-                why_r1_title: "Sem IP público (CGNAT)",
-                why_r1_desc: "Sua operadora não fornece um IP público roteável para sua casa.",
-                why_r2_title: "Bloqueio do Roteador",
-                why_r2_desc: "Roteadores bloqueiam conexões; o redirecionamento de portas é instável.",
-                why_r3_title: "Limitações de portas de ISP",
-                why_r3_desc: "As operadoras bloqueiam portas padrão (80, 443) para impedir hospedagem residencial de sites.",
-                why_r4_title: "Sem criptografia SSL",
-                why_r4_desc: "APIs e webhooks modernos exigem obrigatoriamente URLs seguras HTTPS.",
-                why_r5_title: "Varredura automatizada global",
-                why_r5_desc: "Botnets malignos varrem portas abertas em minutos tentando força bruta e exploração de vulnerabilidades.",
-                why_r6_title: "Infecção de rede interna",
-                why_r6_desc: "Se o seu PC for invadido através da porta aberta, hackers podem infectar outros dispositivos na mesma rede local.",
-
-                title_flow: "Como o WebTNX funciona",
-                step1_title: "1. Solicitação do visitante", step1_desc: "O visitante acessa o seu link personalizado.",
-                step2_title: "2. Retenção da conexão", step2_desc: "O servidor gera um ID de 32-byte e mantém a conexão suspensa.",
-                step3_title: "3. Polling de api/reqs", step3_desc: "O agente faz o polling a cada 2s para buscar as requisições e limpa o JSON.",
-                step4_title: "4. Keep-Alive e Coleta", step4_desc: "Envia um Keep-Alive para manter a conexão aberta e chama o localhost.",
-                step5_title: "5. Criptografia XOR", step5_desc: "Coleta a resposta e realiza criptografia XOR UTF-8 por meio de chave secreta.",
-                step6_title: "6. Retorno de api/res", step6_desc: "Envia os dados criptografados, o servidor decifra e envia ao visitante.",
-
-                title_local: "Configuração local",
-                local_li1: "Inicie o app local (ex: localhost:8080)",
-                local_li2: "Permita CORS (apenas para o Agente Web)",
-                cors_node_title: "Exemplo CORS Express:",
-                cors_python_title: "Exemplo CORS FastAPI:",
-                local_li3: "Para o Agente Web, mantenha a guia ativa. Para o CLI, mantenha o terminal aberto.",
-                title_vs: "WebTNX vs Túneis Tradicionais",
-                th_feature: "Funcionalidade", th_web: "WebTNX (Web)", th_cli: "WebTNX (CLI)", th_traditional: "Tradicional (ngrok)",
-                row1_f: "Instalação", row1_w: "Nenhuma (guia)", row1_c: "CLI leve / Script", row1_t: "Requer CLI",
-                row2_f: "Registro", row2_w: "Nenhum", row2_c: "Nenhum", row2_t: "Requerido",
-                row3_f: "CORS", row3_w: "Requerido", row3_c: "Nenhum", row3_t: "Nenhum",
-                row4_f: "Sandbox Navegador", row4_w: "Protegido", row4_c: "Nenhum", row4_t: "Nenhum",
-                row5_f: "Port forwarding", row5_w: "Não requerido", row5_c: "Não requerido", row5_t: "Não requerido",
-                row6_f: "HTTPS", row6_w: "Incluso grátis", row6_c: "Incluso grátis", row6_t: "Pago para domínio próprio",
-                row7_f: "Protocolos", row7_w: "Apenas HTTP", row7_c: "Apenas HTTP", row7_t: "Suporta TCP, UDP, SSH",
-                row8_f: "Recursos", row8_w: "Médios (~50MB)", row8_c: "Baixos (~10MB)", row8_t: "Médios (~30MB)",
-                row9_f: "Domínio próprio", row9_w: "Não (apenas via caminho)", row9_c: "Não (apenas via caminho)", row9_t: "Sim (pago)",
-                row10_f: "Velocidade / Latência", row10_w: "Média (polling 2s)", row10_c: "Média (polling 2s)", row10_t: "Muito rápida (milissegundos)",
-                row11_f: "Privacidade das requisições", row11_w: "Baixa (requisições em claro)", row11_c: "Média (respostas criptografadas XOR, requisições salvas)", row11_t: "Alta (criptografia E2E, Socket)"
-            },
-            ko: {
-                home_title: "WebTNX: 설치가 필요 없는 HTTP 터널",
-                home_desc: "로컬 개발 서버를 인터넷에 노출하세요. 장치 설정이나 프로그램 설치, 가입이 필요 없습니다.",
-                btn_create: "지금 바로 시작하기",
-                title_what: "HTTP 터널이란 무엇인가요?",
-                desc_what: "HTTP 터널은 NAT나 방화벽 뒤에 있는 로컬 서버를 인터넷에 공개할 수 있는 기술입니다.",
-                subtitle_why: "로컬 IP를 직접 공개하면 안 되는 이유는 무엇인가요?",
-                why_r1_title: "공인 IP 없음 (CGNAT)",
-                why_r1_desc: "대부분의 홈 인터넷은 CGNAT를 사용하므로, 외부에서 직접 PC에 접근할 수 없습니다.",
-                why_r2_title: "라우터 및 방화벽 차단",
-                why_r2_desc: "공유기가 외부 접근을 차단하므로 복잡한 포트포워딩 설정이 필요합니다.",
-                why_r3_title: "ISP 포트 제한",
-                why_r3_desc: "인터넷 제공업체(ISP)는 주거용 웹 호스팅을 방지하기 위해 80, 443 등의 표준 포트를 차단하여 직접 노출을 불가능하게 만듭니다.",
-                why_r4_title: "SSL/HTTPS 암호화 없음",
-                why_r4_desc: "raw 포트는 보안 암호화가 없어 최신 Web API 연동이 불가능합니다.",
-                why_r5_title: "글로벌 포트 스캔 및 자동 봇 탐침",
-                why_r5_desc: "악성 봇넷이 몇 분 안에 전 세계의 열려 있는 포트를 스캔하여 자동 무차별 대입 공격 및 악성 익스플로잇 코드를 직접 실행합니다.",
-                why_r6_title: "내부망 횡적 이동 및 감염 위협",
-                why_r6_desc: "열린 포트를 통해 로컬 컴퓨터가 해킹당하면, 해커가 이 기기를 거점으로 삼아 동일 망의 다른 컴퓨터나 주변 장치까지 횡적 이동하여 감염을 확산시킵니다.",
-                
-                title_flow: "How WebTNX Works",
-                step1_title: "1. 방문자 요청", step1_desc: "방문자가 WebTNX 링크에 접속합니다.",
-                step2_title: "2. 연결 보류", step2_desc: "서버는 32-byte Request ID를 생성하고 연결을 일시적으로 보류합니다.",
-                step3_title: "3. api/reqs 폴링", step3_desc: "에이전트가 2초마다 요청을 가져가고, JSON 파일을 즉시 비웁니다.",
-                step4_title: "4. Keep-Alive와 가져오기", step4_desc: "Keep-Alive를 전송하여 서버 연결을 유지한 뒤 localhost를 호출합니다.",
-                step5_title: "5. XOR 암호화", step5_desc: "로컬 응답을 받은 뒤, 동적 비밀 키를 사용하여 UTF-8 XOR 암호화를 수행합니다.",
-                step6_title: "6. api/res 전송 및 디코딩", step6_desc: "암호화된 데이터를 서버로 보내면, 서버가 디코딩하여 방문자에게 반환합니다.",
-
-                title_local: "로컬 설정 방법",
-                local_li1: "로컬 애플리케이션 실행 (예: localhost:8080)",
-                local_li2: "CORS 허용 (웹 에이전트만 필요)",
-                cors_node_title: "Express CORS 설정 예시:",
-                cors_python_title: "FastAPI CORS 설정 예시:",
-                local_li3: "웹 에이전트의 경우 브라우저 탭을 열어두고, CLI의 경우 터미널을 실행해 두세요.",
-                title_vs: "WebTNX vs 기존 터널 비교",
-                th_feature: "특징", th_web: "WebTNX (Web)", th_cli: "WebTNX (CLI)", th_traditional: "기존 (ngrok 등)",
-                row1_f: "설치", row1_w: "없음 (브라우저)", row1_c: "가벼운 CLI / 스크립트", row1_t: "CLI 프로그램 다운로드 필요",
-                row2_f: "가입", row2_w: "불필요", row2_c: "불필요", row2_t: "필수",
-                row3_f: "CORS 제한", row3_w: "필수 (샌드박스 보안)", row3_c: "없음 (원격 우회)", row3_t: "없음 (원격 우회)",
-                row4_f: "브라우저 샌드박스", row4_w: "샌드박스 보호", row4_c: "없음 (OS 실행)", row4_t: "없음 (OS 실행)",
-                row5_f: "포트 포워딩", row5_w: "불필요", row5_c: "불필요", row5_t: "불필요",
-                row6_f: "HTTPS", row6_w: "표준 제공", row6_c: "표준 제공", row6_t: "유료 커스텀",
-                row7_f: "프로토콜", row7_w: "HTTP/HTTPS만", row7_c: "HTTP/HTTPS만", row7_t: "TCP, UDP, SSH 등",
-                row8_f: "로컬 리소스", row8_w: "보통 (~50MB 탭)", row8_c: "매우 낮음 (~10MB)", row8_t: "보통 (~30MB)",
-                row9_f: "커스텀 도메인", row9_w: "지원하지 않음 (경로 기반만 지원)", row9_c: "지원하지 않음 (경로 기반만 지원)", row9_t: "지원 (유료 결제 시)",
-                row10_f: "반응 속도", row10_w: "보통 (2초 폴링에 따른 물리 지연)", row10_c: "보통 (2초 폴링에 따른 물리 지연)", row10_t: "매우 빠름 (지속성 소켓, 밀리초 단위)",
-                row11_f: "요청 프라이버시", row11_w: "낮음 (평문 요청 전송, ID가 노출되면 탈취 가능)", row11_c: "보통 (응답은 XOR 암호화되나 요청은 서버에 임시 기록됨)",
-                row11_t: "매우 높음 (소켓 기반 전구간 암호화, 파일 비저장)"
             }
         };
 
@@ -674,6 +430,8 @@
             document.getElementById('home-title').innerText = data.home_title;
             document.getElementById('home-desc').innerText = data.home_desc;
             document.getElementById('btn-create').innerText = data.btn_create;
+
+            document.getElementById('nav-docs').innerText = data.nav_docs;
 
             // 1. What
             document.getElementById('title-what').innerText = data.title_what;
@@ -712,8 +470,7 @@
             document.getElementById('title-local').innerText = data.title_local;
             document.getElementById('local-li1').innerHTML = data.local_li1;
             document.getElementById('local-li2').innerHTML = data.local_li2;
-            document.getElementById('cors-node-title').innerText = data.cors_node_title;
-            document.getElementById('cors-python-title').innerText = data.cors_python_title;
+            document.getElementById('cors-headers-desc').innerText = data.cors_headers_desc;
             document.getElementById('local-li3').innerHTML = data.local_li3;
 
             // 4. VS Table
