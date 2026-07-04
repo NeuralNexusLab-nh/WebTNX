@@ -30,7 +30,7 @@ function isValidTunnelId(id) {
     
     const reservedIds = [
         'api', 'create', 'tunnel', 'timeout', 'license', 
-        'index', 'requests', 'ids', 'data', 'favicon', 'static', 'download', 'docs
+        'index', 'requests', 'ids', 'data', 'favicon', 'static', 'download', 'docs'
     ];
     if (reservedIds.includes(id.toLowerCase())) return false;
     return true;
