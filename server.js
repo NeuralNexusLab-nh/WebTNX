@@ -30,7 +30,7 @@ function isValidTunnelId(id) {
     
     const reservedIds = [
         'api', 'create', 'tunnel', 'timeout', 'license', 
-        'index', 'requests', 'ids', 'data', 'favicon', 'static', 'download'
+        'index', 'requests', 'ids', 'data', 'favicon', 'static', 'download', 'docs
     ];
     if (reservedIds.includes(id.toLowerCase())) return false;
     return true;
@@ -42,6 +42,8 @@ app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'pages', 'index.htm
 app.get('/create', (req, res) => res.sendFile(path.join(__dirname, 'pages', 'create.html')));
 app.get('/tunnel', (req, res) => res.sendFile(path.join(__dirname, 'pages', 'tunnel.html')));
 app.get('/download', (req, res) => res.sendFile(path.join(__dirname, 'pages', 'download.html')));
+app.get('/docs', (req, res) => res.sendFile(path.join(__dirname, 'pages', 'docs.html')));
+
 
 app.get('/download/windows', (req, res) => {
     const filePath = path.join(__dirname, 'webtnx.exe');
