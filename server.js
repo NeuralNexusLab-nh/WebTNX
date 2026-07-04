@@ -53,9 +53,9 @@ app.get('/download/windows', (req, res) => {
 });
 
 app.get('/download/unix', (req, res) => {
-    const filePath = path.join(__dirname, 'webtnx');
+    const filePath = path.join(__dirname, 'webtnx.sh');
     if (fs.existsSync(filePath)) {
-        res.download(filePath, 'webtnx');
+        res.download(filePath, 'webtnx.sh');
     } else {
         res.status(404).send('webtnx shell script is currently not placed on server. Please consult admin.');
     }
