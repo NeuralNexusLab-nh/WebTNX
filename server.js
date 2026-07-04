@@ -23,11 +23,52 @@ if (!fs.existsSync(idsPath)) fs.writeFileSync(idsPath, '{}');
 
 const pendingRequests = new Map();
 
+function isValidTunnelId(id) {
+    if (!id || typeof id !== 'string') return false;
+    const safeIdRegex = /^[a-zA-Z0-9-_]+$/;
+    if (!safeIdRegex.test(id)) return false;
+    
+    const reservedIds = [
+        'api', 'create', 'tunnel', 'timeout', 'license', 
+        'index', 'requests', 'ids', 'data', 'favicon', 'static', 'download'
+    ];
+    if (reservedIds.includes(id.toLowerCase())) return false;
+    return true;
+}
+
 app.use(express.static(path.join(__dirname, 'pages')));
 
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'pages', 'index.html')));
 app.get('/create', (req, res) => res.sendFile(path.join(__dirname, 'pages', 'create.html')));
 app.get('/tunnel', (req, res) => res.sendFile(path.join(__dirname, 'pages', 'tunnel.html')));
+app.get('/download', (req, res) => res.sendFile(path.join(__dirname, 'pages', 'download.html')));
+
+app.get('/download/windows', (req, res) => {
+    const filePath = path.join(__dirname, 'webtnx.exe');
+    if (fs.existsSync(filePath)) {
+        res.download(filePath, 'webtnx.exe');
+    } else {
+        res.status(404).send('webtnx.exe is currently not built on server. Please consult admin.');
+    }
+});
+
+app.get('/download/unix', (req, res) => {
+    const filePath = path.join(__dirname, 'webtnx');
+    if (fs.existsSync(filePath)) {
+        res.download(filePath, 'webtnx');
+    } else {
+        res.status(404).send('webtnx shell script is currently not placed on server. Please consult admin.');
+    }
+});
+
+app.get('/download/python', (req, res) => {
+    const filePath = path.join(__dirname, 'webtnx.py');
+    if (fs.existsSync(filePath)) {
+        res.download(filePath, 'webtnx.py');
+    } else {
+        res.status(404).send('webtnx.py is currently not placed on server. Please consult admin.');
+    }
+});
 
 function xorDecrypt(base64Text, key) {
     const encryptedBytes = Buffer.from(base64Text, 'base64');
@@ -52,25 +93,10 @@ function rewriteUrls(content, tunnelId) {
     return rewritten;
 }
 
-function isValidTunnelId(id) {
-    if (!id || typeof id !== 'string') return false;
-    const safeIdRegex = /^[a-zA-Z0-9-_]+$/;
-    if (!safeIdRegex.test(id)) {
-        return false;
-    }
-    const reservedIds = [
-        'api', 'create', 'tunnel', 'timeout', 'license', 
-        'index', 'requests', 'ids', 'data', 'favicon', 'static'
-    ];
-    if (reservedIds.includes(id.toLowerCase())) {
-        return false;
-    }
-    return true;
-}
-
 app.post('/api/register', (req, res) => {
     const { id, port, timeout } = req.body;
     if (!id || !port) return res.status(400).json({ success: false, reason: 'invalid' });
+
     if (!isValidTunnelId(id)) {
         return res.status(400).json({ success: false, reason: 'malicious_or_reserved_id' });
     }
@@ -93,6 +119,11 @@ app.post('/api/register', (req, res) => {
 
 app.post('/api/reqs', (req, res) => {
     const { id } = req.body;
+
+    if (!isValidTunnelId(id)) {
+        return res.status(400).json({ error: 'Invalid ID format or reserved' });
+    }
+
     if (!id) return res.status(400).json({ error: 'Missing ID' });
 
     const ids = JSON.parse(fs.readFileSync(idsPath, 'utf8'));
@@ -165,7 +196,7 @@ app.post('/api/res', (req, res) => {
 app.get('/:tunnelId', (req, res, next) => {
     const { tunnelId } = req.params;
 
-    if (['tunnel', 'api', 'create', 'timeout'].includes(tunnelId) || req.path === '/' || req.path === '/index.html') {
+    if (['tunnel', 'api', 'create', 'timeout', 'download'].includes(tunnelId) || req.path === '/' || req.path === '/index.html') {
         return next();
     }
 
@@ -178,7 +209,7 @@ app.get('/:tunnelId', (req, res, next) => {
 
 app.all('/:tunnelId/*', (req, res, next) => {
     const { tunnelId } = req.params;
-    if (['tunnel', 'api', 'create', 'timeout'].includes(tunnelId) || req.path === '/' || req.path === '/index.html') {
+    if (['tunnel', 'api', 'create', 'timeout', 'download'].includes(tunnelId) || req.path === '/' || req.path === '/index.html') {
         return next();
     }
 
