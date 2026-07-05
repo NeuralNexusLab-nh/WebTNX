@@ -4,53 +4,73 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WebTNX - Configure Tunnel</title>
+    <!-- Font Awesome 全域圖標 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: #f8f9fa; color: #333; margin: 0; padding: 0; display: flex; flex-direction: column; min-height: 100vh; }
         header { display: flex; justify-content: space-between; align-items: center; padding: 20px 40px; background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
         .logo { font-size: 1.5rem; font-weight: bold; color: #007bff; text-decoration: none; }
-        select { padding: 6px 12px; border-radius: 4px; border: 1px solid #ced4da; font-size: 0.9rem; outline: none; cursor: pointer; }
+        .logo i { margin-right: 8px; }
+        .nav-right { display: flex; align-items: center; gap: 15px; }
+        .github-btn { display: inline-block; text-decoration: none; background: #24292e; color: white; padding: 8px 16px; border-radius: 4px; font-size: 0.9rem; font-weight: 500; transition: background 0.2s; }
+        .github-btn:hover { background: #1b1f23; }
+        .github-btn i { margin-right: 6px; }
+        .docs-btn { display: inline-block; text-decoration: none; background: #e9ecef; color: #495057; padding: 8px 16px; border-radius: 4px; font-size: 0.9rem; font-weight: 500; transition: background 0.2s; }
+        .docs-btn:hover { background: #dee2e6; }
+        .docs-btn i { margin-right: 6px; }
+        select { padding: 8px 12px; border-radius: 4px; border: 1px solid #ced4da; font-size: 0.9rem; outline: none; cursor: pointer; }
         .form-container { flex: 1; display: flex; justify-content: center; align-items: center; padding: 20px; }
         .card { background: white; padding: 40px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); width: 100%; max-width: 450px; }
         h2 { margin-top: 0; margin-bottom: 24px; color: #212529; text-align: center; }
+        h2 i { margin-right: 10px; color: #007bff; }
         .form-group { margin-bottom: 20px; }
         label { display: block; margin-bottom: 8px; font-weight: 500; color: #495057; }
+        label i { margin-right: 6px; color: #6c757d; }
         input { width: 100%; padding: 10px; border: 1px solid #ced4da; border-radius: 4px; box-sizing: border-box; font-size: 1rem; outline: none; }
         input:focus { border-color: #007bff; }
         .btn-submit { width: 100%; background: #007bff; color: white; border: none; padding: 12px; border-radius: 4px; font-size: 1rem; font-weight: bold; cursor: pointer; transition: background 0.2s; }
         .btn-submit:hover { background: #0056b3; }
+        .btn-submit i { margin-right: 8px; }
+        .ssl-note { font-size: 0.8rem; color: #28a745; text-align: center; margin-top: 15px; }
+        .ssl-note i { margin-right: 4px; }
     </style>
 </head>
 <body>
     <header>
-        <a href="/" class="logo">WebTNX</a>
-        <select id="lang-select" onchange="changeLanguage(this.value)">
-            <option value="en">English</option>
-            <option value="zh-TW">繁體中文</option>
-            <option value="ja">日本語</option>
-            <option value="fr">Français</option>
-            <option value="it">Italiano</option>
-            <option value="pt">Português</option>
-            <option value="ko">한국어</option>
-        </select>
+        <a href="/" class="logo"><i class="fa-solid fa-cloud-bolt"></i>WebTNX</a>
+        <div class="nav-right">
+            <a href="https://github.com/NeuralNexusLab-nh/WebTNX/tree/main" id="nav-github" class="github-btn" target="_blank"><i class="fa-brands fa-github"></i>GitHub</a>
+            <a href="/docs" id="nav-docs" class="docs-btn"><i class="fa-solid fa-file-lines"></i>Documentation</a>
+            <select id="lang-select" onchange="changeLanguage(this.value)">
+                <option value="en">English</option>
+                <option value="zh-TW">繁體中文</option>
+                <option value="ja">日本語</option>
+                <option value="fr">Français</option>
+                <option value="it">Italiano</option>
+                <option value="pt">Português</option>
+                <option value="ko">한국어</option>
+            </select>
+        </div>
     </header>
     <div class="form-container">
         <div class="card">
-            <h2 id="create-title">Configure Your Tunnel</h2>
+            <h2 id="create-title"><i class="fa-solid fa-gears"></i>Configure Your Tunnel</h2>
             <form onsubmit="handleSubmit(event)">
                 <div class="form-group">
-                    <label id="label-id" for="tunnel-id">Desired Tunnel ID</label>
+                    <label id="label-id" for="tunnel-id"><i class="fa-solid fa-fingerprint"></i>Desired Tunnel ID</label>
                     <input type="text" id="tunnel-id" required placeholder="e.g. my-app">
                 </div>
                 <div class="form-group">
-                    <label id="label-port" for="local-port">Local Server Port</label>
+                    <label id="label-port" for="local-port"><i class="fa-solid fa-ethernet"></i>Local Server Port</label>
                     <input type="number" id="local-port" required placeholder="e.g. 8080" value="8080">
                 </div>
                 <div class="form-group">
-                    <label id="label-timeout" for="timeout">Timeout (Seconds)</label>
+                    <label id="label-timeout" for="timeout"><i class="fa-solid fa-stopwatch"></i>Timeout (Seconds)</label>
                     <input type="number" id="timeout" required placeholder="e.g. 15" value="15">
                 </div>
-                <button type="submit" class="btn-submit" id="btn-start">Start Tunneling</button>
+                <button type="submit" class="btn-submit" id="btn-start"><i class="fa-solid fa-rocket"></i>Start Tunneling</button>
             </form>
+            <div class="ssl-note" id="ssl-text"><i class="fa-solid fa-shield-halved"></i>Protected by End-to-End SSL/TLS Secure Channel</div>
         </div>
     </div>
 
@@ -61,49 +81,56 @@
                 label_id: "Desired Tunnel ID",
                 label_port: "Local Server Port",
                 label_timeout: "Timeout (Seconds)",
-                btn_start: "Start Tunneling"
+                btn_start: "Start Tunneling",
+                ssl_text: "Protected by End-to-End SSL/TLS Secure Channel"
             },
             "zh-TW": {
-                create_title: "設定您的隧道",
+                create_title: "設定您的穿梭隧道",
                 label_id: "想要的網站 ID",
                 label_port: "本機服務 Port",
                 label_timeout: "逾時時間 (秒)",
-                btn_start: "啟動隧道"
+                btn_start: "啟動穿梭隧道",
+                ssl_text: "已受端對端 SSL/TLS 安全加密與雙層數據混淆保護"
             },
             ja: {
                 create_title: "トンネルの設定",
                 label_id: "希望するトンネルID",
-                label_port: "ローカルサーバーのポート",
+                local_port: "ローカルサービスポート",
                 label_timeout: "タイムアウト（秒）",
-                btn_start: "トンネルを開始"
+                btn_start: "トンネルを開始",
+                ssl_text: "エンドツーエンドのSSL/TLS安全な暗号化によって保護されています"
             },
             fr: {
                 create_title: "Configurer votre tunnel",
                 label_id: "ID de tunnel souhaité",
                 label_port: "Port du serveur local",
                 label_timeout: "Délai d'attente (secondes)",
-                btn_start: "Démarrer le tunnel"
+                btn_start: "Démarrer le tunnel",
+                ssl_text: "Protégé par un canal sécurisé SSL/TLS de bout en bout"
             },
             it: {
                 create_title: "Configura il tuo tunnel",
                 label_id: "ID del tunnel desiderato",
                 label_port: "Porta del server locale",
                 label_timeout: "Timeout (secondi)",
-                btn_start: "Avvia tunnel"
+                btn_start: "Avvia tunnel",
+                ssl_text: "Protetto da canale sicuro SSL/TLS end-to-end"
             },
             pt: {
                 create_title: "Configurar seu túnel",
                 label_id: "ID de túnel desejado",
                 label_port: "Porta do servidor local",
                 label_timeout: "Tempo limite (segundos)",
-                btn_start: "Iniciar túnel"
+                btn_start: "Iniciar túnel",
+                ssl_text: "Protegido por canal seguro SSL/TLS ponta a ponta"
             },
             ko: {
                 create_title: "터널 설정하기",
                 label_id: "원하는 터널 ID",
                 label_port: "로컬 서버 포트",
                 label_timeout: "제한 시간(초)",
-                btn_start: "터널 시작하기"
+                btn_start: "터널 시작하기",
+                ssl_text: "종단간 SSL/TLS 보안 채널 및 이중 데이터 난독화로 보호됨"
             }
         };
 
@@ -111,11 +138,12 @@
             localStorage.setItem('webtnx_lang', lang);
             document.getElementById('lang-select').value = lang;
             const data = i18n[lang] || i18n['en'];
-            document.getElementById('create-title').innerText = data.create_title;
-            document.getElementById('label-id').innerText = data.label_id;
-            document.getElementById('label-port').innerText = data.label_port;
-            document.getElementById('label-timeout').innerText = data.label_timeout;
-            document.getElementById('btn-start').innerText = data.btn_start;
+            document.getElementById('create-title').innerHTML = `<i class="fa-solid fa-gears"></i>${data.create_title}`;
+            document.getElementById('label-id').innerHTML = `<i class="fa-solid fa-fingerprint"></i>${data.label_id}`;
+            document.getElementById('label-port').innerHTML = `<i class="fa-solid fa-ethernet"></i>${data.label_port}`;
+            document.getElementById('label-timeout').innerHTML = `<i class="fa-solid fa-stopwatch"></i>${data.label_timeout}`;
+            document.getElementById('btn-start').innerHTML = `<i class="fa-solid fa-rocket"></i>${data.btn_start}`;
+            document.getElementById('ssl-text').innerHTML = `<i class="fa-solid fa-shield-halved"></i>${data.ssl_text}`;
         }
 
         function handleSubmit(e) {
