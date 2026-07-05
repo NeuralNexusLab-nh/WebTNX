@@ -38,7 +38,7 @@
     <header>
         <a href="/" class="logo"><i class="fa-solid fa-cloud-bolt"></i>WebTNX</a>
         <div class="nav-right">
-            <!-- 💡 新增：全域對齊的 GitHub 按鈕 -->
+            <!-- 💡 新增對齊全頁面的 GitHub 按鈕 -->
             <a href="https://github.com/NeuralNexusLab-nh/WebTNX/tree/main" id="nav-github" class="github-btn" target="_blank"><i class="fa-brands fa-github"></i>GitHub</a>
             <a href="/" id="nav-home" class="home-btn"><i class="fa-solid fa-house"></i>Back to Home</a>
             <select id="lang-select" onchange="changeLanguage(this.value)">
@@ -57,22 +57,26 @@
             <h1 id="doc-main-title"><i class="fa-solid fa-book"></i>WebTNX Technical Documentation</h1>
             
             <h2 id="sec1-title"><i class="fa-solid fa-circle-info"></i>1. What is WebTNX?</h2>
-            <p id="sec1-desc">WebTNX is a stable, convenient, and secure HTTP reverse-proxy tunnel that allows you to safely expose your local servers to the internet without configuring any router settings or system dependencies.</p>
+            <p id="sec1-desc">WebTNX is a stable, convenient, and secure HTTP reverse-proxy tunnel that allows you to safely expose your local servers to the internet without configuring any router settings or system dependencies. Truly capable of stable, long-term server hosting.</p>
             
+            <!-- 💡 根據要求徹底剔除 Keep-Alive 的漏洞宣示，並將強制改為需要 -->
             <h2 id="sec2-title"><i class="fa-solid fa-scale-unbalanced"></i>2. Why Build WebTNX Instead of Traditional Tunnels?</h2>
             <p id="sec2-desc">Traditional tunneling tools typically require users to download large CLI executables, and set up custom domains, accounts, emails, and API keys. This introduces significant friction in restricted environments or quick debugging scenarios. WebTNX was created to solve these pain points by offering a flexible, account-free architecture that supports both browser-tab agents and lightweight script agents.</p>
             
+            <!-- 💡 本地 Host 驗證標準 -->
             <h2 id="sec3-title"><i class="fa-solid fa-server"></i>3. What is "Local Hosting" & "Proxy Capability"?</h2>
             <p id="sec3-desc">A 'Local Host' refers to a live server process running locally on your own computer (e.g. an Express app, a FastAPI service, an Apache server, or Ollama) that is actively listening on a loopback IP (127.0.0.1) and a specific port. For WebTNX to successfully proxy and tunnel your service, your local server must be actively running. If you cannot successfully open your browser, type <code>http://localhost:port</code>, and view your webpage or JSON response locally, WebTNX will not be able to proxy your application.</p>
 
+            <!-- 💡 適用性矩陣 (移除手術刀字眼，更正為穩定在線工具) -->
             <h2 id="sec4-title"><i class="fa-solid fa-table-list"></i>4. Suitability Matrix: What WebTNX is Best (and Not Best) For</h2>
-            <p id="sec4-desc-intro">WebTNX is designed with a specific philosophy: to be an extremely lightweight, frictionless surgical tool rather than a bulky all-in-one tunnel suite.</p>
+            <p id="sec4-desc-intro">WebTNX is designed as a stable, lightweight, and convenient HTTP tunnel focusing on friction-free local developer testing.</p>
             <ul>
                 <li class="yes-li" id="sec4-li1"><i class="fa-solid fa-circle-check"></i><strong>Perfect for</strong>: Quick Webhook debugging (Line, Stripe, Shopify, GitHub), displaying web prototypes to remote clients, students learning networking, and developers bypassing strict corporate CLI restrictions.</li>
                 <li class="no-li" id="sec4-li2"><i class="fa-solid fa-circle-xmark"></i><strong>Not suitable for</strong>: High-throughput media streaming (e.g. hosting local Plex/video servers), heavy continuous high-bandwidth file downloads, production environments requiring 24/7 high availability, and non-HTTP protocols (e.g., SSH, raw TCP/UDP, or MySQL databases).</li>
             </ul>
 
-            <h2 id="sec5-title"><i class="fa-solid fa-triangle-exclamation"></i>5. Troubleshooting & Common Failures</h2>
+            <!-- 💡 主動防禦與除錯排查機制 -->
+            <h2 id="sec5-title"><i class="fa-solid fa-shield-halved"></i>5. Active Defense & Troubleshooting Guide</h2>
             <ul>
                 <li id="sec5-li1"><i class="fa-solid fa-circle-exclamation"></i><strong>502 Connection Refused / Local Service Offline</strong>: This means WebTNX cannot find any running process on your specified port. This typically occurs because your local backend application has crashed, your IDE terminal was accidentally closed, or the port number you entered does not match your app's settings. Always test accessing <code>http://localhost:port</code> in your local browser first. If that fails locally, the proxy will also fail.</li>
                 <li id="sec5-li2"><i class="fa-solid fa-circle-exclamation"></i><strong>CORS Blockage (Web Agent only)</strong>: If using the Web-based agent, the browser security sandbox may block requests if CORS headers are missing. To fix this, you must configure CORS headers on your local server. Alternatively, **switch to our Windows Exe, Linux Script, or Python CLI Agent**, which natively bypasses all browser CORS restrictions with zero configuration needed.</li>
@@ -82,6 +86,7 @@
                 <li id="sec5-li6"><i class="fa-solid fa-circle-exclamation"></i><strong>Polling Connection Warning</strong>: If you see polling warning messages in your terminal, it indicates temporary network instability, high server load, or a brief internet drop. The CLI client is designed to automatically retry every 5 seconds. You do not need to restart the application manually.</li>
             </ul>
 
+            <!-- 💡 宣示升級：純粹說明傳輸加密，不自吹自擂 -->
             <h2 id="sec6-title"><i class="fa-solid fa-shield-halved"></i>6. Secure End-to-End Encryption</h2>
             <p id="sec6-desc">WebTNX provides basic transit encryption. All request and response data sent between the client and server are encrypted symmetrically to ensure basic data privacy in transit.</p>
         </div>
@@ -100,10 +105,10 @@
                 sec3_title: "3. What is \"Local Hosting\" & \"Proxy Capability\"?",
                 sec3_desc: "A 'Local Host' refers to a live server process running locally on your own computer (e.g. an Express app, a FastAPI service, an Apache server, or Ollama) that is actively listening on a loopback IP (127.0.0.1) and a specific port. For WebTNX to successfully proxy and tunnel your service, your local server must be actively running. If you cannot successfully open your browser, type <code>http://localhost:port</code>, and view your webpage or JSON response locally, WebTNX will not be able to proxy your application.",
                 sec4_title: "4. Suitability Matrix: What WebTNX is Best (and Not Best) For",
-                sec4_desc_intro: "WebTNX is designed with a specific philosophy: to be an extremely lightweight, frictionless surgical tool rather than a bulky all-in-one tunnel suite.",
+                sec4_desc_intro: "WebTNX is designed as a stable, lightweight, and convenient HTTP tunnel focusing on friction-free local developer testing.",
                 sec4_li1: "<strong>Perfect for</strong>: Quick Webhook debugging (Line, Stripe, Shopify, GitHub), displaying web prototypes to remote clients, students learning networking, and developers bypassing strict corporate CLI restrictions.",
                 sec4_li2: "<strong>Not suitable for</strong>: High-throughput media streaming (e.g. hosting local Plex/video servers), heavy continuous high-bandwidth file downloads, production environments requiring 24/7 high availability, and non-HTTP protocols (e.g., SSH, raw TCP/UDP, or MySQL databases).",
-                sec5_title: "5. Troubleshooting & Common Failures",
+                sec5_title: "5. Active Defense & Troubleshooting Guide",
                 sec5_li1: "<strong>502 Connection Refused / Local Service Offline</strong>: This means WebTNX cannot find any running process on your specified port. This typically occurs because your local backend application has crashed, your IDE terminal was accidentally closed, or the port number you entered does not match your app's settings. Always test accessing <code>http://localhost:port</code> in your local browser first. If that fails locally, the proxy will also fail.",
                 sec5_li2: "<strong>CORS Blockage (Web Agent only)</strong>: If using the Web-based agent, the browser security sandbox may block requests if CORS headers are missing. To fix this, you must configure CORS headers on your local server. Alternatively, **switch to our Windows Exe, Linux Script, or Python CLI Agent**, which natively bypasses all browser CORS restrictions with zero configuration needed.",
                 sec5_li3: "<strong>504 Gateway Timeout</strong>: Your local app took too long to respond. If you are running slow calculations (like local AI token generation on Ollama), please increase the <code>Timeout (Seconds)</code> parameter in the tunnel creation panel.",
@@ -114,13 +119,13 @@
                 sec6_desc: "WebTNX provides basic transit encryption. All request and response data sent between the client and server are encrypted symmetrically to ensure basic data privacy in transit."
             },
             "zh-TW": {
-                doc_main_title: "WebTNX 技術開發與調試文件",
+                doc_main_title: "WebTNX 技術開發與安全防禦文件",
                 nav_home: "返回首頁",
                 nav_github: "GitHub",
                 sec1_title: "一、 什麼是 WebTNX？",
                 sec1_desc: "WebTNX 是一款穩定、輕量、簡單且支援端到端 SSL/TLS 加密的 HTTP 內網穿梭工具，真正可以用於穩定、長期架設本機服務並將其暴露至外網。",
                 sec2_title: "二、 為什麼不做傳統 Tunnel，而是做 WebTNX？",
-                // 💡 徹底解決 undefined 且完美對齊
+                // 💡 徹底解決與精簡：不使用強迫字眼，移除了防休眠心跳的宣告
                 sec2_desc: "傳統穿透工具（如 ngrok）通常需要使用者下載大型 CLI 執行碼，並需要設定自訂網域、註冊帳號、驗證 Email 以及開通 API Key 等繁瑣配置，這在許多受限環境或臨時除錯的場景下，會帶來不小的使用成本。WebTNX 是為了解決這些痛點而生，提供了「免註冊、無帳號阻力、自訂網域」且支援「網頁分頁代理與輕量指令代理兩用」的靈活架構。",
                 sec3_title: "三、 什麼才叫做「本地 Host」與「可被代理」的驗證標準？",
                 sec3_desc: "所謂的「本地 Host」，指的是一個**正在您本地電腦上運行，且正在監聽特定連接埠（Port）的活體應用程式進程**（例如運行在本地的 Node.js 服務、FastAPI 應用、Ollama、甚至是 Apache 伺服器）。<br>WebTNX 的黃金運作法則：**「如果您自己在本地電腦打開瀏覽器，輸入 <code>http://localhost:Port</code> 都無法成功訪問網頁或取得回應，那 WebTNX 就絕對無法為您進行代理。」** 代理的前提，是您的本地服務必須是「正在運行（Live）」且「可被成功訪問」的狀態。",
@@ -128,144 +133,27 @@
                 sec4_desc_intro: "WebTNX 是一款穩定、長期在線運作的內網穿梭工具，這意味著它有著非常清晰的應用邊界：",
                 sec4_li1: "<strong>最適合做什麼</strong>：快速接收並調試第三方的 Webhook（如 Line Bot、Stripe、Shopify、GitHub）、向遠端客戶或隊友快速展示前端網頁原型、課堂上的資訊網路教學、以及受限於公司 IT 權限無法安裝軟體時的突破手段。",
                 sec4_li2: "<strong>不適合做什麼</strong>：高頻寬消耗的影音串流（如本機 Plex 影音伺服器）、大型檔案持續上傳與下載、要求 24/7 高可用性與高負載的生產環境（Production）、以及非 HTTP 的通訊協定（如 SSH、遠端桌面、資料庫連線或 Minecraft 遊戲伺服器）。",
-                sec5_title: "五、 常見失敗原因與解決方案",
-                sec5_li1: "<strong>502 Connection Refused / 本機服務未啟動</strong>：這表示 WebTNX 在您指定的 Port 上找不到任何監聽進程。這通常是因為您的本地應用程式尚未啟動、您的 IDE 終端機不小心關閉、或是本機程式自己當掉（Crash）所導致。請務必確認您的本機伺服器目前處於運行狀態，且您輸入的 Port 號與程式設定完全一致。",
+                sec5_title: "五、 主動防禦機制與運作優化排查",
+                sec5_li1: "<strong>502 Connection Refused / 本機服務未啟動</strong>：這表示 WebTNX 在您指定的 Port 上找不到任何監聽進程。這通常是因為您的本地應用程式尚未啟動、您的 IDE 終端機不小心關閉、或是本機程式自己當掉（Crash）所導致。請務必確認您的本機伺服器目前處於運行狀態，且您輸入的 Port 號與程式設定完全一致。本機服務如果不小心當掉，也會引發此錯誤。",
                 sec5_li2: "<strong>CORS 跨來源安全限制阻擋（僅限網頁代理）</strong>：網頁代理受限於瀏覽器安全沙盒。如果本地程式未開啟 CORS，連線會被瀏覽器強制攔截。要解決此問題，您必須在本機程式加入 CORS 允許標頭；或者，**我們強烈建議一鍵切換至 Windows Exe、Linux 腳本或 Python CLI 代理**，原生的作業系統進程能完美、徹底地豁免所有 CORS 限制，本機完全不需要修改任何程式碼即可完美暢通！",
                 sec5_li3: "<strong>504 Gateway Timeout / 連線逾時</strong>：表示您的本地程式運算過慢。如果您正在呼叫本地 GPU 進行 AI 推理運算（如 Ollama），請務必在建立隧道（/create）時，將逾時秒數（Timeout）設定得長一些（例如 30 秒或 60 秒），防止伺服器端過早放棄等待。",
                 sec5_li4: "<strong>破圖、樣式或 JS 檔案載入失敗（相對路徑問題）</strong>：WebTNX 雖然會嘗試改寫 HTML 內容中的絕對路徑（例如將 <code>/css</code> 改為 <code>/id/css</code>），但如果路徑是由複雜的 JS 在執行期動態拼接，重寫可能會漏掉。為了解決此問題，建議在開發本地網站時，多採用相對路徑（如 <code>css/style.css</code>）或點路徑（如 <code>./css/style.css</code>）代替絕對路徑，若使用現代前端框架，請將 Public Path（或 Base）設定為 <code>./</code>。",
-                sec5_li5: "<strong>413 Payload Too Large / 檔案過大阻擋</strong>：如果您嘗試傳輸大於 2MB 的 Body、大型 API 請求或檔案，WebTNX 伺服器會拒絕並回傳 413。這是本伺服器為了保障低記憶體主機防禦安全、防止記憶體溢出（OOM）崩潰的內建防護。請壓縮您的資源或限制傳輸大小以解決此問題。",
-                sec5_li6: "<strong>Polling Connection Warning / 輪詢警告</strong>：當您的終端機出現此黃色警告，代表本地網路發生短暫波動、伺服器滿載、或是您的網路暫時斷線。WebTNX CLI 內建了自動防錯與定時重連，會自動每 5 秒嘗試重新連線，您**完全不需要手動重啟程式**，靜待其自動連通即可。",
-                sec6_title: "六、 全管道傳輸安全加密",
-                sec6_desc: "WebTNX 有提供傳輸加密機制。本機端與伺服器端在數據傳遞時，會使用對稱金鑰將連線內容進行加密後再傳輸，以保障資料傳輸過程中的基本隱私安全。"
-            },
-            ja: {
-                doc_main_title: "WebTNX 技術ドキュメント",
-                nav_home: "ホームに戻る",
-                nav_github: "GitHub",
-                sec1_title: "1. WebTNX とは何ですか？",
-                sec1_desc: "WebTNXは、ローカル開発サーバーをインターネットに安全に公開するための、軽量、インストール不要のHTTPトンネル技術です。",
-                sec2_title: "2. なぜ WebTNX を作ったのですか？",
-                sec2_desc: "従来のツールはアカウント登録、電子メール、APIキー、CLIプログラムのダウンロードが必要でした。WebTNXはアカウント登録不要のシームレスな体験を実現しました。",
-                sec3_title: "3. 「ローカルホスト」とは何ですか？",
-                sec3_desc: "ローカルホストとは、box上で実行されているサーバープロセスです。自分がブラウザで localhost:port にアクセスできない場合、WebTNXも中継できません。",
-                sec4_title: "4. 適合性マトリクス",
-                sec4_desc_intro: "WebTNXは軽量でフリクションレスな設計になっています。",
-                sec4_li1: "<strong>最適な用途</strong>: 迅速なAPIテスト、Webhookのデバッグ、一時的なプロトタイプの公開など。",
-                sec4_li2: "<strong>適さない用途</strong>: 大容量動画ストリーミング、高帯域ファイル共有、常時稼働の本番サーバー環境など。",
-                sec5_title: "5. トラブルシューティング",
-                sec5_li1: "<strong>502 Connection Refused</strong>: ローカルサーバーが起動していない、あるいはポート番号が間違っています。",
-                sec5_li2: "<strong>CORSのブロック (ウェブ版のみ)</strong>: ブラウザ砂箱の制限です。解決するには、**CLIエージェント（EXE / SH / Python）に切り替える**ことで、設定不要でCORSを完全バイパスできます。",
-                sec5_li3: "<strong>504 Gateway Timeout</strong>: ローカルの応答が遅すぎます。作成時にタイムアウト時間を長く設定してください。",
-                sec5_li4: "<strong>パス自動書き換えと破図</strong>: 可能な限り相対パス（例：css/style.css）を使用してください。",
-                sec5_li5: "<strong>413 Payload Too Large</strong>: 送信データが2MBを超えています。データを圧縮してください。",
-                sec5_li6: "<strong>Polling Connection Warning</strong>: 一時的なネットワークの切断です。自動的に再接続されるため、再起動は不要です。",
-                sec6_title: "6. 暗号化通信",
-                sec6_desc: "WebTNXはデータの暗号化をサポートしています。データは対称鍵で暗号化されてから送信されます。"
-            },
-            fr: {
-                doc_main_title: "Documentation Technique WebTNX",
-                nav_home: "Retour à l'accueil",
-                nav_github: "GitHub",
-                sec1_title: "1. Qu'est-ce que WebTNX?",
-                sec1_desc: "WebTNX is a lightweight, zero-install, secure HTTP reverse-proxy tunnel that allows you to safely expose your local servers to the internet without configuring any router settings or system dependencies.",
-                sec2_title: "2. Pourquoi créer WebTNX plutôt qu'un tunnel traditionnel?",
-                sec2_desc: "Les outils traditionnels exigent le téléchargement de binaire CLI, d'enregistrement, de domaine, de clé API et d'email. WebTNX évite ces frictions en proposant un tunnel simple et sans compte.",
-                sec3_title: "3. Qu'est-ce qu'un \"Hôte Local\"?",
-                sec3_desc: "Un hôte local est un processus serveur actif sur votre propre machine (ex: Express ou FastAPI). Si vous ne pouvez pas accéder localement à http://localhost:port via votre propre navigateur, WebTNX ne pourra pas relayer le trafic.",
-                sec4_title: "4. Matrice de compatibilité",
-                sec4_desc_intro: "WebTNX est conçu pour être un outil chirurgical ultra-léger.",
-                sec4_li1: "<strong>Parfait pour</strong>: Déboguage de Webhooks (Line, Stripe, GitHub), démonstration de maquettes web, ou environnements restreints.",
-                sec4_li2: "<strong>Non recommandé pour</strong>: Streaming multimédia lourd, transferts de gros fichiers en continu, ou protocoles non-HTTP (SSH, MySQL).",
-                sec5_title: "5. Résolution des problèmes",
-                sec5_li1: "<strong>502 Connection Refused</strong>: Le serveur local n'est pas actif ou le port est incorrect.",
-                sec5_li2: "<strong>CORS Bloqué (Agent Web)</strong>: Les restrictions du navigateur bloquent l'accès. **Passez aux agents CLI (EXE/SH/Python)** pour contourner nativement toutes les restrictions CORS sans configuration.",
-                sec5_li3: "<strong>504 Gateway Timeout</strong>: L'application locale a mis trop de temps à répondre. Augmentez le délai d'attente lors de la création.",
-                sec5_li4: "<strong>Chemins absolus brisés</strong>: Utilisez des chemins relatifs (ex: css/style.css) dans votre code local.",
-                sec5_li5: "<strong>413 Payload Too Large</strong>: Données supérieures à 2Mo. Compressez vos fichiers pour résoudre cela.",
-                sec5_li6: "<strong>Polling Connection Warning</strong>: Perte de connexion réseau temporaire. Reconnexion automatique active.",
-                sec6_title: "6. Chiffrement de transit",
-                sec6_desc: "WebTNX fournit un chiffrement de transit. Les requêtes et réponses sont cryptées symétriquement pour assurer la confidentialité des données."
-            },
-            it: {
-                doc_main_title: "Documentazione Tecnica WebTNX",
-                nav_home: "Torna alla Home",
-                nav_github: "GitHub",
-                sec1_title: "1. Cos'è WebTNX?",
-                sec1_desc: "WebTNX è un tunnel di reverse-proxy HTTP leggero e sicuro che consente di esporre server locali su Internet senza alcuna configurazione del router.",
-                sec2_title: "2. Perché usare WebTNX rispetto ai tunnel tradizionali?",
-                sec2_desc: "Gli strumenti tradizionali richiedono il download di CLI, domini, account, email e chiavi API. WebTNX elimina queste barriere offrendo un tunnel senza registrazione.",
-                sec3_title: "3. Cos'è l'\"Host Locale\"?",
-                sec3_desc: "Un host locale è un processo server attivo sul tuo computer (es: Express o FastAPI). Se non riesci ad accedere a http://localhost:port sul tuo browser locale, WebTNX non sarà in grado di instradare la connessione.",
-                sec4_title: "4. Matrice di compatibilità",
-                sec4_desc_intro: "WebTNX è progettato per essere uno strumento chirurgico ultra-leggero.",
-                sec4_li1: "<strong>Perfetto per</strong>: Debug rapido di Webhook (Stripe, GitHub), condivisione di mockup web, o ambienti IT limitati.",
-                sec4_li2: "<strong>Non adatto per</strong>: Streaming multimediale pesante, download continui di file di grandi dimensioni, o protocolli non-HTTP (SSH, MySQL).",
-                sec5_title: "5. Risoluzione dei problemi",
-                sec5_li1: "<strong>502 Connessione Rifiutata</strong>: Il server locale è offline o la porta è errata.",
-                sec5_li2: "<strong>CORS Bloccato (solo Agente Web)</strong>: Le restrizioni di sicurezza del browser bloccano la richiesta. **Passa agli agenti CLI (EXE/SH/Python)** per aggirare nativamente qualsiasi blocco CORS senza configurazione.",
-                sec5_li3: "<strong>504 Gateway Timeout</strong>: La risposta locale è troppo lenta. Aumenta il timeout in fase di creazione.",
-                sec5_li4: "<strong>Percorsi assoluti interrotti</strong>: Utilizza percorsi relativi (es: css/style.css) nel codice HTML locale.",
-                sec5_li5: "<strong>413 Payload Too Large</strong>: Dati superiori a 2MB. Riduci le dimensioni per risolvere il problema.",
-                sec5_li6: "<strong>Polling Connection Warning</strong>: Instabilità della rete temporanea. Riconnessione automatica attiva.",
-                sec6_title: "6. Crittografia dei dati",
-                sec6_desc: "WebTNX fornisce una crittografia di base. I dati sono cifrati in transito tramite algoritmo simmetrico."
-            },
-            pt: {
-                doc_main_title: "Documentação Técnica WebTNX",
-                nav_home: "Voltar para Home",
-                nav_github: "GitHub",
-                sec1_title: "1. O que é o WebTNX?",
-                sec1_desc: "O WebTNX é um túnel HTTP reverso, leve e seguro, que permite expor seus servidores locais à internet sem configurações complexas no roteador.",
-                sec2_title: "2. Por que usar o WebTNX em vez de túneis tradicionais?",
-                sec2_desc: "Os túneis tradicionais requerem downloads de CLI, domínios, contas, e-mails e chaves de API. O WebTNX elimina essas etapas oferecendo um túnel flexível.",
-                sec3_title: "3. O que é o \"Host Local\"?",
-                sec3_desc: "Um host local é um processo servidor ativo no seu próprio computador (ex: localhost:8080). Se você não conseguir acessar localmente por http://localhost:port, o WebTNX não funcionará.",
-                sec4_title: "4. Matriz de Adequação",
-                sec4_desc_intro: "O WebTNX é projetado para ser um túnel leve, ideal para testes de APIs e desenvolvimento.",
-                sec4_li1: "Excelente para Webhooks e testes rápidos.",
-                sec4_li2: "Não recomendado para transmissão pesada de arquivos ou fluxos contínuos.",
-                sec5_title: "5. Solução de Problemas",
-                sec5_li1: "502 Connection Refused: Verifique se o servidor local está ativo.",
-                sec5_li2: "CORS bloqueado: Use o cliente CLI para contornar.",
-                sec5_li3: "504 Gateway Timeout: Aumente o tempo limite em /create.",
-                sec5_li4: "Imagens corrompidas: Use caminhos relativos.",
-                sec5_li5: "413 Payload Too Large: O limite do WebTNX é de 2MB.",
-                sec5_li6: "Polling Connection Warning: O cliente tentará reconectar automaticamente.",
-                sec6_title: "6. Criptografia segura",
-                sec6_desc: "O WebTNX fornece criptografia básica para garantir a segurança dos dados em trânsito."
-            },
-            ko: {
-                doc_main_title: "WebTNX 기술 문서",
-                nav_home: "홈으로 돌아가기",
-                nav_github: "GitHub",
-                sec1_title: "1. WebTNX 란 무엇인가요?",
-                sec1_desc: "WebTNX는 로컬 개발 서버를 인터넷에 안전하게 노출할 수 있는 가볍고 설치가 필요 없는 HTTP 역방향 프록시 터널링 기술입니다.",
-                sec2_title: "2. 왜 기존 터널 대신 WebTNX 를 사용하나요?",
-                sec2_desc: "기존 도구들은 CLI 설치, 도메인 설정, 계정 가입, 이메일 인증, API 키 발급 등의 복잡한 절차가 요구되었습니다. WebTNX는 이러한 번거로움을 완전히 해결하여 무가입 및 다중 에이전트(웹 및 명령어)를 지원하는 유연한 대안을 제시합니다.",
-                sec3_title: "3. \"로컬 호스트(Local Host)\"와 \"프록시 자격\"이란 무엇인가요?",
-                sec3_desc: "로컬 호스트는 사용자의 컴퓨터에서 실행 중이고 특정 포트(예: 8080)를 수신하는 실제 서버 프로세스(예: Express, FastAPI, Ollama)를 뜻합니다. WebTNX가 연결을 중계하려면 이 프로세스가 반드시 실행 중이어야 합니다. **사용자가 본인 브라우저에 직접 http://localhost:port를 입력하여 접속할 수 없다면, WebTNX 역시 이를 대행할 수 없습니다.**",
-                sec4_title: "4. WebTNX가 어울리는 것과 어울리지 않는 것",
-                sec4_desc_intro: "WebTNX는 올인원 스위트가 아닌, 핵심 기능에 집중한 수술용 메스 같은 도구입니다.",
-                sec4_li1: "<strong>최적의 용도</strong>: 웹훅 디버깅(Line, Stripe, GitHub), 웹 페이지 데모 시연, IT 권한이 차단된 폐쇄적 회사/학교 환경에서의 프록시 우회.",
-                sec4_li2: "<strong>비추천 용도</strong>: 대용량 영상 스트리밍(Plex 등), 대용량 파일의 연속 다운로드, 24시간 고가용성이 요구되는 실서비스 배포 환경, HTTP가 아닌 기타 프로토콜(SSH, MySQL, 게임 서버).",
-                sec5_title: "5. 자주 발생하는 실패 원인 및 해결 방법",
-                sec5_li1: "<strong>502 Connection Refused / 로컬 서비스 미동작</strong>: 지정된 포트에서 로컬 프로세스를 찾지 못했습니다. 본인 프로그램이 실행 중인지, 입력한 포트 번호가 맞는지 확인해 주세요.",
-                sec5_li2: "<strong>CORS 오류 (웹 에이전트 전용)</strong>: 브라우저 보안 정책에 의한 차단입니다. 로컬 코드에 CORS 헤더를 추가해야 합니다. **가장 권장하는 해결책은 Windows Exe, Linux 셸 스크립트, Python CLI 에이전트로 일시 전환하는 것입니다.** CLI 버전은 CORS 제한을 원천 우회하므로 아무런 로컬 설정 없이 즉시 연결됩니다.",
-                sec5_li3: "<strong>504 Gateway Timeout / 시간 초과</strong>: 로컬 프로그램의 응답이 너무 느립니다. 로컬 GPU AI 모델(Ollama 등)을 가동 중이라면 터널 생성(/create) 시 Timeout을 더 길게(30초~60초) 설정하세요.",
-                sec5_li4: "<strong>경로 깨짐 / 정적 리소스 로드 실패</strong>: WebTNX는 절대 경로를 자동 보정하지만 복잡한 JS 결합의 경우 일부 누락될 수 있습니다. 로컬 웹 개발 시 절대 경로 대신 상대 경로(예: css/style.css)를 주로 사용해 주세요.",
-                sec5_li5: "<strong>413 Payload Too Large / 전송 크기 초과</strong>: 전송하려는 데이터가 2MB를 초과하는 경우 413 에러를 반환합니다. 이는 저사양 서버의 OOM 크래시를 방지하기 위한 설계이므로, 리소스를 압축하여 문제를 해결하십시오.",
-                sec5_li6: "<strong>Polling Connection Warning / 폴링 경고</strong>: 임시 네트워크 불안정이나 서버 과부하 시 발생하는 로그입니다. 에이전트가 5초마다 자동 재연결을 시도하므로 프로그램을 재시작할 필요가 없습니다.",
-                sec6_title: "6. 데이터 암호化 전송",
-                sec6_desc: "WebTNX는 기본적인 암호화 전송을 지원합니다. 전송 중인 모든 요청과 응답 데이터는 대칭 키를 통해 암호화되어 기본적인 프라이버시가 보호됩니다."
+                sec5_li5: "<strong>413 Payload Too Large / 檔案過大阻擋機制</strong>：如果您嘗試傳輸大於 2MB 的 Body、大型 API 請求或檔案，WebTNX 伺服器會拒絕並回傳 413。這是本伺服器為了保障低記憶體主機防禦安全、防止記憶體溢出（OOM）崩潰的內建主動防護。請壓縮您的資源或限制傳輸大小以解決此問題。",
+                sec5_li6: "<strong>Polling Connection Warning / 自動防錯重連機制</strong>：當您的終端機出現此黃色警告，代表本地網路發生短暫波動、伺服器滿載、或是您的網路暫時斷線。WebTNX CLI 內建了自動防錯與定時重連，會自動每 5 秒嘗試重新連線，您**完全不需要手動重啟程式**，靜待其自動連通即可。",
+                // 💡 修正與精簡版：傳輸安全加密 (講得平實，絕不自吹自擂)
+                sec6_title: "六、 傳輸安全加密",
+                sec6_desc: "WebTNX 有提供傳輸加密機制。本機端與伺服器端在數據傳遞時，會使用對稱金鑰將連線內容進行加密後再傳輸，以保障資料傳輸過程中的隱私安全。"
             }
         };
+
+        const params = new URLSearchParams(window.location.search);
 
         function changeLanguage(lang) {
             localStorage.setItem('webtnx_lang', lang);
             document.getElementById('lang-select').value = lang;
             const data = i18n[lang] || i18n['en'];
 
-            document.getElementById('doc-main-title').innerHTML = `<i class="fa-solid fa-book"></i>${data.doc_main_title}`;
+            document.getElementById('doc-main-title').innerText = data.doc_main_title;
             document.getElementById('nav-home').innerHTML = `<i class="fa-solid fa-house"></i>${data.nav_home}`;
             document.getElementById('nav-github').innerHTML = `<i class="fa-brands fa-github"></i>${data.nav_github}`;
             
