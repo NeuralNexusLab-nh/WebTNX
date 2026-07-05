@@ -18,7 +18,7 @@
         .docs-btn { display: inline-block; text-decoration: none; background: #e9ecef; color: #495057; padding: 8px 16px; border-radius: 4px; font-size: 0.9rem; font-weight: 500; transition: background 0.2s; }
         .docs-btn:hover { background: #dee2e6; }
         .docs-btn i { margin-right: 6px; }
-        select { padding: 8px 12px; border-radius: 4px; border: 1px solid #ced4da; font-size: 0.9rem; outline: none; cursor: pointer; }
+        select { padding: 6px 12px; border-radius: 4px; border: 1px solid #ced4da; font-size: 0.9rem; outline: none; cursor: pointer; }
         .hero { display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 60px 20px 40px 20px; max-width: 800px; margin: 0 auto; }
         h1 { font-size: 2.8rem; color: #212529; margin-bottom: 20px; }
         h1 i { margin-right: 12px; color: #007bff; }
@@ -62,7 +62,9 @@
     <header>
         <a href="/" class="logo"><i class="fa-solid fa-cloud-bolt"></i>WebTNX</a>
         <div class="nav-right">
+            <!-- GitHub 按鈕 -->
             <a href="https://github.com/NeuralNexusLab-nh/WebTNX/tree/main" id="nav-github" class="github-btn" target="_blank"><i class="fa-brands fa-github"></i>GitHub</a>
+            <!-- Docs 按鈕 -->
             <a href="/docs" id="nav-docs" class="docs-btn"><i class="fa-solid fa-file-lines"></i>Documentation</a>
             <select id="lang-select" onchange="changeLanguage(this.value)">
                 <option value="en">English</option>
@@ -103,12 +105,10 @@
                     <h4><i class="fa-solid fa-lock-open"></i><span id="why-r4-title">No SSL/HTTPS Encryption</span></h4>
                     <p id="why-r4-desc">Exposing raw IP usually runs over unencrypted HTTP. Modern web platforms (like Stripe, Line Bot, or browser features like camera access) strictly require HTTPS endpoints to function.</p>
                 </div>
-                <!-- 5. 全球自動化探針 -->
                 <div class="why-card">
                     <h4><i class="fa-solid fa-bug"></i><span id="why-r5-title">Global Scanning & Bot Probing</span></h4>
                     <p id="why-r5-desc">Malicious botnets scan raw open ports globally within minutes, attempting automated brute-force attacks and executing exploit payloads directly against your machine.</p>
                 </div>
-                <!-- 6. 橫向滲透威脅 -->
                 <div class="why-card">
                     <h4><i class="fa-solid fa-network-wired"></i><span id="why-r6-title">Lateral Movement & Intranet Infections</span></h4>
                     <p id="why-r6-desc">If your local computer is compromised through an exposed port, hackers can use it as a pivot to move laterally across your home or corporate local network, infecting other connected devices.</p>
@@ -233,12 +233,11 @@
                             <td id="row10-c" style="color:#dc3545; font-weight:500;">Moderate (~1-2s polling delay)</td>
                             <td id="row10-t" style="color:#28a745; font-weight:500;">Extremely Fast (Millisecond-level)</td>
                         </tr>
-                        <!-- 💡 資安宣示升級為 SSL/TLS -->
                         <tr>
                             <td class="feature-name" id="row11-f"><strong>Request Privacy</strong></td>
                             <td id="row11-w" style="color:#28a745; font-weight:500;">High (HTTPS standard encrypted channel)</td>
-                            <td id="row11-c" style="color:#28a745; font-weight:500;">Excellent (SSL/TLS + XOR Obfuscation)</td>
-                            <td id="row11-t" style="color:#28a745; font-weight:500;">Excellent (E2E encryption, secure socket)</td>
+                            <td id="row11-v" style="color:#28a745; font-weight:500;">Excellent (SSL/TLS + Symmetric Encryption)</td>
+                            <td id="row11-t" style="color:#28a745; font-weight:500;">High (E2E encryption, secure socket)</td>
                         </tr>
                         <tr>
                             <td class="feature-name" id="row8-f"><strong>Local RAM</strong></td>
@@ -251,6 +250,12 @@
             </div>
         </div>
 
+        <!-- 💡 新增：漂亮的 5. 使用條款與隱私權保護政策 (Padlock 綠色邊框卡片) -->
+        <div class="section-block" style="border-top: 3px solid #28a745;">
+            <h2 id="title-terms"><i class="fa-solid fa-user-shield" style="color:#28a745;"></i>Terms of Use & Privacy Policy</h2>
+            <p id="desc-terms">NeuralNexusLab strictly values user privacy. We will <strong>never proactively</strong> transmit, sell, or share any of your private data (including your public/local IP, local port numbers, request headers, or transmitted content/payloads) to any third party in any form. All transmitted payloads and queued requests are stored <strong>only temporarily</strong> on the WebTNX server. They are automatically and permanently deleted from our server files the moment your local agent stops polling or the tunnel expires (within 20 seconds of inactivity).</p>
+        </div>
+
     </div>
 
     <script>
@@ -260,6 +265,7 @@
                 home_desc: "Expose your local development server to the internet. Similar to ngrok, but absolutely free, extremely convenient, and requires no registration. Just use a browser tab or a simple command as your tunnel agent.",
                 btn_create: "Get Started Now",
                 nav_docs: "Documentation",
+                nav_github: "GitHub",
                 title_what: "What is an HTTP Tunnel?",
                 desc_what: "An HTTP tunnel is a technology that allows you to expose a local server (running behind NATs, firewalls, or without a public IP) to the public internet. It assigns a secure public URL to your local project, allowing external users or APIs (like Webhook senders) to connect directly to your local application from anywhere in the world.",
                 subtitle_why: "Why can't I just expose my local IP directly?",
@@ -342,14 +348,17 @@
                 row10_t: "Extremely Fast (Millisecond-level)",
                 row11_f: "<strong>Request Privacy</strong>",
                 row11_w: "High (HTTPS standard encrypted channel)",
-                row11_c: "Excellent (SSL/TLS + XOR Obfuscation)",
-                row11_t: "High (E2E encryption, secure socket)"
+                row11_v: "Excellent (SSL/TLS + Symmetric Encryption)",
+                row11_t: "High (E2E encryption, secure socket)",
+                title_terms: "Terms of Use & Privacy Policy",
+                desc_terms: "NeuralNexusLab strictly values user privacy. We will <strong>never proactively</strong> transmit, sell, or share any of your private data (including your public/local IP, local port numbers, request headers, or transmitted content/payloads) to any third party in any form. All transmitted payloads and queued requests are stored <strong>only temporarily</strong> on the WebTNX server. They are automatically and permanently deleted from our server files the moment your local agent stops polling or the tunnel expires (within 20 seconds of inactivity)."
             },
             "zh-TW": {
-                home_title: "WebTNX：穩定且輕量的 HTTP 內網穿透工具",
-                home_desc: "將您的本地開發伺服器發布到公網。類似 ngrok，但完全免費、便利、輕量，不需註冊。只需打開一個瀏覽器分頁或一條簡單指令即可充當隧道代理。",
+                home_title: "WebTNX：穩定且輕量的 HTTP 內網穿梭工具",
+                home_desc: "將您的本地開發伺服器發布到公網。類似 ngrok，但完全免費、便利、輕量，不需註冊。只需打開一個瀏覽器分頁或一條簡單指令即可充當隧道代理，真正可以用於穩定、長期架設伺服器。",
                 btn_create: "立即開始體驗",
                 nav_docs: "技術文件",
+                nav_github: "GitHub",
                 title_what: "什麼是 HTTP 隧道？",
                 desc_what: "HTTP 隧道技術能讓您將運行在本機（處於 NAT、防火牆後，或沒有公網 IP）的本地伺服器安全地發布到網際網路上。它會提供一個公開的 URL，讓世界上任何地方的人都能直接存取您的本地專案（如測試 Webhook、調試 API 或向客戶展示網頁）。",
                 subtitle_why: "為什麼不能、或不應該直接公開本機的 IP？",
@@ -376,7 +385,7 @@
                 step4_title: "4. 不休眠與本地 fetch",
                 step4_desc: "代理端立即通知伺服器保持連線（不休眠），隨後在本機向 localhost 服務發起 fetch 請求。",
                 step5_title: "5. 本地安全加密",
-                step5_desc: "代理端讀取本地回應（二進位檔案轉為 Base64），並利用私鑰對回應體進行 UTF-8 安全位元組 XOR 運算加密。",
+                step5_desc: "代理端讀取本地回應（二進位檔案轉為 Base64），並利用私鑰對回應體進行端對端安全對稱加密。",
                 step6_title: "6. 安全回傳與解除掛起",
                 step6_desc: "加密後的資料傳回伺服器。WebTNX 伺服器解碼回應體，並隨即解除掛起，將內容回傳給訪客。",
 
@@ -432,12 +441,12 @@
                 row10_t: "極快 (採用長連線多路複用，毫秒級延遲)",
                 row11_f: "<strong>請求內容私密性</strong>",
                 row11_w: "高 (標準 HTTPS 加密通道安全傳遞)",
-                row11_c: "極佳 (SSL/TLS 通道 + 雙層 XOR 數據混淆防護)",
-                row11_t: "極佳 (基於 Socket 的全管道加密傳輸，不留存檔案)"
+                row11_v: "極佳 (SSL/TLS 通道 + 端對端對稱數據加密防護)",
+                row11_t: "極佳 (基於 Socket 的全管道加密傳輸，不留存檔案)",
+                title_terms: "使用條款與隱私權保護政策",
+                desc_terms: "NeuralNexusLab 極其重視使用者隱私安全。本公司<strong>絕對不會主動</strong>以任何形式，將您的任何私密資料（包括公網/本地 IP、本地轉發 Port 埠號、請求標頭、以及傳輸的數據內容/Payload）發送、分享或洩漏給任何第三方。所有傳輸的數據與排隊請求<strong>僅會暫時</strong>存儲於 WebTNX 的伺服器記憶體及暫存檔中，並在您的本地端代理（Agent）停止輪詢（Polling）或隧道過期時（無心跳 20 秒內），自動且永久地從伺服器硬碟中徹底抹除。"
             }
         };
-
-        const params = new URLSearchParams(window.location.search);
 
         function changeLanguage(lang) {
             localStorage.setItem('webtnx_lang', lang);
@@ -445,14 +454,15 @@
             const data = i18n[lang] || i18n['en'];
             
             // Hero
-            document.getElementById('home-title').innerText = data.home_title;
+            document.getElementById('home-title').innerHTML = `<i class="fa-solid fa-network-wired"></i>${data.home_title}`;
             document.getElementById('home-desc').innerText = data.home_desc;
-            document.getElementById('btn-create').innerText = data.btn_create;
+            document.getElementById('btn-create').innerHTML = `<i class="fa-solid fa-circle-play"></i>${data.btn_create}`;
 
-            document.getElementById('nav-docs').innerText = data.nav_docs;
+            document.getElementById('nav-docs').innerHTML = `<i class="fa-solid fa-file-lines"></i>${data.nav_docs}`;
+            document.getElementById('nav-github').innerHTML = `<i class="fa-brands fa-github"></i>${data.nav_github}`;
 
             // 1. What
-            document.getElementById('title-what').innerText = data.title_what;
+            document.getElementById('title-what').innerHTML = `<i class="fa-solid fa-circle-info"></i>${data.title_what}`;
             document.getElementById('desc-what').innerText = data.desc_what;
             
             document.getElementById('subtitle-why').innerText = data.subtitle_why;
@@ -470,29 +480,29 @@
             document.getElementById('why-r6-desc').innerText = data.why_r6_desc;
 
             // 2. Flow
-            document.getElementById('title-flow').innerText = data.title_flow;
-            document.getElementById('step1-title').innerText = data.step1_title;
+            document.getElementById('title-flow').innerHTML = `<i class="fa-solid fa-diagram-project"></i>${data.title_flow}`;
+            document.getElementById('step1-title').innerHTML = `<i class="fa-solid fa-arrow-right-to-bracket"></i>${data.step1_title}`;
             document.getElementById('step1-desc').innerHTML = data.step1_desc;
-            document.getElementById('step2-title').innerText = data.step2_title;
+            document.getElementById('step2-title').innerHTML = `<i class="fa-solid fa-database"></i>${data.step2_title}`;
             document.getElementById('step2-desc').innerHTML = data.step2_desc;
-            document.getElementById('step3-title').innerText = data.step3_title;
+            document.getElementById('step3-title').innerHTML = `<i class="fa-solid fa-arrows-spin"></i>${data.step3_title}`;
             document.getElementById('step3-desc').innerHTML = data.step3_desc;
-            document.getElementById('step4-title').innerText = data.step4_title;
+            document.getElementById('step4-title').innerHTML = `<i class="fa-solid fa-heartbeat"></i>${data.step4_title}`;
             document.getElementById('step4-desc').innerHTML = data.step4_desc;
-            document.getElementById('step5-title').innerText = data.step5_title;
+            document.getElementById('step5-title').innerHTML = `<i class="fa-solid fa-key"></i>${data.step5_title}`;
             document.getElementById('step5-desc').innerHTML = data.step5_desc;
-            document.getElementById('step6-title').innerText = data.step6_title;
+            document.getElementById('step6-title').innerHTML = `<i class="fa-solid fa-reply"></i>${data.step6_title}`;
             document.getElementById('step6-desc').innerHTML = data.step6_desc;
 
             // 3. Local
-            document.getElementById('title-local').innerText = data.title_local;
+            document.getElementById('title-local').innerHTML = `<i class="fa-solid fa-gears"></i>${data.title_local}`;
             document.getElementById('local-li1').innerHTML = data.local_li1;
             document.getElementById('local-li2').innerHTML = data.local_li2;
             document.getElementById('cors-headers-desc').innerText = data.cors_headers_desc;
             document.getElementById('local-li3').innerHTML = data.local_li3;
 
             // 4. VS Table
-            document.getElementById('title-vs').innerText = data.title_vs;
+            document.getElementById('title-vs').innerHTML = `<i class="fa-solid fa-scale-balanced"></i>${data.title_vs}`;
             document.getElementById('th-feature').innerText = data.th_feature;
             document.getElementById('th-web').innerText = data.th_web;
             document.getElementById('th-cli').innerText = data.th_cli;
@@ -550,8 +560,12 @@
 
             document.getElementById('row11-f').innerHTML = data.row11_f;
             document.getElementById('row11-w').innerText = data.row11_w;
-            document.getElementById('row11-c').innerText = data.row11_c;
+            document.getElementById('row11-v').innerText = data.row11_v;
             document.getElementById('row11-t').innerText = data.row11_t;
+
+            // Terms of Use
+            document.getElementById('title-terms').innerHTML = `<i class="fa-solid fa-user-shield" style="color:#28a745;"></i>${data.title_terms}`;
+            document.getElementById('desc-terms').innerHTML = data.desc_terms;
         }
 
         const savedLang = localStorage.getItem('webtnx_lang') || 'en';
