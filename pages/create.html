@@ -18,7 +18,7 @@
         .docs-btn { display: inline-block; text-decoration: none; background: #e9ecef; color: #495057; padding: 8px 16px; border-radius: 4px; font-size: 0.9rem; font-weight: 500; transition: background 0.2s; }
         .docs-btn:hover { background: #dee2e6; }
         .docs-btn i { margin-right: 6px; }
-        select { padding: 8px 12px; border-radius: 4px; border: 1px solid #ced4da; font-size: 0.9rem; outline: none; cursor: pointer; }
+        select { padding: 6px 12px; border-radius: 4px; border: 1px solid #ced4da; font-size: 0.9rem; outline: none; cursor: pointer; }
         .form-container { flex: 1; display: flex; justify-content: center; align-items: center; padding: 20px; }
         .card { background: white; padding: 40px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); width: 100%; max-width: 450px; }
         h2 { margin-top: 0; margin-bottom: 24px; color: #212529; text-align: center; }
@@ -39,6 +39,7 @@
     <header>
         <a href="/" class="logo"><i class="fa-solid fa-cloud-bolt"></i>WebTNX</a>
         <div class="nav-right">
+            <!-- 💡 新增並對齊導航按鈕 -->
             <a href="https://github.com/NeuralNexusLab-nh/WebTNX/tree/main" id="nav-github" class="github-btn" target="_blank"><i class="fa-brands fa-github"></i>GitHub</a>
             <a href="/docs" id="nav-docs" class="docs-btn"><i class="fa-solid fa-file-lines"></i>Documentation</a>
             <select id="lang-select" onchange="changeLanguage(this.value)">
@@ -82,7 +83,9 @@
                 label_port: "Local Server Port",
                 label_timeout: "Timeout (Seconds)",
                 btn_start: "Start Tunneling",
-                ssl_text: "Protected by End-to-End SSL/TLS Secure Channel"
+                ssl_text: "Protected by End-to-End SSL/TLS Secure Channel & XOR Obfuscation",
+                nav_github: "GitHub",
+                nav_docs: "Documentation"
             },
             "zh-TW": {
                 create_title: "設定您的穿梭隧道",
@@ -90,15 +93,19 @@
                 label_port: "本機服務 Port",
                 label_timeout: "逾時時間 (秒)",
                 btn_start: "啟動穿梭隧道",
-                ssl_text: "已受端對端 SSL/TLS 安全加密與雙層數據混淆保護"
+                ssl_text: "已受端對端 SSL/TLS 安全通道與雙層數據混淆保護",
+                nav_github: "GitHub",
+                nav_docs: "技術文件"
             },
             ja: {
                 create_title: "トンネルの設定",
                 label_id: "希望するトンネルID",
-                local_port: "ローカルサービスポート",
+                label_port: "ローカルサービスポート",
                 label_timeout: "タイムアウト（秒）",
                 btn_start: "トンネルを開始",
-                ssl_text: "エンドツーエンドのSSL/TLS安全な暗号化によって保護されています"
+                ssl_text: "エンドツーエンドのSSL/TLS安全な暗号化によって保護されています",
+                nav_github: "GitHub",
+                nav_docs: "ドキュメント"
             },
             fr: {
                 create_title: "Configurer votre tunnel",
@@ -106,7 +113,9 @@
                 label_port: "Port du serveur local",
                 label_timeout: "Délai d'attente (secondes)",
                 btn_start: "Démarrer le tunnel",
-                ssl_text: "Protégé par un canal sécurisé SSL/TLS de bout en bout"
+                ssl_text: "Protégé par un canal sécurisé SSL/TLS de bout en bout",
+                nav_github: "GitHub",
+                nav_docs: "Documentation"
             },
             it: {
                 create_title: "Configura il tuo tunnel",
@@ -114,7 +123,9 @@
                 label_port: "Porta del server locale",
                 label_timeout: "Timeout (secondi)",
                 btn_start: "Avvia tunnel",
-                ssl_text: "Protetto da canale sicuro SSL/TLS end-to-end"
+                ssl_text: "Protetto da canale sicuro SSL/TLS end-to-end",
+                nav_github: "GitHub",
+                nav_docs: "Documentazione"
             },
             pt: {
                 create_title: "Configurar seu túnel",
@@ -122,7 +133,9 @@
                 label_port: "Porta do servidor local",
                 label_timeout: "Tempo limite (segundos)",
                 btn_start: "Iniciar túnel",
-                ssl_text: "Protegido por canal seguro SSL/TLS ponta a ponta"
+                ssl_text: "Protegido por canal seguro SSL/TLS ponta a ponta",
+                nav_github: "GitHub",
+                nav_docs: "Documentação"
             },
             ko: {
                 create_title: "터널 설정하기",
@@ -130,7 +143,9 @@
                 label_port: "로컬 서버 포트",
                 label_timeout: "제한 시간(초)",
                 btn_start: "터널 시작하기",
-                ssl_text: "종단간 SSL/TLS 보안 채널 및 이중 데이터 난독화로 보호됨"
+                ssl_text: "종단간 SSL/TLS 보안 채널 및 이중 데이터 난독화로 보호됨",
+                nav_github: "GitHub",
+                nav_docs: "기술문서"
             }
         };
 
@@ -144,6 +159,10 @@
             document.getElementById('label-timeout').innerHTML = `<i class="fa-solid fa-stopwatch"></i>${data.label_timeout}`;
             document.getElementById('btn-start').innerHTML = `<i class="fa-solid fa-rocket"></i>${data.btn_start}`;
             document.getElementById('ssl-text').innerHTML = `<i class="fa-solid fa-shield-halved"></i>${data.ssl_text}`;
+            
+            // 💡 動態更換導航按鈕文字
+            document.getElementById('nav-github').innerHTML = `<i class="fa-brands fa-github"></i>${data.nav_github}`;
+            document.getElementById('nav-docs').innerHTML = `<i class="fa-solid fa-file-lines"></i>${data.nav_docs}`;
         }
 
         function handleSubmit(e) {
