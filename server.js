@@ -44,7 +44,6 @@ app.get('/tunnel', (req, res) => res.sendFile(path.join(__dirname, 'pages', 'tun
 app.get('/download', (req, res) => res.sendFile(path.join(__dirname, 'pages', 'download.html')));
 app.get('/docs', (req, res) => res.sendFile(path.join(__dirname, 'pages', 'docs.html')));
 
-
 app.get('/download/windows', (req, res) => {
     const filePath = path.join(__dirname, 'webtnx.exe');
     if (fs.existsSync(filePath)) {
@@ -59,7 +58,7 @@ app.get('/download/unix', (req, res) => {
     if (fs.existsSync(filePath)) {
         res.download(filePath, 'webtnx.sh');
     } else {
-        res.status(404).send('webtnx shell script is currently not placed on server. Please consult admin.');
+        res.status(404).send('webtnx.sh shell script is currently not placed on server. Please consult admin.');
     }
 });
 
@@ -198,7 +197,7 @@ app.post('/api/res', (req, res) => {
 app.get('/:tunnelId', (req, res, next) => {
     const { tunnelId } = req.params;
 
-    if (['tunnel', 'api', 'create', 'timeout', 'download'].includes(tunnelId) || req.path === '/' || req.path === '/index.html') {
+    if (['tunnel', 'api', 'create', 'timeout', 'download', 'docs'].includes(tunnelId) || req.path === '/' || req.path === '/index.html') {
         return next();
     }
 
@@ -211,7 +210,7 @@ app.get('/:tunnelId', (req, res, next) => {
 
 app.all('/:tunnelId/*', (req, res, next) => {
     const { tunnelId } = req.params;
-    if (['tunnel', 'api', 'create', 'timeout', 'download'].includes(tunnelId) || req.path === '/' || req.path === '/index.html') {
+    if (['tunnel', 'api', 'create', 'timeout', 'download', 'docs'].includes(tunnelId) || req.path === '/' || req.path === '/index.html') {
         return next();
     }
 
