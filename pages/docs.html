@@ -44,11 +44,6 @@
             <select id="lang-select" onchange="changeLanguage(this.value)">
                 <option value="en">English</option>
                 <option value="zh-TW">繁體中文</option>
-                <option value="ja">日本語</option>
-                <option value="fr">Français</option>
-                <option value="it">Italiano</option>
-                <option value="pt">Português</option>
-                <option value="ko">한국어</option>
             </select>
         </div>
     </header>
@@ -99,7 +94,7 @@
                 nav_home: "Back to Home",
                 nav_github: "GitHub",
                 sec1_title: "1. What is WebTNX?",
-                sec1_desc: "WebTNX is a stable, convenient, and secure HTTP reverse-proxy tunnel that allows you to safely expose your local servers to the internet without configuring any router settings or system dependencies. Truly capable of stable, long-term server hosting.",
+                sec1_desc: "WebTNX is a stable, convenient, and secure HTTP reverse-proxy tunnel that allows you to safely expose your local servers to the internet without configuring any router settings or system dependencies. Truly capable of stable, long-term server hosting. WebTNX was developed by <a href='https://nxlab.zone.id/' target='_blank'>NeuralNexusLab</a>.",
                 sec2_title: "2. Why Build WebTNX Instead of Traditional Tunnels?",
                 sec2_desc: "Traditional tunneling tools typically require users to download large CLI executables, and set up custom domains, accounts, emails, and API keys. This introduces significant friction in restricted environments or quick debugging scenarios. WebTNX was created to solve these pain points by offering a flexible, account-free architecture that supports both browser-tab agents and lightweight script agents.",
                 sec3_title: "3. What is \"Local Hosting\" & \"Proxy Capability\"?",
@@ -123,7 +118,7 @@
                 nav_home: "返回首頁",
                 nav_github: "GitHub",
                 sec1_title: "一、 什麼是 WebTNX？",
-                sec1_desc: "WebTNX 是一款穩定、輕量、簡單且支援端到端 SSL/TLS 加密的 HTTP 內網穿梭工具，真正可以用於穩定、長期架設本機服務並將其暴露至外網。",
+                sec1_desc: "WebTNX 是一款穩定、輕量、簡單且支援端到端 SSL/TLS 加密的 HTTP 內網穿梭工具，真正可以用於穩定、長期架設本機服務並將其暴露至外網。WebTNX是由<a href='https://nxlab.zone.id/' target='_blank'>NeuralNexusLab</a>開發的。",
                 sec2_title: "二、 為什麼不做傳統 Tunnel，而是做 WebTNX？",
                 // 💡 徹底解決與精簡：不使用強迫字眼，移除了防休眠心跳的宣告
                 sec2_desc: "傳統穿透工具（如 ngrok）通常需要使用者下載大型 CLI 執行碼，並需要設定自訂網域、註冊帳號、驗證 Email 以及開通 API Key 等繁瑣配置，這在許多受限環境或臨時除錯的場景下，會帶來不小的使用成本。WebTNX 是為了解決這些痛點而生，提供了「免註冊、無帳號阻力、自訂網域」且支援「網頁分頁代理與輕量指令代理兩用」的靈活架構。",
@@ -140,7 +135,6 @@
                 sec5_li4: "<strong>破圖、樣式或 JS 檔案載入失敗（相對路徑問題）</strong>：WebTNX 雖然會嘗試改寫 HTML 內容中的絕對路徑（例如將 <code>/css</code> 改為 <code>/id/css</code>），但如果路徑是由複雜的 JS 在執行期動態拼接，重寫可能會漏掉。為了解決此問題，建議在開發本地網站時，多採用相對路徑（如 <code>css/style.css</code>）或點路徑（如 <code>./css/style.css</code>）代替絕對路徑，若使用現代前端框架，請將 Public Path（或 Base）設定為 <code>./</code>。",
                 sec5_li5: "<strong>413 Payload Too Large / 檔案過大阻擋機制</strong>：如果您嘗試傳輸大於 2MB 的 Body、大型 API 請求或檔案，WebTNX 伺服器會拒絕並回傳 413。這是本伺服器為了保障低記憶體主機防禦安全、防止記憶體溢出（OOM）崩潰的內建主動防護。請壓縮您的資源或限制傳輸大小以解決此問題。",
                 sec5_li6: "<strong>Polling Connection Warning / 自動防錯重連機制</strong>：當您的終端機出現此黃色警告，代表本地網路發生短暫波動、伺服器滿載、或是您的網路暫時斷線。WebTNX CLI 內建了自動防錯與定時重連，會自動每 5 秒嘗試重新連線，您**完全不需要手動重啟程式**，靜待其自動連通即可。",
-                // 💡 修正與精簡版：傳輸安全加密 (講得平實，絕不自吹自擂)
                 sec6_title: "六、 傳輸安全加密",
                 sec6_desc: "WebTNX 有提供傳輸加密機制。本機端與伺服器端在數據傳遞時，會使用對稱金鑰將連線內容進行加密後再傳輸，以保障資料傳輸過程中的隱私安全。"
             }
