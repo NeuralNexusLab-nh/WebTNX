@@ -3,23 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WebTNX - Convenient & Lightweight HTTP Tunnel</title>
+    <title>WebTNX - Stable & Lightweight HTTP Tunnel</title>
+    <!-- 💡 新增：全域 Font Awesome 圖標支援 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: #f8f9fa; color: #333; margin: 0; padding: 0; display: flex; flex-direction: column; min-height: 100vh; }
         header { display: flex; justify-content: space-between; align-items: center; padding: 20px 40px; background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        .logo { font-size: 1.5rem; font-weight: bold; color: #007bff; }
+        .logo { font-size: 1.5rem; font-weight: bold; color: #007bff; text-decoration: none; }
+        .logo i { margin-right: 8px; }
         .nav-right { display: flex; align-items: center; gap: 15px; }
-        .docs-btn { display: inline-block; text-decoration: none; background: #e9ecef; color: #495057; padding: 6px 14px; border-radius: 4px; font-size: 0.9rem; font-weight: 500; transition: background 0.2s; }
+        .github-btn { display: inline-block; text-decoration: none; background: #24292e; color: white; padding: 8px 16px; border-radius: 4px; font-size: 0.9rem; font-weight: 500; transition: background 0.2s; }
+        .github-btn:hover { background: #1b1f23; }
+        .github-btn i { margin-right: 6px; }
+        .docs-btn { display: inline-block; text-decoration: none; background: #e9ecef; color: #495057; padding: 8px 16px; border-radius: 4px; font-size: 0.9rem; font-weight: 500; transition: background 0.2s; }
         .docs-btn:hover { background: #dee2e6; }
-        select { padding: 6px 12px; border-radius: 4px; border: 1px solid #ced4da; font-size: 0.9rem; outline: none; cursor: pointer; }
+        .docs-btn i { margin-right: 6px; }
+        select { padding: 8px 12px; border-radius: 4px; border: 1px solid #ced4da; font-size: 0.9rem; outline: none; cursor: pointer; }
         .hero { display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 60px 20px 40px 20px; max-width: 800px; margin: 0 auto; }
         h1 { font-size: 2.8rem; color: #212529; margin-bottom: 20px; }
-        .hero-desc { font-size: 1.2rem; line-height: 1.6; color: #6c757d; margin-bottom: 40px; }
+        h1 i { margin-right: 12px; color: #007bff; }
+        .hero-desc { font-size: 1.2rem; line-height: 1.6; color: #6c757d; margin-bottom: 30px; }
         .btn { display: inline-block; background: #007bff; color: white; text-decoration: none; padding: 14px 28px; border-radius: 6px; font-weight: bold; font-size: 1.1rem; transition: background 0.2s; box-shadow: 0 4px 6px rgba(0,123,255,0.15); }
         .btn:hover { background: #0056b3; }
+        .btn i { margin-right: 8px; }
         .info-container { max-width: 950px; margin: 0 auto; padding: 20px; box-sizing: border-box; }
         .section-block { background: white; border-radius: 8px; padding: 35px; margin-bottom: 30px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); border: 1px solid #e9ecef; }
-        .section-block h2 { font-size: 1.6rem; color: #212529; margin-top: 0; margin-bottom: 15px; border-left: 4px solid #007bff; padding-left: 12px; }
+        .section-block h2 { font-size: 1.6rem; color: #212529; margin-top: 0; margin-bottom: 20px; border-left: 4px solid #007bff; padding-left: 12px; }
+        .section-block h2 i { margin-right: 8px; color: #007bff; }
         .section-block p { font-size: 1rem; line-height: 1.7; color: #495057; margin-bottom: 20px; }
         .subtitle-why { font-size: 1.25rem; font-weight: 600; color: #495057; margin-top: 30px; margin-bottom: 15px; text-align: center; }
         .why-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 15px; }
@@ -27,6 +37,7 @@
         @media (max-width: 600px) { .why-grid { grid-template-columns: 1fr; } }
         .why-card { background: #fff; border: 1px solid #e9ecef; border-left: 3px solid #ffc107; border-radius: 6px; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.01); }
         .why-card h4 { font-size: 1.05rem; margin-top: 0; margin-bottom: 10px; color: #343a40; }
+        .why-card h4 i { margin-right: 6px; color: #ffc107; }
         .why-card p { font-size: 0.9rem; color: #6c757d; line-height: 1.6; margin: 0; }
         .step-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 25px; }
         @media (max-width: 900px) { .step-grid { grid-template-columns: repeat(2, 1fr); } }
@@ -36,7 +47,7 @@
         .step-card p { font-size: 0.9rem; color: #6c757d; line-height: 1.5; margin: 0; }
         .checklist { list-style: none; padding: 0; margin-top: 20px; }
         .checklist li { padding-left: 28px; position: relative; margin-bottom: 20px; font-size: 0.95rem; line-height: 1.7; color: #495057; }
-        .checklist li::before { content: "✓"; position: absolute; left: 0; top: 0; color: #28a745; font-weight: bold; font-size: 1.1rem; }
+        .checklist li::before { content: "\f00c"; font-family: "Font Awesome 6 Free"; font-weight: 900; position: absolute; left: 0; top: 0; color: #28a745; font-size: 1.1rem; }
         .table-responsive { overflow-x: auto; margin-top: 25px; }
         table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.95rem; }
         th, td { padding: 12px 15px; border-bottom: 1px solid #dee2e6; }
@@ -48,9 +59,12 @@
 </head>
 <body>
     <header>
-        <div class="logo">WebTNX</div>
+        <a href="/" class="logo"><i class="fa-solid fa-cloud-bolt"></i>WebTNX</a>
         <div class="nav-right">
-            <a href="/docs" id="nav-docs" class="docs-btn">Documentation</a>
+            <!-- GitHub 按鈕 -->
+            <a href="https://github.com/NeuralNexusLab-nh/WebTNX/tree/main" id="nav-github" class="github-btn" target="_blank"><i class="fa-brands fa-github"></i>GitHub</a>
+            <!-- Docs 按鈕 -->
+            <a href="/docs" id="nav-docs" class="docs-btn"><i class="fa-solid fa-file-lines"></i>Documentation</a>
             <select id="lang-select" onchange="changeLanguage(this.value)">
                 <option value="en">English</option>
                 <option value="zh-TW">繁體中文</option>
@@ -63,47 +77,49 @@
         </div>
     </header>
     <div class="hero">
-        <h1 id="home-title">WebTNX: Convenient & Lightweight HTTP Tunnel</h1>
+        <h1 id="home-title"><i class="fa-solid fa-network-wired"></i>WebTNX: Stable & Lightweight HTTP Tunnel</h1>
         <p class="hero-desc" id="home-desc">Expose your local development server to the internet. Similar to ngrok, but absolutely free, extremely convenient, and requires no registration. Just use a browser tab or a simple command as your tunnel agent.</p>
-        <a href="/download" class="btn" id="btn-create">Get Started Now</a>
+        <a href="/download" class="btn" id="btn-create"><i class="fa-solid fa-circle-play"></i>Get Started Now</a>
     </div>
     <div class="info-container">
-        <!-- 什麼是 HTTP 隧道 -->
+        <!-- 1. 什麼是 HTTP 隧道 -->
         <div class="section-block">
-            <h2 id="title-what">What is an HTTP Tunnel?</h2>
+            <h2 id="title-what"><i class="fa-solid fa-circle-info"></i>What is an HTTP Tunnel?</h2>
             <p id="desc-what">An HTTP tunnel is a technology that allows you to expose a local server (running behind NATs, firewalls, or without a public IP) to the public internet. It assigns a secure public URL to your local project, allowing external users or APIs (like Webhook senders) to connect directly to your local application from anywhere in the world.</p>
             <div class="subtitle-why" id="subtitle-why">Why can't I just expose my local IP directly?</div>
             <div class="why-grid">
                 <div class="why-card">
-                    <h4 id="why-r1-title">No Public IP (NAT/CGNAT)</h4>
+                    <h4><i class="fa-solid fa-ban"></i><span id="why-r1-title">No Public IP (NAT/CGNAT)</span></h4>
                     <p id="why-r1-desc">Most home broadband providers use Carrier-Grade NAT. You do not actually have a real public IP address, meaning no one on the internet can locate or reach your computer directly.</p>
                 </div>
                 <div class="why-card">
-                    <h4 id="why-r2-title">Router & Firewall Blockages</h4>
+                    <h4><i class="fa-solid fa-shield-halved"></i><span id="why-r2-title">Router & Firewall Blockages</span></h4>
                     <p id="why-r2-desc">Routers block unsolicited inbound traffic. To bypass this, you would have to configure 'Port Forwarding' in your router settings, which is tedious, often restricted, and changes dynamically.</p>
                 </div>
                 <div class="why-card">
-                    <h4 id="why-r3-title">Router Port Limits</h4>
+                    <h4><i class="fa-solid fa-triangle-exclamation"></i><span id="why-r3-title">Router Port Limits</span></h4>
                     <p id="why-r3-desc">ISPs and local router firewalls block incoming traffic on common ports (like 80, 443, 8080) by default to prevent residential web hosting, making direct exposure impossible.</p>
                 </div>
                 <div class="why-card">
-                    <h4 id="why-r4-title">No SSL/HTTPS Encryption</h4>
+                    <h4><i class="fa-solid fa-lock-open"></i><span id="why-r4-title">No SSL/HTTPS Encryption</span></h4>
                     <p id="why-r4-desc">Exposing raw IP usually runs over unencrypted HTTP. Modern web platforms (like Stripe, Line Bot, or browser features like camera access) strictly require HTTPS endpoints to function.</p>
                 </div>
+                <!-- 💡 資安重大威脅升級 5 -->
                 <div class="why-card">
-                    <h4 id="why-r5-title">Global Scanning & Bot Probing</h4>
+                    <h4><i class="fa-solid fa-bug"></i><span id="why-r5-title">Global Scanning & Bot Probing</span></h4>
                     <p id="why-r5-desc">Malicious botnets scan raw open ports globally within minutes, attempting automated brute-force attacks and executing exploit payloads directly against your machine.</p>
                 </div>
+                <!-- 💡 資安重大威脅升級 6 -->
                 <div class="why-card">
-                    <h4 id="why-r6-title">Lateral Movement & Intranet Infections</h4>
+                    <h4><i class="fa-solid fa-network-wired"></i><span id="why-r6-title">Lateral Movement & Intranet Infections</span></h4>
                     <p id="why-r6-desc">If your local computer is compromised through an exposed port, hackers can use it as a pivot to move laterally across your home or corporate local network, infecting other connected devices.</p>
                 </div>
             </div>
         </div>
 
-        <!-- 運作流程 -->
+        <!-- 2. 運作流程 -->
         <div class="section-block">
-            <h2 id="title-flow">How WebTNX Works</h2>
+            <h2 id="title-flow"><i class="fa-solid fa-diagram-project"></i>How WebTNX Works</h2>
             <div class="step-grid">
                 <div class="step-card">
                     <h3 id="step1-title">1. Public Request</h3>
@@ -132,9 +148,9 @@
             </div>
         </div>
 
-        <!-- CORS 標頭要求說明 -->
+        <!-- 3. CORS 標頭要求說明 -->
         <div class="section-block">
-            <h2 id="title-local">Local Setup & Requirements</h2>
+            <h2 id="title-local"><i class="fa-solid fa-gears"></i>Local Setup & Requirements</h2>
             <ul class="checklist">
                 <li id="local-li1"><strong>Start Local App</strong>: Ensure your web application is running locally and listening on a specific port (e.g. <code>http://localhost:8080</code>).</li>
                 <li id="local-li2"><strong>Enable CORS (Web Agent Only)</strong>: If using the Web-based Agent, your local app must accept cross-origin requests from <code>https://webtnx.zone.id</code>.</li>
@@ -150,9 +166,9 @@
             </ul>
         </div>
 
-        <!-- 全面擴充版對比表格 -->
+        <!-- 4. 全面擴充版對比表格 -->
         <div class="section-block">
-            <h2 id="title-vs">WebTNX vs. Traditional Tunnels</h2>
+            <h2 id="title-vs"><i class="fa-solid fa-scale-balanced"></i>WebTNX vs. Traditional Tunnels</h2>
             <div class="table-responsive">
                 <table>
                     <thead>
@@ -218,11 +234,12 @@
                             <td id="row10-c" style="color:#dc3545; font-weight:500;">Moderate (~1-2s polling delay)</td>
                             <td id="row10-t" style="color:#28a745; font-weight:500;">Extremely Fast (Millisecond-level)</td>
                         </tr>
+                        <!-- 💡 加密安全性防護等級提升 -->
                         <tr>
                             <td class="feature-name" id="row11-f"><strong>Request Privacy</strong></td>
-                            <td id="row11-w" style="color:#dc3545; font-weight:500;">Low (Requests public if ID guessed)</td>
-                            <td id="row11-c">Medium (XOR encrypted responses)</td>
-                            <td id="row11-t" style="color:#28a745; font-weight:500;">High (E2E encryption, secure socket)</td>
+                            <td id="row11-w" style="color:#28a745; font-weight:500;">High (HTTPS standard encrypted channel)</td>
+                            <td id="row11-c" style="color:#28a745; font-weight:500;">Excellent (SSL/TLS + Obfuscation)</td>
+                            <td id="row11-t" style="color:#28a745; font-weight:500;">Excellent (E2E encryption, secure socket)</td>
                         </tr>
                         <tr>
                             <td class="feature-name" id="row8-f"><strong>Local RAM</strong></td>
@@ -325,8 +342,8 @@
                 row10_c: "Moderate (~1-2s polling delay)",
                 row10_t: "Extremely Fast (Millisecond-level)",
                 row11_f: "<strong>Request Privacy</strong>",
-                row11_w: "Low (Requests public if ID guessed)",
-                row11_c: "Medium (XOR encrypted responses)",
+                row11_w: "High (HTTPS standard encrypted channel)",
+                row11_c: "Excellent (SSL/TLS + Obfuscation)",
                 row11_t: "High (E2E encryption, secure socket)"
             },
             "zh-TW": {
@@ -415,11 +432,13 @@
                 row10_c: "中等 (受限於每 2 秒輪詢造成的物理延遲)",
                 row10_t: "極快 (採用長連線多路複用，毫秒級延遲)",
                 row11_f: "<strong>請求內容私密性</strong>",
-                row11_w: "較低 (明文傳遞與暫存，若 ID 被猜到可被盲測)",
-                row11_c: "中等 (回應內容採端到端 XOR 加密，但請求仍在伺服器暫存)",
-                row11_t: "極高 (基於 Socket 的全管道加密傳輸，不留存檔案)"
+                row11_w: "高 (標準 HTTPS 加密通道安全傳遞)",
+                row11_c: "極佳 (SSL/TLS 通道 + 雙層 XOR 數據混淆防護)",
+                row11_t: "極佳 (基於 Socket 的全管道加密傳輸，不留存檔案)"
             }
         };
+
+        const params = new URLSearchParams(window.location.search);
 
         function changeLanguage(lang) {
             localStorage.setItem('webtnx_lang', lang);
