@@ -4,24 +4,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WebTNX - Choose Your Agent</title>
+    <!-- Font Awesome 全域圖標 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: #f8f9fa; color: #333; margin: 0; padding: 0; display: flex; flex-direction: column; min-height: 100vh; }
         header { display: flex; justify-content: space-between; align-items: center; padding: 20px 40px; background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
         .logo { font-size: 1.5rem; font-weight: bold; color: #007bff; text-decoration: none; }
+        .logo i { margin-right: 8px; }
+        .nav-right { display: flex; align-items: center; gap: 15px; }
+        .github-btn { display: inline-block; text-decoration: none; background: #24292e; color: white; padding: 8px 16px; border-radius: 4px; font-size: 0.9rem; font-weight: 500; transition: background 0.2s; }
+        .github-btn:hover { background: #1b1f23; }
+        .github-btn i { margin-right: 6px; }
+        .docs-btn { display: inline-block; text-decoration: none; background: #e9ecef; color: #495057; padding: 8px 16px; border-radius: 4px; font-size: 0.9rem; font-weight: 500; transition: background 0.2s; }
+        .docs-btn:hover { background: #dee2e6; }
+        .docs-btn i { margin-right: 6px; }
         select { padding: 6px 12px; border-radius: 4px; border: 1px solid #ced4da; font-size: 0.9rem; outline: none; cursor: pointer; }
         .main-container { flex: 1; max-width: 1100px; width: 100%; margin: 0 auto; padding: 40px 20px; box-sizing: border-box; text-align: center; }
         h1 { font-size: 2.2rem; color: #212529; margin-bottom: 10px; }
         .subtitle { font-size: 1.1rem; color: #6c757d; margin-bottom: 40px; }
-        
-        /* 💡 類別大標題樣式 */
         .section-category { font-size: 1.4rem; font-weight: bold; color: #343a40; text-align: left; margin: 35px 0 15px 0; padding-bottom: 8px; border-bottom: 2px solid #dee2e6; }
-        
-        /* 💡 完美控制寬度的響應式網格 (避免單卡成行，極力維持橫向排列) */
+        .section-category i { margin-right: 8px; color: #007bff; }
         .agent-grid-single { display: grid; grid-template-columns: 1fr; max-width: 450px; margin: 0 auto; }
         .agent-grid-multi { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
         @media (max-width: 900px) { .agent-grid-multi { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 600px) { .agent-grid-multi { grid-template-columns: 1fr; } }
-
         .agent-card { background: white; border: 1px solid #e9ecef; border-radius: 8px; padding: 30px 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.02); display: flex; flex-direction: column; justify-content: space-between; text-align: left; transition: transform 0.2s, box-shadow 0.2s; box-sizing: border-box; }
         .agent-card:hover { transform: translateY(-4px); box-shadow: 0 8px 16px rgba(0,0,0,0.05); }
         .agent-icon { margin-bottom: 15px; display: block; }
@@ -34,33 +40,38 @@
         .agent-desc li { margin-bottom: 6px; }
         .btn-action { display: block; text-align: center; background: #007bff; color: white; text-decoration: none; padding: 12px; border-radius: 4px; font-weight: bold; font-size: 0.95rem; transition: background 0.2s; }
         .btn-action:hover { background: #0056b3; }
+        .btn-action i { margin-right: 6px; }
         .btn-web { background: #28a745; }
         .btn-web:hover { background: #218838; }
     </style>
 </head>
 <body>
     <header>
-        <a href="/" class="logo">WebTNX</a>
-        <select id="lang-select" onchange="changeLanguage(this.value)">
-            <option value="en">English</option>
-            <option value="zh-TW">繁體中文</option>
-            <option value="ja">日本語</option>
-            <option value="fr">Français</option>
-            <option value="it">Italiano</option>
-            <option value="pt">Português</option>
-            <option value="ko">한국어</option>
-        </select>
+        <a href="/" class="logo"><i class="fa-solid fa-cloud-bolt"></i>WebTNX</a>
+        <div class="nav-right">
+            <a href="https://github.com/NeuralNexusLab-nh/WebTNX/tree/main" id="nav-github" class="github-btn" target="_blank"><i class="fa-brands fa-github"></i>GitHub</a>
+            <a href="/docs" id="nav-docs" class="docs-btn"><i class="fa-solid fa-file-lines"></i>Documentation</a>
+            <select id="lang-select" onchange="changeLanguage(this.value)">
+                <option value="en">English</option>
+                <option value="zh-TW">繁體中文</option>
+                <option value="ja">日本語</option>
+                <option value="fr">Français</option>
+                <option value="it">Italiano</option>
+                <option value="pt">Português</option>
+                <option value="ko">한국어</option>
+            </select>
+        </div>
     </header>
     <div class="main-container">
         <h1 id="dl-title">Choose Your WebTNX Agent</h1>
-        <div class="subtitle" id="dl-subtitle">Pick the best tunneling method for your workflow.</div>
+        <div class="subtitle" id="dl-subtitle">Pick the best tunneling method for your workflow. All options feature End-to-End SSL/TLS secure encryption.</div>
         
-        <!-- 💡 類別 A：網頁版代理 -->
-        <div class="section-category" id="sec-web-title">Web-Based Version (Zero Install)</div>
+        <!-- Web Version -->
+        <div class="section-category" id="sec-web-title"><i class="fa-solid fa-globe"></i>Web-Based Version (Zero Install)</div>
         <div class="agent-grid-single">
             <div class="agent-card">
                 <div>
-                    <!-- Pure SVG Web Logo -->
+                    <!-- Globe SVG -->
                     <svg class="agent-icon" viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="#28a745" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="12" cy="12" r="10"></circle>
                         <line x1="2" y1="12" x2="22" y2="12"></line>
@@ -77,17 +88,17 @@
                         </ul>
                     </div>
                 </div>
-                <a href="/create" class="btn-action btn-web" id="card1-btn">Launch Web Agent</a>
+                <a href="/create" class="btn-action btn-web" id="card1-btn"><i class="fa-solid fa-circle-play"></i>Launch Web Agent</a>
             </div>
         </div>
 
-        <!-- 💡 類別 B：命令列版代理 -->
-        <div class="section-category" id="sec-cli-title">Command-Line (CLI) Versions (CORS Bypassed)</div>
+        <!-- CLI Versions -->
+        <div class="section-category" id="sec-cli-title"><i class="fa-solid fa-terminal"></i>Command-Line (CLI) Versions (CORS Bypassed)</div>
         <div class="agent-grid-multi">
             <!-- Windows Exe -->
             <div class="agent-card">
                 <div>
-                    <!-- Pure SVG Windows Logo -->
+                    <!-- Windows SVG -->
                     <svg class="agent-icon" viewBox="0 0 24 24" width="44" height="44" fill="#1565c0">
                         <path d="M0 3.449L9.75 2.1v9.45H0V3.449zM0 12.45h9.75v9.45L0 20.551v-8.101zM10.8 1.95L24 0v11.55H10.8V1.95zM10.8 12.45H24v11.55l-13.2-1.95v-9.6z"/>
                     </svg>
@@ -102,13 +113,13 @@
                         </ul>
                     </div>
                 </div>
-                <a href="/download/windows" class="btn-action" id="card2-btn">Download Windows CLI</a>
+                <a href="/download/windows" class="btn-action" id="card2-btn"><i class="fa-brands fa-windows"></i>Download Windows CLI</a>
             </div>
 
             <!-- Unix Shell -->
             <div class="agent-card">
                 <div>
-                    <!-- Pure SVG Terminal/Unix Logo -->
+                    <!-- Terminal SVG -->
                     <svg class="agent-icon" viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="#1565c0" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                         <polyline points="4 17 10 11 4 5"></polyline>
                         <line x1="12" y1="19" x2="20" y2="19"></line>
@@ -124,13 +135,13 @@
                         </ul>
                     </div>
                 </div>
-                <a href="/download/unix" class="btn-action" id="card3-btn">Download Shell Script</a>
+                <a href="/download/unix" class="btn-action" id="card3-btn"><i class="fa-solid fa-terminal"></i>Download Shell Script</a>
             </div>
 
             <!-- Python Source -->
             <div class="agent-card">
                 <div>
-                    <!-- Pure SVG Python Logo -->
+                    <!-- Python SVG -->
                     <svg class="agent-icon" viewBox="0 0 24 24" width="44" height="44" fill="#1565c0">
                         <path d="M12.11 2.01c-1.39 0-2.6.1-3.41.31-2.1.53-2.15 1.74-2.15 3.32v1.54h5.68c1.32 0 2.45 1.07 2.45 2.38v2.45h1.9c1.58 0 3.06-.05 3.59-2.15.53-2.1.53-3.42 0-5.52-.53-2.1-1.96-2.33-3.54-2.33h-4.52zm-1.89.84c.38 0 .69.31.69.69s-.31.69-.69.69-.69-.31-.69-.69.31-.69.69-.69zM11.89 21.99c1.39 0 2.6-.1 3.41-.31 2.1-.53 2.15-1.74 2.15-3.32v-1.54h-5.68c-1.32 0-2.45-1.07-2.45-2.38v-2.45h-1.9c-1.58 0-3.06.05-3.59 2.15-.53 2.1-.53 3.42 0 5.52.53 2.1 1.96 2.33 3.54 2.33h4.52zm1.89-.84c-.38 0-.69-.31-.69-.69s.31-.69.69-.69.69.31.69.69-.31.69-.69.69z"/>
                     </svg>
@@ -145,7 +156,7 @@
                         </ul>
                     </div>
                 </div>
-                <a href="/download/python" class="btn-action" id="card4-btn">Get Python Script</a>
+                <a href="/download/python" class="btn-action" id="card4-btn"><i class="fa-brands fa-python"></i>Get Python Script</a>
             </div>
         </div>
     </div>
@@ -154,139 +165,141 @@
         const i18n = {
             en: {
                 dl_title: "Choose Your WebTNX Agent",
-                dl_subtitle: "Pick the best tunneling method for your workflow.",
+                dl_subtitle: "Pick the best tunneling method for your workflow. All options are fully protected by End-to-End SSL/TLS Secure Encryption.",
                 sec_web_title: "Web-Based Version (Zero Install)",
-                sec_cli_title: "Command-Line (CLI) Versions (CORS Bypassed)",
+                sec_cli_title: "Command-Line (CLI) Versions (CORS Bypassed - Run directly without settings)",
                 card1_title: "Web Agent",
                 card1_badge: "Zero Install / Sandbox",
                 card1_desc: "Best for quick API/Webhook tests on any device.<ul><li>No software download required</li><li>Runs in secure browser sandbox</li><li>⚠️ Requires configuring local CORS</li></ul>",
                 card1_btn: "Launch Web Agent",
                 card2_title: "Windows Exe",
                 card2_badge: "Native CLI / No CORS",
-                card2_desc: "Perfect for Windows developers looking for maximum convenience.<ul><li>Bypasses CORS completely</li><li>Single standalone .exe file</li><li>⚠️ No browser sandbox protection</li></ul>",
+                card2_desc: "Perfect for Windows developers looking for maximum convenience.<ul><li>Bypasses CORS completely</li><li>Single standalone .exe file. Run directly.</li><li>⚠️ No browser sandbox protection</li></ul>",
                 card2_btn: "Download Windows CLI",
                 card3_title: "Linux / macOS",
                 card3_badge: "Native CLI / No CORS",
-                card3_desc: "Optimized for Unix/Linux/macOS terminal environments.<ul><li>Bypasses CORS completely</li><li>Executable shell command</li><li>⚠️ No browser sandbox protection</li></ul>",
+                card3_desc: "Optimized for Unix/Linux/macOS terminal environments.<ul><li>Bypasses CORS completely</li><li>Executable shell command. Run directly.</li><li>⚠️ No browser sandbox protection</li></ul>",
                 card3_btn: "Download Shell Script",
                 card4_title: "Python Source",
                 card4_badge: "Native CLI / No CORS",
-                card4_desc: "Ideal for security auditors and cross-platform Python developers.<ul><li>Bypasses CORS completely</li><li>100% transparent open source</li><li>⚠️ Requires Python 3 installed</li></ul>",
+                card4_desc: "Ideal for security auditors and cross-platform Python developers.<ul><li>Bypasses CORS completely</li><li>100% transparent open source. Run directly.</li><li>⚠️ Requires Python 3 installed</li></ul>",
                 card4_btn: "Get Python Script"
             },
             "zh-TW": {
                 dl_title: "選擇您的 WebTNX 代理端",
-                dl_subtitle: "挑選最適合您日常開發與調試工作流的穿透模式。",
+                dl_subtitle: "挑選最適合您日常開發與調試工作流的穿透模式。所有模式皆完整支援端到端 SSL/TLS 安全加密。",
                 sec_web_title: "網頁版代理（免安裝、即開即用）",
-                sec_cli_title: "命令列 CLI 版代理（原生免除 CORS 限制）",
+                sec_cli_title: "命令列 CLI 版代理（原生免除 CORS 限制，直接執行即可）",
                 card1_title: "網頁代理 (Web)",
                 card1_badge: "免安裝 / 瀏覽器安全防護",
                 card1_desc: "適合任何裝置快速測試 API 接口或接收 Webhook。<ul><li>完全免下載任何檔案</li><li>受瀏覽器嚴格安全沙盒保護</li><li>⚠️ 本機專案需要配置 CORS 允許連線</li></ul>",
                 card1_btn: "啟動網頁代理",
                 card2_title: "Windows EXE 檔",
                 card2_badge: "作業系統進程 / 豁免 CORS",
-                card2_desc: "最適合 Windows 開發人員，追求最無摩擦的開發調試。<ul><li>原生繞過 CORS 跨來源安全性限制</li><li>單一、獨立的 .exe 執行檔</li><li>⚠️ 未受瀏覽器沙盒保護，執行原生程序</li></ul>",
+                card2_desc: "最適合 Windows 開發人員，追求最無摩擦的開發調試。<ul><li>原生繞過 CORS 跨來源安全性限制</li><li>單一、獨立的 .exe 執行檔，直接執行即可</li><li>⚠️ 未受瀏覽器沙盒保護，執行原生程序</li></ul>",
                 card2_btn: "下載 Windows CLI",
                 card3_title: "Linux / macOS 腳本",
                 card3_badge: "作業系統進程 / 豁免 CORS",
-                card3_desc: "專為 Linux、macOS 或各類 Unix 伺服器終端環境優化。<ul><li>原生繞過 CORS 跨來源安全性限制</li><li>鎖定執行權限後即可執行的 Shell 指令</li><li>⚠️ 未受瀏覽器沙盒保護，執行原生程序</li></ul>",
+                card3_desc: "專為 Linux、macOS 或各類 Unix 伺服器終端環境優化。<ul><li>原生繞過 CORS 跨來源安全性限制</li><li>可執行的 Shell 指令，賦予權限後直接執行即可</li><li>⚠️ 未受瀏覽器沙盒保護，執行原生程序</li></ul>",
                 card3_btn: "下載 Shell 腳本",
                 card4_title: "Python 原始碼",
                 card4_badge: "作業系統進程 / 豁免 CORS",
-                card4_desc: "最適合資安稽核人員、跨平台或偏好原始碼透明度的開發者。<ul><li>原生繞過 CORS 跨來源安全性限制</li><li>100% 透明開源、無編譯封裝</li><li>⚠️ 本機必須事先安裝好 Python 3 環境</li></ul>",
+                card4_desc: "最適合資安稽核人員、跨平台或偏好原始碼透明度的開發者。<ul><li>原生繞過 CORS 跨來源安全性限制</li><li>100% 透明開源、無編譯，直接執行即可</li><li>⚠️ 本機必須事先安裝好 Python 3 環境</li></ul>",
                 card4_btn: "獲取 Python 腳本"
             },
             ja: {
                 dl_title: "WebTNX エージェントの選択",
-                dl_subtitle: "ワークフローに最適なトンネリング方法を選択してください。",
+                dl_subtitle: "ワークフローに最適なトンネリング方法を選択してください。すべてのオプションがエンドツーエンドのSSL/TLS安全な暗号化によって保護されています。",
                 sec_web_title: "ウェブ代理版 (インストール不要)",
-                sec_cli_title: "CLIエージェント版 (CORS不要)",
+                sec_cli_title: "CLIエージェント版 (CORS不要 - 設定なしで直接実行できます)",
                 card1_title: "ウェブ代理 (Web)", card1_badge: "インストール不要 / 砂箱",
                 card1_desc: "任意のデバイスでの迅速なAPIテストに最適。<ul><li>ダウンロード不要</li><li>ブラウザ安全砂箱内で実行</li><li>⚠️ ローカルCORS設定が必要</li></ul>",
                 card1_btn: "ウェブ代理を起動",
                 card2_title: "Windows Exe", card2_badge: "ネイティブCLI / CORS不要",
-                card2_desc: "CORSを完全にバイパスするWindows開発者向け。<ul><li>CORSを完全にバイパス</li><li>単一の.exeファイル</li><li>⚠️ ブラウザ砂箱の保護なし</li></ul>",
+                card2_desc: "CORSを完全にバイパスするWindows開発者向け。<ul><li>CORSを完全にバイパス</li><li>単一の.exeファイル。直接実行。</li><li>⚠️ ブラウザ砂箱の保護なし</li></ul>",
                 card2_btn: "Windows CLIをダウンロード",
                 card3_title: "Linux / macOS", card3_badge: "ネイティブCLI / CORS不要",
-                card3_desc: "ターミナル環境向け。<ul><li>CORSを完全にバイパス</li><li>実行可能シェルコマンド</li><li>⚠️ ブラウザ砂箱の保護なし</li></ul>",
+                card3_desc: "ターミナル環境向け。<ul><li>CORSを完全にバイパス</li><li>実行可能シェルコマンド。直接実行。</li><li>⚠️ ブラウザ砂箱の保護なし</li></ul>",
                 card3_btn: "シェルスクリプトをダウンロード",
                 card4_title: "Python ソース", card4_badge: "ネイティブCLI / CORS不要",
-                card4_desc: "オープンソース透明性を重視する開発者向け。<ul><li>CORSを完全にバイパス</li><li>100% 透明なソースコード</li><li>⚠️ Python 3 のインストールが必要</li></ul>",
+                card4_desc: "オープンソース透明性を重視する開発者向け。<ul><li>CORSを完全にバイパス</li><li>100% 透明なソースコード。直接実行。</li><li>⚠️ Python 3 のインストールが必要</li></ul>",
                 card4_btn: "Pythonスクリプトを取得"
             },
             fr: {
                 dl_title: "Choisissez votre Agent WebTNX",
-                dl_subtitle: "Sélectionnez la meilleure méthode de tunnel pour votre flux de travail.",
+                dl_subtitle: "Sélectionnez la meilleure méthode de tunnel pour votre flux de travail. Toutes les options sont protégées par un canal sécurisé SSL/TLS de bout en bout.",
                 sec_web_title: "Version Web (Sans installation)",
-                sec_cli_title: "Versions CLI (Sans CORS)",
+                sec_cli_title: "Versions CLI (Sans CORS - Exécuter directement sans réglages)",
                 card1_title: "Agent Web", card1_badge: "Sans installation / Sandbox",
                 card1_desc: "Idéal pour les tests rapides d'API/Webhook.<ul><li>Aucun téléchargement requis</li><li>Sûr dans la sandbox du navigateur</li><li>⚠️ Nécessite la configuration CORS</li></ul>",
                 card1_btn: "Lancer l'Agent Web",
                 card2_title: "Windows Exe", card2_badge: "CLI natif / Sans CORS",
-                card2_desc: "Parfait pour les développeurs Windows.<ul><li>Contourne entièrement CORS</li><li>Fichier .exe autonome unique</li><li>⚠️ Aucune protection sandbox</li></ul>",
+                card2_desc: "Parfait pour les développeurs Windows.<ul><li>Contourne entièrement CORS</li><li>Fichier .exe autonome. Exécuter directement.</li><li>⚠️ Aucune protection sandbox</li></ul>",
                 card2_btn: "Télécharger Windows CLI",
                 card3_title: "Linux / macOS", card3_badge: "CLI natif / Sans CORS",
-                card3_desc: "Optimisé pour les terminaux Unix/Linux/macOS.<ul><li>Contourne entièrement CORS</li><li>Commande shell exécutable</li><li>⚠️ Aucune protection sandbox</li></ul>",
+                card3_desc: "Optimisé pour les terminaux Unix/Linux/macOS.<ul><li>Contourne entièrement CORS</li><li>Commande shell. Exécuter directement.</li><li>⚠️ Aucune protection sandbox</li></ul>",
                 card3_btn: "Télécharger le Script Shell",
                 card4_title: "Source Python", card4_badge: "CLI natif / Sans CORS",
-                card4_desc: "Idéal pour les auditeurs et développeurs Python.<ul><li>Contourne entièrement CORS</li><li>Code source 100% transparent</li><li>⚠️ Nécessite Python 3</li></ul>",
+                card4_desc: "Idéal pour les auditeurs et développeurs Python.<ul><li>Contourne entièrement CORS</li><li>Code source 100% transparent. Exécuter directement.</li><li>⚠️ Nécessite Python 3</li></ul>",
                 card4_btn: "Obtenir le Script Python"
             },
             it: {
                 dl_title: "Scegli il tuo Agente WebTNX",
-                dl_subtitle: "Scegli il miglior metodo di tunneling per il tuo lavoro.",
+                dl_subtitle: "Scegli il miglior metodo di tunneling per il tuo lavoro. Tutte le opzioni sono protette da canale sicuro SSL/TLS end-to-end.",
                 sec_web_title: "Versione Web (Senza installazione)",
-                sec_cli_title: "Versioni CLI (Senza CORS)",
+                sec_cli_title: "Versioni CLI (Senza CORS - Esegui direttamente senza impostazioni)",
                 card1_title: "Agente Web", card1_badge: "Senza installazione / Sandbox",
                 card1_desc: "Ideale per test rapidi di API/Webhook.<ul><li>Nessun download richiesto</li><li>Sicuro nella sandbox del browser</li><li>⚠️ Richiede configurazione CORS</li></ul>",
                 card1_btn: "Avvia Agente Web",
                 card2_title: "Windows Exe", card2_badge: "CLI nativo / Senza CORS",
-                card2_desc: "Perfetto per gli sviluppatori Windows.<ul><li>Evita completamente CORS</li><li>Singolo file .exe autonomo</li><li>⚠️ Nessuna protezione sandbox</li></ul>",
+                card2_desc: "Perfetto per gli sviluppatori Windows.<ul><li>Evita completamente CORS</li><li>Singolo file .exe. Esegui direttamente.</li><li>⚠️ Nessuna protezione sandbox</li></ul>",
                 card2_btn: "Scarica Windows CLI",
                 card3_title: "Linux / macOS", card3_badge: "CLI nativo / Senza CORS",
-                card3_desc: "Ottimizzato per terminali Unix/Linux/macOS.<ul><li>Evita completamente CORS</li><li>Comando shell eseguibile</li><li>⚠️ Nessuna protezione sandbox</li></ul>",
+                card3_desc: "Ottimizzato per terminali Unix/Linux/macOS.<ul><li>Evita completamente CORS</li><li>Comando shell. Esegui direttamente.</li><li>⚠️ Nessuna protezione sandbox</li></ul>",
                 card3_btn: "Scarica Script Shell",
                 card4_title: "Sorgente Python", card4_badge: "CLI nativo / Senza CORS",
-                card4_desc: "Ideale per revisori e sviluppatori Python.<ul><li>Evita completamente CORS</li><li>Codice sorgente 100% trasparente</li><li>⚠️ Richiede Python 3</li></ul>",
+                card4_desc: "Ideale per revisori e sviluppatori Python.<ul><li>Evita completamente CORS</li><li>Codice 100% trasparente. Esegui direttamente.</li><li>⚠️ Richiede Python 3</li></ul>",
                 card4_btn: "Ottieni Script Python"
             },
             pt: {
                 dl_title: "Escolha seu Agente WebTNX",
-                dl_subtitle: "Escolha o melhor método de túnel para seu fluxo de trabalho.",
+                dl_subtitle: "Escolha o melhor método de túnel para seu fluxo de trabalho. Todas as opções são protegidas por canal seguro SSL/TLS ponta a ponta.",
                 sec_web_title: "Versão Web (Sem instalação)",
-                sec_cli_title: "Versões CLI (Sem CORS)",
+                sec_cli_title: "Versões CLI (Sem CORS - Execute diretamente sem configurações)",
                 card1_title: "Agente Web", card1_badge: "Sem instalação / Sandbox",
                 card1_desc: "Ideal para testes rápidos de API/Webhook.<ul><li>Nenhum download necessário</li><li>Seguro no sandbox do navegador</li><li>⚠️ Requer configuração CORS</li></ul>",
                 card1_btn: "Iniciar Agente Web",
                 card2_title: "Windows Exe", card2_badge: "CLI nativo / Sem CORS",
-                card2_desc: "Perfeito para desenvolvedores Windows.<ul><li>Bypassa totalmente CORS</li><li>Arquivo .exe autônomo único</li><li>⚠️ Sem proteção sandbox</li></ul>",
+                card2_desc: "Perfeito para desenvolvedores Windows.<ul><li>Bypassa totalmente CORS</li><li>Arquivo .exe único. Execute diretamente.</li><li>⚠️ Sem proteção sandbox</li></ul>",
                 card2_btn: "Baixar Windows CLI",
                 card3_title: "Linux / macOS", card3_badge: "CLI nativo / Sem CORS",
-                card3_desc: "Otimizado para terminais Unix/Linux/macOS.<ul><li>Bypassa totalmente CORS</li><li>Comando shell executável</li><li>⚠️ Sem proteção sandbox</li></ul>",
+                card3_desc: "Otimizado para terminais Unix/Linux/macOS.<ul><li>Bypassa totalmente CORS</li><li>Comando shell executável. Execute diretamente.</li><li>⚠️ Sem proteção sandbox</li></ul>",
                 card3_btn: "Baixar Script Shell",
                 card4_title: "Código Python", card4_badge: "CLI nativo / Sem CORS",
-                card4_desc: "Ideal para auditores e desenvolvedores Python.<ul><li>Bypassa totalmente CORS</li><li>Código fonte 100% transparente</li><li>⚠️ Requer Python 3</li></ul>",
+                card4_desc: "Ideal para auditores e desenvolvedores Python.<ul><li>Bypassa totalmente CORS</li><li>Código fonte 100% transparente. Execute diretamente.</li><li>⚠️ Requer Python 3</li></ul>",
                 card4_btn: "Obter Script Python"
             },
             ko: {
                 dl_title: "WebTNX 에이전트 선택",
-                dl_subtitle: "워크플로우에 가장 적합한 터널링 방식을 선택하세요.",
+                dl_subtitle: "워크플로우에 가장 적합한 터널링 방식을 선택하세요. 모든 옵션은 종단간 SSL/TLS 보안 채널로 보호됩니다.",
                 sec_web_title: "웹 기반 에이전트 (설치 불필요)",
-                sec_cli_title: "CLI 기반 에이전트 (CORS 우회)",
+                sec_cli_title: "CLI 기반 에이전트 (CORS 우회 - 추가 설정 없이 바로 실행하세요)",
                 card1_title: "웹 에이전트", card1_badge: "설치 없음 / 브라우저 보호",
                 card1_desc: "모든 기기에서 빠른 API/Webhook 테스트에 최적.<ul><li>소프트웨어 다운로드 불필요</li><li>안전한 브라우저 샌드박스 실행</li><li>⚠️ 로컬 CORS 설정 필수</li></ul>",
                 card1_btn: "웹 에이전트 시작",
                 card2_title: "Windows Exe", card2_badge: "네이티브 CLI / CORS 없음",
-                card2_desc: "CORS를 완전히 우회하고자 하는 Windows 개발자용.<ul><li>CORS 제한 없음</li><li>독립형 단일 .exe 파일</li><li>⚠️ 브라우저 샌드박스 보호 없음</li></ul>",
+                card2_desc: "CORS를 완전히 우회하고자 하는 Windows 개발자용.<ul><li>CORS 제한 없음</li><li>단일 .exe 파일. 바로 실행하세요.</li><li>⚠️ 브라우저 샌드박스 보호 없음</li></ul>",
                 card2_btn: "Windows CLI 다운로드",
                 card3_title: "Linux / macOS", card3_badge: "네이티브 CLI / CORS 없음",
-                card3_desc: "터미널 환경에 최적화됨.<ul><li>CORS 제한 없음</li><li>실행 가능한 셸 명령어</li><li>⚠️ 브라우저 샌드박스 보호 없음</li></ul>",
+                card3_desc: "터미널 환경에 최적화됨.<ul><li>CORS 제한 없음</li><li>실행 가능한 셸 명령어. 바로 실행하세요.</li><li>⚠️ 브라우저 샌드박스 보호 없음</li></ul>",
                 card3_btn: "셸 스크립트 다운로드",
                 card4_title: "Python 소스", card4_badge: "네이티브 CLI / CORS 없음",
-                card4_desc: "소스 코드 투명성을 선호하는 개발자용.<ul><li>CORS 제한 없음</li><li>100% 투명한 오픈 소스</li><li>⚠️ Python 3 설치 필요</li></ul>",
+                card4_desc: "소스 코드 투명성을 선호하는 개발자용.<ul><li>CORS 제한 없음</li><li>100% 투명한 소스 코드. 바로 실행하세요.</li><li>⚠️ Python 3 설치 필요</li></ul>",
                 card4_btn: "Python 스크립트 받기"
             }
         };
+
+        const params = new URLSearchParams(window.location.search);
 
         function changeLanguage(lang) {
             localStorage.setItem('webtnx_lang', lang);
@@ -295,28 +308,28 @@
 
             document.getElementById('dl-title').innerText = data.dl_title;
             document.getElementById('dl-subtitle').innerText = data.dl_subtitle;
-            document.getElementById('sec-web-title').innerText = data.sec_web_title;
-            document.getElementById('sec-cli-title').innerText = data.sec_cli_title;
+            document.getElementById('sec-web-title').innerHTML = `<i class="fa-solid fa-globe"></i>${data.sec_web_title}`;
+            document.getElementById('sec-cli-title').innerHTML = `<i class="fa-solid fa-terminal"></i>${data.sec_cli_title}`;
 
             document.getElementById('card1-title').innerText = data.card1_title;
             document.getElementById('card1-badge').innerText = data.card1_badge;
             document.getElementById('card1-desc').innerHTML = data.card1_desc;
-            document.getElementById('card1-btn').innerText = data.card1_btn;
+            document.getElementById('card1-btn').innerHTML = `<i class="fa-solid fa-circle-play"></i>${data.card1_btn}`;
 
             document.getElementById('card2-title').innerText = data.card2_title;
             document.getElementById('card2-badge').innerText = data.card2_badge;
             document.getElementById('card2-desc').innerHTML = data.card2_desc;
-            document.getElementById('card2-btn').innerText = data.card2_btn;
+            document.getElementById('card2-btn').innerHTML = `<i class="fa-brands fa-windows"></i>${data.card2_btn}`;
 
             document.getElementById('card3-title').innerText = data.card3_title;
             document.getElementById('card3-badge').innerText = data.card3_badge;
             document.getElementById('card3-desc').innerHTML = data.card3_desc;
-            document.getElementById('card3-btn').innerText = data.card3_btn;
+            document.getElementById('card3-btn').innerHTML = `<i class="fa-solid fa-terminal"></i>${data.card3_btn}`;
 
             document.getElementById('card4-title').innerText = data.card4_title;
             document.getElementById('card4-badge').innerText = data.card4_badge;
             document.getElementById('card4-desc').innerHTML = data.card4_desc;
-            document.getElementById('card4-btn').innerText = data.card4_btn;
+            document.getElementById('card4-btn').innerHTML = `<i class="fa-brands fa-python"></i>${data.card4_btn}`;
         }
 
         const savedLang = localStorage.getItem('webtnx_lang') || 'en';
