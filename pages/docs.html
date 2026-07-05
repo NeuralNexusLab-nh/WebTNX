@@ -23,7 +23,7 @@
         .doc-block { background: white; border-radius: 8px; padding: 40px; margin-bottom: 30px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); border: 1px solid #e9ecef; text-align: left; }
         h1 { font-size: 2.2rem; color: #212529; margin-top: 0; margin-bottom: 30px; border-bottom: 2px solid #dee2e6; padding-bottom: 10px; }
         h1 i { margin-right: 12px; color: #007bff; }
-        h2 { font-size: 1.5rem; color: #007bff; margin-top: 30px; margin-bottom: 15px; }
+        h2 { font-size: 1.5rem; color: #007bff; margin-top: 35px; margin-bottom: 15px; }
         h2 i { margin-right: 8px; }
         p { font-size: 1rem; line-height: 1.8; color: #495057; margin-bottom: 20px; }
         ul, ol { padding-left: 24px; margin-bottom: 20px; line-height: 1.8; color: #495057; }
@@ -32,13 +32,26 @@
         li.yes-li i { color: #28a745 !important; }
         li.no-li i { color: #dc3545 !important; }
         code { background: #f1f3f5; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 0.95rem; color: #c7254e; }
+
+        /* 💡 新增：漂亮的技術文件導航欄 */
+        .doc-nav { display: flex; flex-wrap: wrap; gap: 10px; background: #f1f3f5; padding: 15px; border-radius: 6px; margin-bottom: 30px; }
+        .doc-nav a { text-decoration: none; color: #495057; font-size: 0.85rem; font-weight: 500; padding: 6px 12px; background: white; border: 1px solid #dee2e6; border-radius: 4px; transition: all 0.2s; }
+        .doc-nav a:hover { background: #007bff; color: white; border-color: #007bff; }
+        .doc-nav i { margin-right: 4px; }
+
+        /* 💡 新增：FAQ 漂亮排版 */
+        .faq-list { display: flex; flex-direction: column; gap: 20px; margin-top: 20px; }
+        .faq-item { border-bottom: 1px solid #e9ecef; padding-bottom: 20px; margin-bottom: 10px; }
+        .faq-item:last-child { border-bottom: none; }
+        .faq-q { font-size: 1.05rem; font-weight: bold; color: #212529; margin-bottom: 10px; display: flex; align-items: flex-start; gap: 8px; }
+        .faq-q i { color: #007bff; margin-top: 4px; flex-shrink: 0; }
+        .faq-a { font-size: 0.95rem; line-height: 1.7; color: #495057; padding-left: 24px; }
     </style>
 </head>
 <body>
     <header>
         <a href="/" class="logo"><i class="fa-solid fa-cloud-bolt"></i>WebTNX</a>
         <div class="nav-right">
-            <!-- 💡 新增對齊全頁面的 GitHub 按鈕 -->
             <a href="https://github.com/NeuralNexusLab-nh/WebTNX/tree/main" id="nav-github" class="github-btn" target="_blank"><i class="fa-brands fa-github"></i>GitHub</a>
             <a href="/" id="nav-home" class="home-btn"><i class="fa-solid fa-house"></i>Back to Home</a>
             <select id="lang-select" onchange="changeLanguage(this.value)">
@@ -51,18 +64,26 @@
         <div class="doc-block">
             <h1 id="doc-main-title"><i class="fa-solid fa-book"></i>WebTNX Technical Documentation</h1>
             
+            <!-- 💡 新增：文件分類跳轉快捷選單 -->
+            <div class="doc-nav">
+                <a href="#sec1-title" id="nav-sec1"><i class="fa-solid fa-circle-info"></i>What is WebTNX?</a>
+                <a href="#sec2-title" id="nav-sec2"><i class="fa-solid fa-scale-unbalanced"></i>Why WebTNX?</a>
+                <a href="#sec3-title" id="nav-sec3"><i class="fa-solid fa-server"></i>Local Host</a>
+                <a href="#sec4-title" id="nav-sec4"><i class="fa-solid fa-table-list"></i>Suitability</a>
+                <a href="#sec5-title" id="nav-sec5"><i class="fa-solid fa-triangle-exclamation"></i>Troubleshooting</a>
+                <a href="#sec6-title" id="nav-sec6"><i class="fa-solid fa-shield-halved"></i>Encryption</a>
+                <a href="#sec-faq" id="nav-sec-faq"><i class="fa-solid fa-circle-question"></i>FAQ</a>
+            </div>
+
             <h2 id="sec1-title"><i class="fa-solid fa-circle-info"></i>1. What is WebTNX?</h2>
-            <p id="sec1-desc">WebTNX is a stable, convenient, and secure HTTP reverse-proxy tunnel that allows you to safely expose your local servers to the internet without configuring any router settings or system dependencies. Truly capable of stable, long-term server hosting.</p>
+            <p id="sec1-desc">WebTNX is a stable, convenient, and secure HTTP reverse-proxy tunnel that allows you to safely expose your local servers to the internet without configuring any router settings or system dependencies. Truly capable of stable, long-term server hosting. WebTNX was developed by <a href='https://nxlab.zone.id/' target='_blank'>NeuralNexusLab</a>.</p>
             
-            <!-- 💡 根據要求徹底剔除 Keep-Alive 的漏洞宣示，並將強制改為需要 -->
             <h2 id="sec2-title"><i class="fa-solid fa-scale-unbalanced"></i>2. Why Build WebTNX Instead of Traditional Tunnels?</h2>
             <p id="sec2-desc">Traditional tunneling tools typically require users to download large CLI executables, and set up custom domains, accounts, emails, and API keys. This introduces significant friction in restricted environments or quick debugging scenarios. WebTNX was created to solve these pain points by offering a flexible, account-free architecture that supports both browser-tab agents and lightweight script agents.</p>
             
-            <!-- 💡 本地 Host 驗證標準 -->
             <h2 id="sec3-title"><i class="fa-solid fa-server"></i>3. What is "Local Hosting" & "Proxy Capability"?</h2>
             <p id="sec3-desc">A 'Local Host' refers to a live server process running locally on your own computer (e.g. an Express app, a FastAPI service, an Apache server, or Ollama) that is actively listening on a loopback IP (127.0.0.1) and a specific port. For WebTNX to successfully proxy and tunnel your service, your local server must be actively running. If you cannot successfully open your browser, type <code>http://localhost:port</code>, and view your webpage or JSON response locally, WebTNX will not be able to proxy your application.</p>
 
-            <!-- 💡 適用性矩陣 (移除手術刀字眼，更正為穩定在線工具) -->
             <h2 id="sec4-title"><i class="fa-solid fa-table-list"></i>4. Suitability Matrix: What WebTNX is Best (and Not Best) For</h2>
             <p id="sec4-desc-intro">WebTNX is designed as a stable, lightweight, and convenient HTTP tunnel focusing on friction-free local developer testing.</p>
             <ul>
@@ -70,8 +91,7 @@
                 <li class="no-li" id="sec4-li2"><i class="fa-solid fa-circle-xmark"></i><strong>Not suitable for</strong>: High-throughput media streaming (e.g. hosting local Plex/video servers), heavy continuous high-bandwidth file downloads, production environments requiring 24/7 high availability, and non-HTTP protocols (e.g., SSH, raw TCP/UDP, or MySQL databases).</li>
             </ul>
 
-            <!-- 💡 主動防禦與除錯排查機制 -->
-            <h2 id="sec5-title"><i class="fa-solid fa-shield-halved"></i>5. Active Defense & Troubleshooting Guide</h2>
+            <h2 id="sec5-title"><i class="fa-solid fa-triangle-exclamation"></i>5. Active Defense & Troubleshooting Guide</h2>
             <ul>
                 <li id="sec5-li1"><i class="fa-solid fa-circle-exclamation"></i><strong>502 Connection Refused / Local Service Offline</strong>: This means WebTNX cannot find any running process on your specified port. This typically occurs because your local backend application has crashed, your IDE terminal was accidentally closed, or the port number you entered does not match your app's settings. Always test accessing <code>http://localhost:port</code> in your local browser first. If that fails locally, the proxy will also fail.</li>
                 <li id="sec5-li2"><i class="fa-solid fa-circle-exclamation"></i><strong>CORS Blockage (Web Agent only)</strong>: If using the Web-based agent, the browser security sandbox may block requests if CORS headers are missing. To fix this, you must configure CORS headers on your local server. Alternatively, **switch to our Windows Exe, Linux Script, or Python CLI Agent**, which natively bypasses all browser CORS restrictions with zero configuration needed.</li>
@@ -81,9 +101,64 @@
                 <li id="sec5-li6"><i class="fa-solid fa-circle-exclamation"></i><strong>Polling Connection Warning</strong>: If you see polling warning messages in your terminal, it indicates temporary network instability, high server load, or a brief internet drop. The CLI client is designed to automatically retry every 5 seconds. You do not need to restart the application manually.</li>
             </ul>
 
-            <!-- 💡 宣示升級：純粹說明傳輸加密，不自吹自擂 -->
             <h2 id="sec6-title"><i class="fa-solid fa-shield-halved"></i>6. Secure End-to-End Encryption</h2>
             <p id="sec6-desc">WebTNX provides basic transit encryption. All request and response data sent between the client and server are encrypted symmetrically to ensure basic data privacy in transit.</p>
+
+            <!-- 💡 新增： 7. 常見技術問答 FAQ 區塊 -->
+            <h2 id="sec-faq"><i class="fa-solid fa-circle-question"></i>7. Frequently Asked Questions (FAQ)</h2>
+            <div class="faq-list">
+                <div class="faq-item">
+                    <div class="faq-q" id="faq-q1"><i class="fa-solid fa-chevron-right"></i>Q1. Do I need to manually prefix my local project's asset paths with my App ID?</div>
+                    <div class="faq-a" id="faq-a1">No, please keep your local paths exactly as they are! WebTNX automatically...</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-q" id="faq-q2"><i class="fa-solid fa-chevron-right"></i>Q2. Is my transit data secure with WebTNX? Can it be intercepted?</div>
+                    <div class="faq-a" id="faq-a2">Yes, your data is securely encrypted in transit...</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-q" id="faq-q3"><i class="fa-solid fa-chevron-right"></i>Q3. Why path-based routing instead of subdomains?</div>
+                    <div class="faq-a" id="faq-a3">Path-based routing allows all tunnels to securely share a single...</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-q" id="faq-q4"><i class="fa-solid fa-chevron-right"></i>Q4. Why Web Agent needs CORS but CLI doesn't?</div>
+                    <div class="faq-a" id="faq-a4">CLI Agents (EXE/SH/Python) run as native OS processes...</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-q" id="faq-q5"><i class="fa-solid fa-chevron-right"></i>Q5. Can I run multiple tunnels?</div>
+                    <div class="faq-a" id="faq-a5">Yes, as long as you choose a unique App ID for each tunnel...</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-q" id="faq-q6"><i class="fa-solid fa-chevron-right"></i>Q6. Why 2MB payload cap?</div>
+                    <div class="faq-a" id="faq-a6">This is an intentional security design to safeguard...</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-q" id="faq-q7"><i class="fa-solid fa-chevron-right"></i>Q7. ID Reuse after termination?</div>
+                    <div class="faq-a" id="faq-a7">Yes, once closed, the ID is temporarily locked for 20 seconds...</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-q" id="faq-q8"><i class="fa-solid fa-chevron-right"></i>Q8. Does WebTNX support local AI model inference (e.g., Ollama)?</div>
+                    <div class="faq-a" id="faq-a8">Yes. We designed advanced keep-alive technology...</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-q" id="faq-q9"><i class="fa-solid fa-chevron-right"></i>Q9. Can I run it securely in Private/Incognito browser tabs?</div>
+                    <div class="faq-a" id="faq-a9">Yes, Web Agent is built entirely on standard, modern browser APIs...</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-q" id="faq-q10"><i class="fa-solid fa-chevron-right"></i>Q10. Does the WebTNX server permanently store my request payloads on its disk?</div>
+                    <div class="faq-a" id="faq-a10">Absolutely not. The server-side directory acts only as...</div>
+                </div>
+                <!-- 💡 新增 11：24/7 背景常駐運行 -->
+                <div class="faq-item">
+                    <div class="faq-q" id="faq-q11"><i class="fa-solid fa-chevron-right"></i>Q11. Can I run WebTNX CLI 24/7 in the background permanently?</div>
+                    <div class="faq-a" id="faq-a11">Yes, this is one of the biggest strengths of our native CLI agents...</div>
+                </div>
+                <!-- 💡 新增 12：網頁代理 CORS 預檢紅色警告 -->
+                <div class="faq-item">
+                    <div class="faq-q" id="faq-q12"><i class="fa-solid fa-chevron-right"></i>Q12. Why does the Web Agent still show the red warning?</div>
+                    <div class="faq-a" id="faq-a12">This usually occurs if your browser's strict security settings...</div>
+                </div>
+            </div>
+
         </div>
     </div>
 
@@ -93,6 +168,16 @@
                 doc_main_title: "WebTNX Technical Documentation",
                 nav_home: "Back to Home",
                 nav_github: "GitHub",
+                
+                // 導航欄翻譯
+                nav_sec1: "What is WebTNX?",
+                nav_sec2: "Why WebTNX?",
+                nav_sec3: "Local Host",
+                nav_sec4: "Suitability",
+                nav_sec5: "Troubleshooting",
+                nav_sec6: "Encryption",
+                nav_sec_faq: "FAQ",
+
                 sec1_title: "1. What is WebTNX?",
                 sec1_desc: "WebTNX is a stable, convenient, and secure HTTP reverse-proxy tunnel that allows you to safely expose your local servers to the internet without configuring any router settings or system dependencies. Truly capable of stable, long-term server hosting. WebTNX was developed by <a href='https://nxlab.zone.id/' target='_blank'>NeuralNexusLab</a>.",
                 sec2_title: "2. Why Build WebTNX Instead of Traditional Tunnels?",
@@ -111,16 +196,52 @@
                 sec5_li5: "<strong>413 Payload Too Large</strong>: If you attempt to transmit payloads or files larger than 2MB, WebTNX server will reject it with 413. This is an intentional security design to safeguard our memory-constrained servers from OOM (Out of Memory) crashes. Compress your assets or limit transfer sizes to resolve this.",
                 sec5_li6: "<strong>Polling Connection Warning</strong>: If you see polling warning messages in your terminal, it indicates temporary network instability, high server load, or a brief internet drop. The CLI client is designed to automatically retry every 5 seconds. You do not need to restart the application manually.",
                 sec6_title: "6. Secure End-to-End Encryption",
-                sec6_desc: "WebTNX provides basic transit encryption. All request and response data sent between the client and server are encrypted symmetrically to ensure basic data privacy in transit."
+                sec6_desc: "WebTNX provides basic transit encryption. All request and response data sent between the client and server are encrypted symmetrically to ensure basic data privacy in transit.",
+                
+                // FAQ 標題與 12 大問答 (英文)
+                sec_faq_title: "7. Frequently Asked Questions (FAQ)",
+                faq_q1: "Q1. Do I need to manually prefix my local project's asset paths with my App ID?",
+                faq_a1: "<strong>No, please keep your local paths exactly as they are!</strong> WebTNX automatically parses your returned HTML and JS content. As long as a path does not specify an external domain, WebTNX will automatically prepend your App ID during transit. Do not manually add the App ID prefix in your local project, as this will cause duplicate paths (like <code>/app/app/css/...</code>) and break asset loading.",
+                faq_q2: "Q2. Is my transit data secure with WebTNX? Can it be intercepted?",
+                faq_a2: "<strong>Yes, your data is securely encrypted in transit.</strong> First and foremost, the WebTNX public server natively runs on <strong>HTTPS (SSL/TLS)</strong>. This guarantees that all request and response traffic routed through your tunnels is fully encrypted at the transport layer over the public internet. Furthermore, when using our CLI agents, payloads are also encrypted symmetrically locally before transit, providing robust multi-layer privacy.",
+                faq_q3: "Q3. Why path-based routing instead of subdomains?",
+                faq_a3: "Subdomain-based tunneling requires wildcard DNS records and wildcard SSL certificates. In serverless or highly automated hosting environments, issuing dynamic SSL certificates for newly created, unregistered subdomains can trigger rate limits, cause deployment delays, or be rejected by the ingress gateway. Path-based routing allows all tunnels to securely share a single, pre-verified, and fully SSL/TLS-protected domain certificate, completely avoiding certificate-issuance failures.",
+                faq_q4: "Q4. Why Web Agent needs CORS but CLI doesn't?",
+                faq_a4: "<strong>Web Agent</strong> runs inside the browser sandbox, which strictly enforces the 'Same-Origin Policy.' If your local server lacks CORS headers, the browser will block the local fetch request due to security policies. <strong>CLI Agents (EXE/SH/Python)</strong> run as native OS processes. They communicate with your local server at the system socket level and are completely unaffected by browser sandboxing, offering true zero-configuration, CORS-free tunneling.",
+                faq_q5: "Q5. Can I run multiple tunnels?",
+                faq_a5: "Yes. As long as you choose a <strong>unique App ID</strong> for each tunnel (e.g., <code>app1</code>, <code>app2</code>) and point them to their respective local ports (e.g., <code>8080</code>, <code>3000</code>), you can launch multiple browser tabs or terminal windows to tunnel multiple local projects simultaneously.",
+                faq_q6: "Q6. Why 2MB payload cap?",
+                faq_a6: "To keep WebTNX extremely lightweight and ensure long-term stability on servers with limited resources, the system enforces a built-in 2MB transfer limit. This is a proactive security design to safeguard our servers from memory-exhaustion or OOM (Out of Memory) crashes, and is more than sufficient for typical web development, API testing, and Webhook debugging.",
+                faq_q7: "Q7. If my tunnel is closed or my local agent is terminated, can I use the same App ID next time?",
+                faq_a7: "<strong>Yes, this is one of WebTNX's key advantages.</strong> When your local agent is closed or disconnected, the WebTNX server temporarily locks the ID for up to 20 seconds (the heartbeat TTL mechanism). After 20 seconds of inactivity, the server automatically expires the old connection and releases the ID back to the public pool. As long as no one else claims it in the meantime, you can use the exact same ID next time you start your tunnel.",
+                faq_q8: "Q8. Does WebTNX support local AI model inference (e.g., Ollama)?",
+                faq_a8: "<strong>Yes.</strong> We designed advanced keep-alive technology into the WebTNX agents. For large, slower computations or LLM outputs (like Ollama or OpenAI APIs), the agent actively signals the server to sustain the open connection once it starts processing. Once the full response is completed locally, it is securely transmitted, preventing premature timeouts during long-duration AI model runs.",
+                faq_q9: "Q9. Can I run it securely in Private/Incognito browser tabs?",
+                faq_a9: "<strong>Yes.</strong> The Web Agent is built entirely on standard, modern browser APIs (<code>fetch</code>, <code>localStorage</code>, and asynchronous polling). It is fully compatible with private tabs, incognito windows, or mobile browsers (like iOS Safari or Chrome on Android). Note that private modes will clear <code>localStorage</code> upon closing, so your preferred language settings may revert to default next time you open the page.",
+                faq_q10: "Q10. Does the WebTNX server permanently store my request payloads on its disk?",
+                faq_a10: "<strong>Absolutely not.</strong> The server-side directory acts only as a temporary mailbox. The moment your local agent polls and retrieves the pending requests, the temporary JSON files are <strong>wiped and reset immediately</strong>. Once the tunnel is closed or becomes inactive for 20 seconds, your registered tunnel profile in <code>ids.json</code> and any lingering temp files are automatically and permanently deleted from the disk, leaving zero residual privacy risk.",
+                faq_q11: "Q11. Can I run WebTNX CLI 24/7 in the background permanently as a long-term server?",
+                faq_a11: "<strong>Yes, this is one of the biggest strengths of our native CLI agents.</strong> If you are using the Windows Exe or Linux/macOS CLI versions, you can run WebTNX persistently in the background using native system daemon managers (such as Windows Task Scheduler, or <code>nohup</code>, <code>screen</code>, <code>pm2</code> on Unix/Linux). This allows the tunnel to run quietly in your system background 24/7, achieving a completely self-hosted, stable home server environment.",
+                faq_q12: "Q12. Why does the Web Agent still show the 'Local connection failed or CORS blocked' red warning even though my local server is running?",
+                faq_a12: "This usually occurs if your browser's strict security settings (like Brave's Shields, Safari's tracking protection, or security extensions on Chrome) block the cross-origin request to <code>localhost</code> at the browser engine level, perceiving it as a potential risk. <strong>Solutions</strong>: 1. Set <code>https://webtnx.zone.id</code> as an exception in your browser's security panel; 2. <strong>More recommended</strong>: Simply switch to our native CLI agents (EXE/SH/Python). Native OS execution is completely unaffected by these browser-level policies, ensuring seamless and instant connection."
             },
             "zh-TW": {
                 doc_main_title: "WebTNX 技術開發與安全防禦文件",
                 nav_home: "返回首頁",
                 nav_github: "GitHub",
+                
+                // 導航欄翻譯
+                nav_sec1: "什麼是 WebTNX？",
+                nav_sec2: "為什麼選 WebTNX？",
+                nav_sec3: "本地 Host 進程",
+                nav_sec4: "適用性矩陣",
+                nav_sec5: "防禦與除錯",
+                nav_sec6: "傳輸加密",
+                nav_sec_faq: "常見技術問答 (FAQ)",
+
                 sec1_title: "一、 什麼是 WebTNX？",
                 sec1_desc: "WebTNX 是一款穩定、輕量、簡單且支援端到端 SSL/TLS 加密的 HTTP 內網穿梭工具，真正可以用於穩定、長期架設本機服務並將其暴露至外網。WebTNX是由<a href='https://nxlab.zone.id/' target='_blank'>NeuralNexusLab</a>開發的。",
                 sec2_title: "二、 為什麼不做傳統 Tunnel，而是做 WebTNX？",
-                // 💡 徹底解決與精簡：不使用強迫字眼，移除了防休眠心跳的宣告
                 sec2_desc: "傳統穿透工具（如 ngrok）通常需要使用者下載大型 CLI 執行碼，並需要設定自訂網域、註冊帳號、驗證 Email 以及開通 API Key 等繁瑣配置，這在許多受限環境或臨時除錯的場景下，會帶來不小的使用成本。WebTNX 是為了解決這些痛點而生，提供了「免註冊、無帳號阻力、自訂網域」且支援「網頁分頁代理與輕量指令代理兩用」的靈活架構。",
                 sec3_title: "三、 什麼才叫做「本地 Host」與「可被代理」的驗證標準？",
                 sec3_desc: "所謂的「本地 Host」，指的是一個**正在您本地電腦上運行，且正在監聽特定連接埠（Port）的活體應用程式進程**（例如運行在本地的 Node.js 服務、FastAPI 應用、Ollama、甚至是 Apache 伺服器）。<br>WebTNX 的黃金運作法則：**「如果您自己在本地電腦打開瀏覽器，輸入 <code>http://localhost:Port</code> 都無法成功訪問網頁或取得回應，那 WebTNX 就絕對無法為您進行代理。」** 代理的前提，是您的本地服務必須是「正在運行（Live）」且「可被成功訪問」的狀態。",
@@ -135,8 +256,35 @@
                 sec5_li4: "<strong>破圖、樣式或 JS 檔案載入失敗（相對路徑問題）</strong>：WebTNX 雖然會嘗試改寫 HTML 內容中的絕對路徑（例如將 <code>/css</code> 改為 <code>/id/css</code>），但如果路徑是由複雜的 JS 在執行期動態拼接，重寫可能會漏掉。為了解決此問題，建議在開發本地網站時，多採用相對路徑（如 <code>css/style.css</code>）或點路徑（如 <code>./css/style.css</code>）代替絕對路徑，若使用現代前端框架，請將 Public Path（或 Base）設定為 <code>./</code>。",
                 sec5_li5: "<strong>413 Payload Too Large / 檔案過大阻擋機制</strong>：如果您嘗試傳輸大於 2MB 的 Body、大型 API 請求或檔案，WebTNX 伺服器會拒絕並回傳 413。這是本伺服器為了保障低記憶體主機防禦安全、防止記憶體溢出（OOM）崩潰的內建主動防護。請壓縮您的資源或限制傳輸大小以解決此問題。",
                 sec5_li6: "<strong>Polling Connection Warning / 自動防錯重連機制</strong>：當您的終端機出現此黃色警告，代表本地網路發生短暫波動、伺服器滿載、或是您的網路暫時斷線。WebTNX CLI 內建了自動防錯與定時重連，會自動每 5 秒嘗試重新連線，您**完全不需要手動重啟程式**，靜待其自動連通即可。",
-                sec6_title: "六、 傳輸安全加密",
-                sec6_desc: "WebTNX 有提供傳輸加密機制。本機端與伺服器端在數據傳遞時，會使用對稱金鑰將連線內容進行加密後再傳輸，以保障資料傳輸過程中的隱私安全。"
+                sec6_title: "六、 全管道傳輸安全加密",
+                sec6_desc: "WebTNX 有提供傳輸加密機制。本機端與伺服器端在數據傳遞時，會使用對稱金鑰將連線內容進行加密後再傳輸，以保障資料傳輸過程中的隱私安全。",
+                
+                // FAQ 標題與 12 大問答 (繁中)
+                sec_faq_title: "七、 常見技術問答 (FAQ)",
+                faq_q1: "Q1. 我需要自己在本地開發專案的路徑前面，手動加上網站 ID（App ID）嗎？",
+                faq_a1: "<strong>完全不需要，請保持您本地專案路徑的原貌！</strong> WebTNX 伺服器會自動解析您回傳的 HTML 與 JS 內容，只要是沒有指定外部網域的相對路徑與絕對路徑（例如您的 <code>href='/css/style.css'</code> 或 <code>src='js/app.js'</code>），系統都會在傳輸時自動在前方加上您的網站 ID 前綴（除非該路徑是您在 JS 中以字串動態拼接出來的）。因此，請不要手動在本機程式中加上前綴，否則會導致路徑重疊而載入失敗。",
+                faq_q2: "Q2. WebTNX 的資料傳輸安全嗎？會被中途竊聽或攔截嗎？",
+                faq_a2: "<strong>請放心，資料傳輸具有完整的加密保護。</strong> 首先，WebTNX 的公網伺服器本身全面運行於安全的 <strong>HTTPS（SSL/TLS）</strong> 協議之上，這意味著每個穿梭隧道在網際網路上傳遞的所有請求與回應內容，在網路傳輸層（Transport Layer）都已經過 SSL/TLS 強度加密。此外，當您使用 CLI 代理端時，連線內容還會額外進行本地端對稱加密，雙重保障您的資料隱私安全。",
+                faq_q3: "Q3. 為什麼 WebTNX 採用「路徑型路由」（如 /id/）而不是像 ngrok 那樣的「子網域型路由」（如 id.domain.com）？",
+                faq_a3: "子網域型路由需要設定萬用字元（Wildcard）DNS 與動態簽發 SSL 憑證。在許多現代雲端託管平台或自動化部署網關中，動態為隨機產生的子網域簽發合法的 SSL 憑證會面臨憑證簽發延遲、頻率限制，或被平台網關拒絕的問題。採用<strong>路徑型路由</strong>，可以讓所有穿梭隧道共同安全地共享同一個已預先驗證、完全受 SSL/TLS 保護的單一網域憑證，徹底解決了憑證簽發失敗與網關阻擋問題。",
+                faq_q4: "Q4. 為什麼網頁版代理（Web Agent）必須開啟 CORS，而命令列版（CLI Agent）卻完全不需要？",
+                faq_a4: "<strong>網頁版代理</strong>運作在瀏覽器沙盒內，瀏覽器會強制執行「同源政策（Same-Origin Policy）」，如果您的本機服務沒有主動回傳 CORS 授權標頭，瀏覽器出於安全保護會拒絕該次連線。<strong>命令列版（CLI）</strong>則是作為作業系統的原生進程運作，它在系統層級與您的本機連接埠進行通訊，天然不受瀏覽器沙盒規則的約束，因此能實現完全零配置、免 CORS 設定的無痛穿透。",
+                faq_q5: "Q5. 我可以同時啟動多個不同的穿梭隧道嗎？",
+                faq_a5: "可以。只要您為每個隧道選擇一個<strong>不重複的網站 ID</strong>（例如 <code>app1</code>、<code>app2</code>），並將它們指向各自對應的本地連接埠（如 <code>8080</code>、<code>3000</code>），您就可以同時開啟多個瀏覽器分頁或多個終端機視窗，同時進行多個專案的公網穿梭。",
+                faq_q6: "Q6. 為什麼 WebTNX 的單次請求/回應大小限制在 2MB？",
+                faq_a6: "為了讓 WebTNX 保持極致輕量化，並能在配置有限的伺服器上長期穩定運行，系統內建了 2MB 的傳輸上限。這是一項主動防禦設計，旨在避免伺服器因巨量檔案傳輸（如惡意的記憶體溢出攻擊）而崩潰。這對於正常的 API 調試、Webhook 接收和一般網頁測試來說已極為充足。",
+                faq_q7: "Q7. 如果這次我的穿梭隧道關閉或本機代理程式結束了，下次我還可以使用完全相同的網站 ID（App ID）嗎？",
+                faq_a7: "<strong>完全可以，這正是 WebTNX 的運作優勢。</strong> 當您的本地端代理（Agent）關閉或斷開連線後，該 ID 會被伺服器暫時鎖定最多 20 秒（此為心跳生存期 TTL 機制）。20 秒過後，伺服器會自動判定原連線已安全結束，並將該 ID 釋放回公共池中。只要期間沒有被其他人搶先佔用，您在下一次啟動時，依然可以使用完全相同的 ID 來連通您的本機服務。",
+                faq_q8: "Q8. WebTNX 支援本地 AI 模型推理（如 Ollama）等需要較長運算時間的 API 數據傳輸嗎？",
+                faq_a8: "<strong>支援。</strong> 我們在 WebTNX 的代理端設計了先進的「長連接不休眠（Keep-Alive）機制」。對於類似 Ollama 本機 AI 模型運算、大型資料庫慢速查詢等需要較長等待時間的請求，當代理端開始從本機獲取回應時，會主動通知伺服器延長並保持該次連線。資料在本地端獲取完畢後，會一次性安全傳輸。這能完美支援您在本地端運行並遠端測試各類大語言模型（LLM）的 API 生成。",
+                faq_q9: "Q9. 我可以在「無痕模式（Incognito / Private Mode）」或手機、iPad 上使用網頁版代理嗎？",
+                faq_a9: "<strong>完全可以。</strong> 網頁版代理完全是基於瀏覽器的標準 Web技術（<code>fetch</code>、<code>localStorage</code> 和非同步輪詢）開發的。不論是桌上型電腦、手機還是 iPad 的無痕分頁，都支援直接啟動。唯一需要注意的是：無痕模式在關閉瀏覽器分頁後會自動清除本地緩存，因此您下一次訪問時，可能需要手動重新選擇您喜好的多國語言設定。",
+                faq_q10: "Q10. WebTNX 伺服器會將我的請求內容與數據永久留存在硬碟中嗎？",
+                faq_a10: "<strong>絕對不會，我們實施最嚴格的隱私零殘留規範！</strong> 伺服器端的硬碟目錄僅充當臨時的「郵件收發箱」。每當本地端的代理（Agent）發送輪詢請求取走任務時，對應的暫存 JSON 檔案會被<strong>立刻清空並重置</strong>。一旦您關閉隧道或 20 秒無心跳過期後，連同您在 <code>ids.json</code> 中的註冊參數與所有暫存檔案，全都會自動、永久地從伺服器硬碟中徹底抹除，不留存任何隱私殘留。",
+                faq_q11: "Q11. 我可以讓 WebTNX CLI 24/7 永久在我的本機背景運行，當作長期伺服器使用嗎？",
+                faq_a11: "<strong>可以，這正是 WebTNX 原生進程的強項。</strong> 如果您使用的是 Windows Exe 或是 Linux/macOS 的 CLI 版本，您可以透過系統自帶的進程守護工具（例如 Windows 的「工作排程器」、或 Linux/macOS 的 <code>nohup</code>、<code>screen</code>、<code>pm2</code> 等）在背景默默、穩定地長期執行 WebTNX。這能讓它在您的系統後台不佔用任何視窗，實現完全免費、穩定的個人家庭伺服器託管。",
+                faq_q12: "Q12. 為什麼我已經確認本地伺服器啟動了，網頁代理（Web Agent）依然彈出「本地連線失敗或 CORS 阻擋」的紅色警告？",
+                faq_a12: "這通常是因為您使用的瀏覽器啟用了較為嚴格的「主動隱私防護」（例如 Brave 瀏覽器的 Shields、Safari 的防追蹤，或 Chrome 安裝了擋廣告／安全性套件）。它們可能會在瀏覽器底層，將「公網 HTTPS 網頁存取本地 localhost」的行為判定為潛在風險並強制阻擋。<strong>解決方法有二</strong>：第一是暫時關閉該分頁的瀏覽器安全防護盾；<strong>第二也是最推薦的做法——直接換用 CLI 代理（EXE/SH/Python）</strong>，原生進程完全不受瀏覽器的這些安全策略干擾，一秒流暢連通。"
             }
         };
 
@@ -151,6 +299,15 @@
             document.getElementById('nav-home').innerHTML = `<i class="fa-solid fa-house"></i>${data.nav_home}`;
             document.getElementById('nav-github').innerHTML = `<i class="fa-brands fa-github"></i>${data.nav_github}`;
             
+            // 💡 導航選單翻譯
+            document.getElementById('nav-sec1').innerHTML = `<i class="fa-solid fa-circle-info"></i>${data.nav_sec1}`;
+            document.getElementById('nav-sec2').innerHTML = `<i class="fa-solid fa-scale-unbalanced"></i>${data.nav_sec2}`;
+            document.getElementById('nav-sec3').innerHTML = `<i class="fa-solid fa-server"></i>${data.nav_sec3}`;
+            document.getElementById('nav-sec4').innerHTML = `<i class="fa-solid fa-table-list"></i>${data.nav_sec4}`;
+            document.getElementById('nav-sec5').innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i>${data.nav_sec5}`;
+            document.getElementById('nav-sec6').innerHTML = `<i class="fa-solid fa-shield-halved"></i>${data.nav_sec6}`;
+            document.getElementById('nav-sec-faq').innerHTML = `<i class="fa-solid fa-circle-question"></i>${data.nav_sec_faq}`;
+
             document.getElementById('sec1-title').innerHTML = `<i class="fa-solid fa-circle-info"></i>${data.sec1_title}`;
             document.getElementById('sec1-desc').innerHTML = data.sec1_desc;
 
@@ -175,6 +332,14 @@
 
             document.getElementById('sec6-title').innerHTML = `<i class="fa-solid fa-shield-halved"></i>${data.sec6_title}`;
             document.getElementById('sec6-desc').innerHTML = data.sec6_desc;
+
+            // 💡 FAQ 區塊標題與 12 大問答翻譯
+            document.getElementById('sec-faq').innerHTML = `<i class="fa-solid fa-circle-question"></i>${data.sec_faq_title}`;
+            
+            for (let i = 1; i <= 12; i++) {
+                document.getElementById(`faq-q${i}`).innerHTML = `<i class="fa-solid fa-chevron-right"></i>${data[`faq_q${i}`]}`;
+                document.getElementById(`faq-a${i}`).innerHTML = data[`faq_a${i}`];
+            }
         }
 
         const savedLang = localStorage.getItem('webtnx_lang') || 'en';
