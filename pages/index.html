@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WebTNX - Stable & Lightweight HTTP Tunnel</title>
-    <!-- 💡 新增：全域 Font Awesome 圖標支援 -->
+    <!-- Font Awesome 全域圖標 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: #f8f9fa; color: #333; margin: 0; padding: 0; display: flex; flex-direction: column; min-height: 100vh; }
@@ -22,7 +22,7 @@
         .hero { display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 60px 20px 40px 20px; max-width: 800px; margin: 0 auto; }
         h1 { font-size: 2.8rem; color: #212529; margin-bottom: 20px; }
         h1 i { margin-right: 12px; color: #007bff; }
-        .hero-desc { font-size: 1.2rem; line-height: 1.6; color: #6c757d; margin-bottom: 30px; }
+        .hero-desc { font-size: 1.2rem; line-height: 1.6; color: #6c757d; margin-bottom: 40px; }
         .btn { display: inline-block; background: #007bff; color: white; text-decoration: none; padding: 14px 28px; border-radius: 6px; font-weight: bold; font-size: 1.1rem; transition: background 0.2s; box-shadow: 0 4px 6px rgba(0,123,255,0.15); }
         .btn:hover { background: #0056b3; }
         .btn i { margin-right: 8px; }
@@ -44,6 +44,7 @@
         @media (max-width: 600px) { .step-grid { grid-template-columns: 1fr; } }
         .step-card { background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 6px; padding: 20px; text-align: left; }
         .step-card h3 { font-size: 1.05rem; margin-top: 0; margin-bottom: 10px; color: #007bff; }
+        .step-card h3 i { margin-right: 6px; }
         .step-card p { font-size: 0.9rem; color: #6c757d; line-height: 1.5; margin: 0; }
         .checklist { list-style: none; padding: 0; margin-top: 20px; }
         .checklist li { padding-left: 28px; position: relative; margin-bottom: 20px; font-size: 0.95rem; line-height: 1.7; color: #495057; }
@@ -61,9 +62,7 @@
     <header>
         <a href="/" class="logo"><i class="fa-solid fa-cloud-bolt"></i>WebTNX</a>
         <div class="nav-right">
-            <!-- GitHub 按鈕 -->
             <a href="https://github.com/NeuralNexusLab-nh/WebTNX/tree/main" id="nav-github" class="github-btn" target="_blank"><i class="fa-brands fa-github"></i>GitHub</a>
-            <!-- Docs 按鈕 -->
             <a href="/docs" id="nav-docs" class="docs-btn"><i class="fa-solid fa-file-lines"></i>Documentation</a>
             <select id="lang-select" onchange="changeLanguage(this.value)">
                 <option value="en">English</option>
@@ -104,12 +103,12 @@
                     <h4><i class="fa-solid fa-lock-open"></i><span id="why-r4-title">No SSL/HTTPS Encryption</span></h4>
                     <p id="why-r4-desc">Exposing raw IP usually runs over unencrypted HTTP. Modern web platforms (like Stripe, Line Bot, or browser features like camera access) strictly require HTTPS endpoints to function.</p>
                 </div>
-                <!-- 💡 資安重大威脅升級 5 -->
+                <!-- 5. 全球自動化探針 -->
                 <div class="why-card">
                     <h4><i class="fa-solid fa-bug"></i><span id="why-r5-title">Global Scanning & Bot Probing</span></h4>
                     <p id="why-r5-desc">Malicious botnets scan raw open ports globally within minutes, attempting automated brute-force attacks and executing exploit payloads directly against your machine.</p>
                 </div>
-                <!-- 💡 資安重大威脅升級 6 -->
+                <!-- 6. 橫向滲透威脅 -->
                 <div class="why-card">
                     <h4><i class="fa-solid fa-network-wired"></i><span id="why-r6-title">Lateral Movement & Intranet Infections</span></h4>
                     <p id="why-r6-desc">If your local computer is compromised through an exposed port, hackers can use it as a pivot to move laterally across your home or corporate local network, infecting other connected devices.</p>
@@ -122,27 +121,27 @@
             <h2 id="title-flow"><i class="fa-solid fa-diagram-project"></i>How WebTNX Works</h2>
             <div class="step-grid">
                 <div class="step-card">
-                    <h3 id="step1-title">1. Public Request</h3>
+                    <h3><i class="fa-solid fa-arrow-right-to-bracket"></i><span id="step1-title">1. Public Request</span></h3>
                     <p id="step1-desc">A visitor accesses your custom WebTNX link (e.g. <code>https://webtnx.zone.id/my-app/</code>).</p>
                 </div>
                 <div class="step-card">
-                    <h3 id="step2-title">2. Queue Request</h3>
+                    <h3><i class="fa-solid fa-database"></i><span id="step2-title">2. Queue Request</span></h3>
                     <p id="step2-desc">The WebTNX server generates a secure transaction Request ID, logs it into a temporary queue, and holds the visitor's connection open.</p>
                 </div>
                 <div class="step-card">
-                    <h3 id="step3-title">3. Agent Polling</h3>
+                    <h3><i class="fa-solid fa-arrows-spin"></i><span id="step3-title">3. Agent Polling</span></h3>
                     <p id="step3-desc">Your active WebTNX agent (Web or CLI) polls the server periodically, fetches the pending request, and wipes the server file instantly.</p>
                 </div>
                 <div class="step-card">
-                    <h3 id="step4-title">4. Keep-Alive & Local Call</h3>
+                    <h3><i class="fa-solid fa-heartbeat"></i><span id="step4-title">4. Keep-Alive & Local Call</span></h3>
                     <p id="step4-desc">The agent instantly signals the server to sustain the open connection, then forwards the request locally to your localhost.</p>
                 </div>
                 <div class="step-card">
-                    <h3 id="step5-title">5. Dynamic Encryption</h3>
+                    <h3><i class="fa-solid fa-key"></i><span id="step5-title">5. Dynamic Encryption</span></h3>
                     <p id="step5-desc">The agent reads the local response (binary files are safely converted to base64) and encrypts the payload symmetrically using a private security key.</p>
                 </div>
                 <div class="step-card">
-                    <h3 id="step6-title">6. Secure Return</h3>
+                    <h3><i class="fa-solid fa-reply"></i><span id="step6-title">6. Secure Return</span></h3>
                     <p id="step6-desc">The encrypted payload is safely transmitted back. The WebTNX server decrypts it and returns the plaintext content to the visitor.</p>
                 </div>
             </div>
@@ -166,7 +165,7 @@
             </ul>
         </div>
 
-        <!-- 4. 全面擴充版對比表格 -->
+        <!-- 4. 全面對比表格 -->
         <div class="section-block">
             <h2 id="title-vs"><i class="fa-solid fa-scale-balanced"></i>WebTNX vs. Traditional Tunnels</h2>
             <div class="table-responsive">
@@ -234,11 +233,11 @@
                             <td id="row10-c" style="color:#dc3545; font-weight:500;">Moderate (~1-2s polling delay)</td>
                             <td id="row10-t" style="color:#28a745; font-weight:500;">Extremely Fast (Millisecond-level)</td>
                         </tr>
-                        <!-- 💡 加密安全性防護等級提升 -->
+                        <!-- 💡 資安宣示升級為 SSL/TLS -->
                         <tr>
                             <td class="feature-name" id="row11-f"><strong>Request Privacy</strong></td>
                             <td id="row11-w" style="color:#28a745; font-weight:500;">High (HTTPS standard encrypted channel)</td>
-                            <td id="row11-c" style="color:#28a745; font-weight:500;">Excellent (SSL/TLS + Obfuscation)</td>
+                            <td id="row11-c" style="color:#28a745; font-weight:500;">Excellent (SSL/TLS + XOR Obfuscation)</td>
                             <td id="row11-t" style="color:#28a745; font-weight:500;">Excellent (E2E encryption, secure socket)</td>
                         </tr>
                         <tr>
@@ -257,7 +256,7 @@
     <script>
         const i18n = {
             en: {
-                home_title: "WebTNX: Convenient & Lightweight HTTP Tunnel",
+                home_title: "WebTNX: Stable & Lightweight HTTP Tunnel",
                 home_desc: "Expose your local development server to the internet. Similar to ngrok, but absolutely free, extremely convenient, and requires no registration. Just use a browser tab or a simple command as your tunnel agent.",
                 btn_create: "Get Started Now",
                 nav_docs: "Documentation",
@@ -343,18 +342,18 @@
                 row10_t: "Extremely Fast (Millisecond-level)",
                 row11_f: "<strong>Request Privacy</strong>",
                 row11_w: "High (HTTPS standard encrypted channel)",
-                row11_c: "Excellent (SSL/TLS + Obfuscation)",
+                row11_c: "Excellent (SSL/TLS + XOR Obfuscation)",
                 row11_t: "High (E2E encryption, secure socket)"
             },
             "zh-TW": {
-                home_title: "WebTNX：便利且輕量的 HTTP 內網穿透工具",
+                home_title: "WebTNX：穩定且輕量的 HTTP 內網穿透工具",
                 home_desc: "將您的本地開發伺服器發布到公網。類似 ngrok，但完全免費、便利、輕量，不需註冊。只需打開一個瀏覽器分頁或一條簡單指令即可充當隧道代理。",
                 btn_create: "立即開始體驗",
                 nav_docs: "技術文件",
                 title_what: "什麼是 HTTP 隧道？",
                 desc_what: "HTTP 隧道技術能讓您將運行在本機（處於 NAT、防火牆後，或沒有公網 IP）的本地伺服器安全地發布到網際網路上。它會提供一個公開的 URL，讓世界上任何地方的人都能直接存取您的本地專案（如測試 Webhook、調試 API 或向客戶展示網頁）。",
                 subtitle_why: "為什麼不能、或不應該直接公開本機的 IP？",
-                why_r1_title: "沒有公網 IP (寬頻 NAT / CGNAT 限制)",
+                why_r1_title: "沒有公網 IP (電信級 NAT / CGNAT 限制)",
                 why_r1_desc: "大多數家庭寬頻業者使用電信級 NAT。您的電腦並沒有真實的公網 IP，這意味著外部網路的任何人，物理上都無法在網路上定位並直接連線到您的電腦。",
                 why_r2_title: "分享器與防火牆的天然阻擋",
                 why_r2_desc: "路由器預設會阻擋所有未經請求的外部連入流量。要繞過它，您必須手動登入分享器設定繁瑣且不穩定的「連接埠映射（Port Forwarding）」。",
