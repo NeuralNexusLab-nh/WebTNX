@@ -4,29 +4,43 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WebTNX - Tunnel Running</title>
+    <!-- Font Awesome 全域圖標 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: #f8f9fa; color: #333; margin: 0; padding: 0; display: flex; flex-direction: column; min-height: 100vh; }
         header { display: flex; justify-content: space-between; align-items: center; padding: 20px 40px; background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        /* 💡 修改點：Logo 點擊在新分頁開啟首頁 */
+        /* 💡 點擊在新分頁開啟首頁 */
         .logo { font-size: 1.5rem; font-weight: bold; color: #007bff; text-decoration: none; }
+        .logo i { margin-right: 8px; }
         .nav-right { display: flex; align-items: center; gap: 15px; }
-        .docs-btn { display: inline-block; text-decoration: none; background: #e9ecef; color: #495057; padding: 6px 14px; border-radius: 4px; font-size: 0.9rem; font-weight: 500; transition: background 0.2s; }
+        .github-btn { display: inline-block; text-decoration: none; background: #24292e; color: white; padding: 8px 16px; border-radius: 4px; font-size: 0.9rem; font-weight: 500; transition: background 0.2s; }
+        .github-btn:hover { background: #1b1f23; }
+        .github-btn i { margin-right: 6px; }
+        .docs-btn { display: inline-block; text-decoration: none; background: #e9ecef; color: #495057; padding: 8px 16px; border-radius: 4px; font-size: 0.9rem; font-weight: 500; transition: background 0.2s; }
         .docs-btn:hover { background: #dee2e6; }
+        .docs-btn i { margin-right: 6px; }
         select { padding: 6px 12px; border-radius: 4px; border: 1px solid #ced4da; font-size: 0.9rem; outline: none; cursor: pointer; }
         .main-container { flex: 1; display: flex; justify-content: center; align-items: center; padding: 20px; }
         .card { background: white; padding: 40px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); width: 100%; max-width: 600px; box-sizing: border-box; }
         h1 { font-size: 1.8rem; color: #28a745; margin-top: 0; margin-bottom: 20px; }
+        h1 i { margin-right: 10px; }
         .alert-danger { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; padding: 15px; border-radius: 5px; margin-bottom: 20px; line-height: 1.5; }
+        .alert-danger i { margin-right: 8px; }
         
         .alert-warning { background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba; padding: 15px; border-radius: 5px; margin: 15px 0; line-height: 1.6; font-size: 0.95rem; }
+        .alert-warning i { margin-right: 8px; }
         .alert-info { background-color: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; padding: 15px; border-radius: 5px; margin: 15px 0; line-height: 1.6; font-size: 0.95rem; }
+        .alert-info i { margin-right: 8px; }
         
         code { background: #e9ecef; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 0.95rem; }
         .btn-back { display: inline-block; background: #dc3545; color: white; text-decoration: none; padding: 10px 20px; border-radius: 4px; font-weight: bold; transition: background 0.2s; border: none; cursor: pointer; }
         .btn-back:hover { background: #bd2130; }
+        .btn-back i { margin-right: 6px; }
 
         .history-box { margin-top: 25px; border-top: 1px solid #dee2e6; padding-top: 20px; }
         .history-title { font-size: 1.1rem; font-weight: 600; color: #495057; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
+        .history-title h3 { margin: 0; font-size: 1.1rem; }
+        .history-title h3 i { margin-right: 6px; color: #495057; }
         .pulse-dot { width: 8px; height: 8px; background-color: #28a745; border-radius: 50%; display: inline-block; animation: pulse 1.5s infinite; }
         @keyframes pulse {
             0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7); }
@@ -57,10 +71,11 @@
 <body>
     <header>
         <!-- 💡 點擊在新分頁開啟首頁 -->
-        <a href="/" target="_blank" class="logo">WebTNX</a>
+        <a href="/" target="_blank" class="logo"><i class="fa-solid fa-cloud-bolt"></i>WebTNX</a>
         <div class="nav-right">
-            <!-- 💡 新增指向 /docs 的按鈕 -->
-            <a href="/docs" id="nav-docs" class="docs-btn" style="text-decoration:none; font-weight:500;">Documentation</a>
+            <!-- 💡 新增指向 /docs 和 GitHub 的按鈕 (皆在新分頁開啟) -->
+            <a href="https://github.com/NeuralNexusLab-nh/WebTNX/tree/main" id="nav-github" class="github-btn" target="_blank"><i class="fa-brands fa-github"></i>GitHub</a>
+            <a href="/docs" id="nav-docs" class="docs-btn" target="_blank"><i class="fa-solid fa-file-lines"></i>Documentation</a>
             <select id="lang-select" onchange="changeLanguage(this.value)">
                 <option value="en">English</option>
                 <option value="zh-TW">繁體中文</option>
@@ -75,11 +90,11 @@
     <div class="main-container">
         <!-- 正常運作視窗 -->
         <div class="card" id="active-card" style="display:none;">
-            <h1 id="tunnel-active-title">WebTNX Tunnel is Running!</h1>
+            <h1 id="tunnel-active-title"><i class="fa-solid fa-circle-check"></i>WebTNX Tunnel is Running!</h1>
             <p><span id="txt-local-port">Local service port:</span> <code id="display-port">8080</code></p>
             <p><strong><span id="txt-public-url">Public URL:</span></strong> <a id="public-link" href="#" target="_blank"></a></p>
             
-            <!-- 💡 新增：CORS 阻擋與連線失敗預檢警告紅色框框 -->
+            <!-- CORS 阻擋與連線失敗預檢警告紅色框框 -->
             <div class="alert-danger" id="cors-precheck-error" style="display:none;"></div>
             
             <div class="alert-warning" id="keep-alive-warning"></div>
@@ -87,9 +102,10 @@
             <div class="alert-info" id="rewriting-info"></div>
             <div class="alert-info" id="cors-warning"></div>
 
+            <!-- 漂亮的動態請求紀錄區 -->
             <div class="history-box">
                 <div class="history-title">
-                    <span id="txt-history-title">Request History</span>
+                    <h3><i class="fa-solid fa-list-check"></i><span id="txt-history-title">Request History</span></h3>
                     <span class="pulse-dot"></span>
                 </div>
                 <div class="log-list" id="log-list">
@@ -101,9 +117,9 @@
         <!-- ID 佔用錯誤視窗 -->
         <div class="card" id="error-card" style="display:none;">
             <div class="alert-danger" id="err-message">
-                This ID is already in use. Please choose another one.
+                <i class="fa-solid fa-circle-exclamation"></i>This ID is currently in use. Please choose another one.
             </div>
-            <a href="/create" class="btn-back" id="btn-back">Back to Configuration</a>
+            <a href="/create" class="btn-back" id="btn-back"><i class="fa-solid fa-arrow-left"></i>Back to Configuration</a>
         </div>
     </div>
 
@@ -113,12 +129,11 @@
                 active_title: "WebTNX Tunnel is Running!",
                 local_port: "Local service port:",
                 public_url: "Public URL:",
-                keep_alive_warning: "<strong>⚠️ Do not refresh or close this tab!</strong><br>This browser page serves as your tunnel agent. Closing, refreshing, or letting your computer fall asleep (or putting this tab to sleep in the background) will immediately disconnect your tunnel.",
-                allow_local_warning: "<strong>⚠️ Permission Required: Allow Local Network Access</strong><br>Please make sure your browser permits this website to connect to your local website. If your browser displays a 'Private Network Access' prompt or any security warning, you must choose 'Allow' or 'Trust', otherwise the tunnel will not be able to communicate with your localhost.",
-                // 💡 新增預檢 CORS 錯誤翻譯 (英文)
-                cors_precheck_error: "<strong>⚠️ Local Connection Failed or CORS Blocked!</strong><br>WebTNX cannot communicate with your local server on port <strong>{port}</strong>. This usually happens if your local application is offline, or if the browser blocked the request due to CORS security policies. Please ensure your local server is running and CORS is enabled.",
-                rewriting_info: "<strong>💡 Auto Path Rewriting Enabled:</strong><br>To ensure resources load properly, WebTNX automatically rewrites absolute and relative paths (e.g. <code>/assets</code>) inside your HTML and JS responses, prefixing them with <code>/{id}/</code>.",
-                cors_warning: "<strong>⚠️ CORS Setting Required:</strong><br>Please allow CORS for <code>https://webtnx.zone.id</code> in your localhost local app.<br>Example Header: <code>Access-Control-Allow-Origin: https://webtnx.zone.id</code>",
+                keep_alive_warning: "<strong><i class='fa-solid fa-triangle-exclamation'></i> Do not refresh or close this tab!</strong><br>This browser page serves as your tunnel agent. Closing, refreshing, or letting your computer fall asleep (or putting this tab to sleep in the background) will immediately disconnect your tunnel.",
+                allow_local_warning: "<strong><i class='fa-solid fa-shield-halved'></i> Permission Required: Allow Local Network Access</strong><br>Please make sure your browser permits this website to connect to your local website. If your browser displays a 'Private Network Access' prompt or any security warning, you must choose 'Allow' or 'Trust', otherwise the tunnel will not be able to communicate with your localhost. Fully protected by End-to-End SSL/TLS Secure Channel.",
+                cors_precheck_error: "<strong><i class='fa-solid fa-circle-exclamation'></i> Local Connection Failed or CORS Blocked!</strong><br>WebTNX cannot communicate with your local server on port <strong>{port}</strong>. This usually happens if your local application is offline, or if the browser blocked the request due to CORS security policies. Please ensure your local server is running and CORS is enabled.",
+                rewriting_info: "<strong><i class='fa-solid fa-wand-magic-sparkles'></i> Auto Path Rewriting Enabled:</strong><br>To ensure resources load properly, WebTNX automatically rewrites absolute and relative paths (e.g. <code>/assets</code>) inside your HTML and JS responses, prefixing them with <code>/{id}/</code>.",
+                cors_warning: "<strong><i class='fa-solid fa-lock'></i> CORS Setting Required:</strong><br>Please allow CORS for <code>https://webtnx.zone.id</code> in your localhost local app.<br>Example Header: <code>Access-Control-Allow-Origin: https://webtnx.zone.id</code>",
                 error_in_use: "This ID is currently in use. Please choose another one.",
                 btn_back: "Back to Configuration",
                 conn_err: "Failed to connect to WebTNX Server.",
@@ -132,12 +147,11 @@
                 active_title: "WebTNX 網頁隧道正在運行中！",
                 local_port: "本機服務 Port：",
                 public_url: "公開存取網址：",
-                keep_alive_warning: "<strong>⚠️ 請勿重新整理（Refresh）或關閉此分頁！</strong><br>本網頁正扮演您的隧道代理。若關閉、重整分頁，或是讓電腦進入休眠狀態（或讓此分頁在背景休眠），隧道連線將會立即中斷。",
-                allow_local_warning: "<strong>⚠️ 必要權限：請允許此網站存取本地網路</strong><br>請確保您的瀏覽器已授權並允許此網站連線至您的本地網站（Local Website）。若瀏覽器彈出『私有網路存取（Private Network Access）』或安全性提示，請務必選擇『允許』或『信賴』，否則隧道將無法正常與您的 localhost 通訊。",
-                // 💡 新增預檢 CORS 錯誤翻譯 (繁中)
-                cors_precheck_error: "<strong>⚠️ 本地連線失敗或 CORS 安全限制阻擋！</strong><br>WebTNX 目前無法與您本機的 Port <strong>{port}</strong> 連通。這通常是因為您的本地應用程式尚未啟動，或是瀏覽器因為同源政策（CORS）阻擋了此請求。請確認您的本機伺服器已開啟並允許 CORS。",
-                rewriting_info: "<strong>💡 已啟用相對路徑重寫：</strong><br>為了讓資源正常載入，WebTNX 已自動將 HTML 與 JS 回應內容中的相對與絕對路徑（例如 <code>/assets</code>）重寫並加上了 <code>/{id}/</code> 前綴。",
-                cors_warning: "<strong>⚠️ 必須設定 CORS 允許跨來源請求：</strong><br>請在您的本機程式中啟用 CORS，允許來自 <code>https://webtnx.zone.id</code> 的請求。<br>例 Headers：<code>Access-Control-Allow-Origin: https://webtnx.zone.id</code>",
+                keep_alive_warning: "<strong><i class='fa-solid fa-triangle-exclamation'></i> 請勿重新整理（Refresh）或關閉此分頁！</strong><br>本網頁正扮演您的隧道代理。若關閉、重整分頁，或是讓電腦進入休眠狀態（或讓此分頁在背景休眠），隧道連線將會立即中斷。",
+                allow_local_warning: "<strong><i class='fa-solid fa-shield-halved'></i> 必要權限：請允許此網站存取本地網路</strong><br>請確保您的瀏覽器已授權並允許此網站連線至您的本地網站（Local Website）。若瀏覽器彈出『私有網路存取（Private Network Access）』或安全性提示，請務必選擇『允許』或『信賴』，否則隧道將無法正常與您的 localhost 通訊。此過程已完全受端對端 SSL/TLS 與雙層混淆加密通道保護。",
+                cors_precheck_error: "<strong><i class='fa-solid fa-circle-exclamation'></i> 本地連線失敗或 CORS 安全限制阻擋！</strong><br>WebTNX 目前無法與您本機的 Port <strong>{port}</strong> 連通。這通常是因為您的本地應用程式尚未啟動，或是瀏覽器因為同源政策（CORS）阻擋了此請求。請確認您的本機伺服器已開啟並允許 CORS。",
+                rewriting_info: "<strong><i class='fa-solid fa-wand-magic-sparkles'></i> 已啟用相對路徑重寫：</strong><br>為了讓資源正常載入，WebTNX 已自動將 HTML 與 JS 回應內容中的相對與絕對路徑（例如 <code>/assets</code>）重寫並加上了 <code>/{id}/</code> 前綴。",
+                cors_warning: "<strong><i class='fa-solid fa-lock'></i> 必須設定 CORS 允許跨來源請求：</strong><br>請在您的本機程式中啟用 CORS，允許來自 <code>https://webtnx.zone.id</code> 的請求。<br>例 Headers：<code>Access-Control-Allow-Origin: https://webtnx.zone.id</code>",
                 error_in_use: "此 ID 目前已被佔用，請重新選擇另一個 ID。",
                 btn_back: "返回重新設定",
                 conn_err: "與 WebTNX 伺服器連線失敗。",
@@ -249,27 +263,25 @@
             document.getElementById('lang-select').value = lang;
             const data = i18n[lang] || i18n['en'];
 
-            document.getElementById('tunnel-active-title').innerText = data.active_title;
+            document.getElementById('tunnel-active-title').innerHTML = `<i class="fa-solid fa-circle-check"></i>${data.active_title}`;
             document.getElementById('txt-local-port').innerText = data.local_port;
             document.getElementById('txt-public-url').innerText = data.public_url;
             document.getElementById('keep-alive-warning').innerHTML = data.keep_alive_warning;
             
             document.getElementById('allow-local-warning').innerHTML = data.allow_local_warning;
-            
-            // 💡 預檢 CORS 警告套用語系 (動態替換 port)
             document.getElementById('cors-precheck-error').innerHTML = data.cors_precheck_error.replace(/{port}/g, port);
 
             document.getElementById('rewriting-info').innerHTML = data.rewriting_info.replace(/{id}/g, tunnelId);
             document.getElementById('cors-warning').innerHTML = data.cors_warning;
-            document.getElementById('btn-back').innerText = data.btn_back;
-            document.getElementById('err-message').innerText = data.error_in_use;
+            document.getElementById('btn-back').innerHTML = `<i class="fa-solid fa-arrow-left"></i>${data.btn_back}`;
+            document.getElementById('err-message').innerHTML = `<i class="fa-solid fa-circle-exclamation"></i>${data.error_in_use}`;
 
             document.getElementById('txt-history-title').innerText = data.txt_history_title;
             const placeholder = document.getElementById('no-reqs-placeholder');
             if (placeholder) {
                 placeholder.innerText = data.txt_no_reqs;
             }
-            document.getElementById('nav-docs').innerText = data.nav_docs;
+            document.getElementById('nav-docs').innerHTML = `<i class="fa-solid fa-file-lines"></i>${data.nav_docs}`;
         }
 
         function xorEncrypt(text, key) {
@@ -345,17 +357,13 @@
             logList.insertBefore(logItem, logList.firstChild);
         }
 
-        // 💡 新增：CORS 安全預檢
         async function runCORSPrecheck() {
             try {
-                // 發起一個簡單的 HEAD/GET 請求到 localhost 的 Port，測試是否會被 CORS 拒絕
                 await fetch(`http://localhost:${port}/`, { method: 'OPTIONS' });
             } catch (err) {
                 try {
-                    // 若 OPTIONS 失敗，嘗試一次最基本的 GET
                     await fetch(`http://localhost:${port}/`);
                 } catch (innerErr) {
-                    // 如果兩者皆完全失敗，表示本機服務未開啟，或是被瀏覽器 CORS 政策強制攔截
                     document.getElementById('cors-precheck-error').style.display = 'block';
                 }
             }
@@ -387,7 +395,6 @@
                 document.getElementById('public-link').href = pubLink;
                 document.getElementById('public-link').innerText = pubLink;
 
-                // 💡 啟動前，先執行 CORS 預檢
                 await runCORSPrecheck();
 
                 startPolling();
