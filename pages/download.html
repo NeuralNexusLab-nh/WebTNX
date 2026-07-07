@@ -161,7 +161,7 @@
             </div>
         </div>
 
-        <!-- 🔌 Category C: Embedded Libraries -->
+        <!-- Developer Embedded Libraries -->
         <div class="section-category" id="sec-embedded-title"><i class="fa-solid fa-code"></i>Developer Embedded Libraries (Zero Console / CORS Bypassed)</div>
         <div class="agent-grid-multi">
             <!-- Node.js SDK -->
@@ -227,7 +227,7 @@
 
     </div>
 
-    <!-- 💡 自訂彈窗（Modal）-->
+    <!-- 自訂彈窗（Modal）-->
     <div id="sdk-modal" class="modal-overlay" onclick="handleOverlayClick(event)">
         <div class="modal-card">
             <button onclick="closeModal()" class="modal-close-btn"><i class="fa-solid fa-xmark"></i></button>
@@ -276,7 +276,7 @@
                 modal_params_header: "<strong>Parameter Definitions:</strong><br>• <code>id</code> (String): Your desired App ID / subpath (e.g. 'myollama').<br>• <code>port</code> (Integer): The port your local application server is listening on.<br>• <code>timeout</code> (Integer): Maximum seconds to wait for a local response before timing out (default 15).",
                 modal_copy_success: "Copied!",
                 modal_copy_btn: "Copy Code",
-                modal_desc_node: "Integrate WebTNX directly inside your Express/Node.js app. This zero-dependency code polls, handles keepalive, performs symmetric encryption, and tunnels your port natively upon server start.",
+                modal_desc_node: "Integrate WebTNX directly inside your Express/Node.js app. This zero-dependency code uses global Fetch (standard since Node v18) to run the background loop natively.",
                 modal_desc_python: "Launch WebTNX inside a safe background daemon thread of your Flask/FastAPI server. This avoids blocking your local web process, and natively routes traffic completely CORS-free.",
                 modal_desc_go: "Spawn WebTNX securely as a lightweight concurrent Goroutine in your Gin/Fiber API server. This achieves the absolute lowest resource overhead with complete CORS bypass."
             },
@@ -313,15 +313,15 @@
                 modal_params_header: "<strong>參數定義與說明：</strong><br>• <code>id</code> (字串)：您想要的 App ID 網站代稱（會成為公網連結 Path，如 'my-app'）。<br>• <code>port</code> (整數)：您本機服務正在監聽的 Port 埠號。<br>• <code>timeout</code> (整數)：允許本地端運算的最長逾時秒數（預設 15 秒）。",
                 modal_copy_success: "複製成功！",
                 modal_copy_btn: "複製程式碼",
-                modal_desc_node: "請將以下免套件依賴（No-dependency）的函數加入您的 Node.js/Express 專案中。它會在服務啟動時平行執行背景輪詢、Keep-alive 維持、並在本地端將回應傳回公網伺服器。",
+                modal_desc_node: "請將以下免套件依賴的非同步函數加入您的 Node.js/Express 專案中。此代碼直接採用了 <b>Node.js 18+ 原生內建的 Fetch API</b>（100% 免安裝任何 npm 套件），在您伺服器啟動時自動於背景執行。",
                 modal_desc_python: "請將以下代碼加入您的 Python (Flask / FastAPI) 專案。此代碼會自動啟動一個 Daemon 守護執行緒在背景執行，保證在完全不阻塞本機 Web 服務的前提下穩定穿梭。",
                 modal_desc_go: "請將以下基於 Go 標準庫的代碼加入您的 Gin / Fiber API 伺服器中。啟動時只需使用 <code>go webtnx(...)</code> 即可在超輕量協程中開啟隱形穿梭。"
             }
         };
 
-        // 💡 徹底優化：完全移除了反單引號與換行、註解，徹底根除 ReferenceError 導致的白屏 Bug
+        // 💡 內嵌型 SDK 程式碼資料庫：已重構為極致輕量、Fetch API (Node 18+)、無換行、無註解的 Minified 規格
         const sdkCode = {
-            node: "function webtnx(id,port,t=15){const h=require('http'),k=id+'_'+port+'_'+t,xor=(t,k)=>Buffer.from(Buffer.from(t).map((b,i)=>b^Buffer.from(k)[i%k.length])).toString('base64'),post=(u,d,fn)=>{const r=h.request(u,{method:'POST',headers:{'content-type':'application/json'}},r=>{let b='';r.on('data',c=>b+=c).on('end',()=>fn&&fn(b))});r.write(JSON.stringify(d));r.end()};post('https://webtnx.zone.id/api/register',{id,port,timeout:t},r=>{if(!JSON.parse(r).success)return console.error('ID in use');console.log('Live: https://webtnx.zone.id/'+id+'/');setInterval(()=>post('https://webtnx.zone.id/api/reqs',{id},pr=>{const reqs=JSON.parse(pr).requests||[];reqs.forEach(q=>{post('https://webtnx.zone.id/api/keepalive',{requestId:q.id});const lr=h.request('http://localhost:'+port+q.path,{method:q.method,headers:q.headers},s=>{const ch=[];s.on('data',c=>ch.push(c)).on('end',()=>{const buf=Buffer.concat(ch),ct=s.headers['content-type']||'',isBin=!ct.includes('text/')&&!ct.includes('json')&&!ct.includes('javascript'),raw=isBin?buf.toString('base64'):buf.toString('utf8');post('https://webtnx.zone.id/api/res',{requestId:q.id,status:s.statusCode,headers:s.headers,body:xor(raw,k),isBase64:isBin,isEncrypted:true})})});lr.end()})}),2000)})}",
+            node: "async function webtnx(id,port,t=15){const srv='https://webtnx.zone.id',key=id+'_'+port+'_'+t,xor=(t,k)=>Buffer.from(Buffer.from(t).map((b,i)=>b^Buffer.from(k)[i%k.length])).toString('base64'),post=(u,d)=>fetch(u,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(d)}).then(r=>r.json().catch(()=>r.text()));try{const reg=await post(srv+'/api/register',{id,port,timeout:t});if(!reg.success)return console.error('[WebTNX] ID in use');console.log('[WebTNX] Live: '+srv+'/'+id+'/');setInterval(async()=>{try{const {requests}=await post(srv+'/api/reqs',{id});(requests||[]).forEach(async(q)=>{post(srv+'/api/keepalive',{requestId:q.id});let status=200,body='',isBin=false,resH={};try{const lRes=await fetch('http://localhost:'+port+q.path+(q.query?'?'+new URLSearchParams(q.query):''),{method:q.method,headers:q.headers}),ct=(lRes.headers.get('content-type')||'').toLowerCase();isBin=!ct.includes('text/')&&!ct.includes('json')&&!ct.includes('javascript');body=isBin?Buffer.from(await lRes.arrayBuffer()).toString('base64'):await lRes.text();status=lRes.status;lRes.headers.forEach((v,k)=>resH[k]=v);}catch(err){status=502;body=xor('Offline: '+err.message,key);isBin=false;}post(srv+'/api/res',{requestId:q.id,status,headers:isBin?resH:{'content-type':'text/html'},body:isBin?body:xor(body,key),isBase64:isBin,isEncrypted:!isBin});})}catch(e){}},2000)}catch(err){console.error('[WebTNX] Registration failed: '+err.message)}}",
             go: "package main; import (\"bytes\";\"encoding/base64\";\"encoding/json\";\"fmt\";\"io\";\"net/http\";\"strings\";\"time\"); func webtnx(id string, port int, timeout int) { go func() { sUrl := \"https://webtnx.zone.id\"; key := fmt.Sprintf(\"%s_%d_%d\", id, port, timeout); xor := func(t, k string) string { b, kb := []byte(t), []byte(k); enc := make([]byte, len(b)); for i := range b { enc[i] = b[i] ^ kb[i%len(kb)] }; return base64.StdEncoding.EncodeToString(enc) }; reg, _ := json.Marshal(map[string]interface{}{\"id\": id, \"port\": port, \"timeout\": timeout}); r, err := http.Post(sUrl+\"/api/register\", \"application/json\", bytes.NewBuffer(reg)); if err != nil || r.StatusCode != 200 { fmt.Println(\"Register Failed\"); return }; fmt.Printf(\"Tunnel Live: %s/%s/\\n\", sUrl, id); for { time.Sleep(2 * time.Second); pld, _ := json.Marshal(map[string]string{\"id\": id}); pr, err := http.Post(sUrl+\"/api/reqs\", \"application/json\", bytes.NewBuffer(pld)); if err != nil { continue }; var res map[string]interface{}; json.NewDecoder(pr.Body).Decode(&res); pr.Body.Close(); reqs, ok := res[\"requests\"].([]interface{}); if !ok { continue }; for _, rVal := range reqs { req := rVal.(map[string]interface{}); reqID := req[\"id\"].(string); ka, _ := json.Marshal(map[string]string{\"requestId\": reqID}); http.Post(sUrl+\"/api/keepalive\", \"application/json\", bytes.NewBuffer(ka)); lUrl := fmt.Sprintf(\"http://localhost:%d%s\", port, req[\"path\"].(string)); lq, _ := http.NewRequest(req[\"method\"].(string), lUrl, nil); lResp, err := http.DefaultClient.Do(lq); var status int = 200; var body string; var isBin bool; if err != nil { status = 502; body = xor(\"Offline\", key) } else { status = lResp.StatusCode; ct := strings.ToLower(lResp.Header.Get(\"Content-Type\")); isBin = !strings.Contains(ct, \"text/\") && !strings.Contains(ct, \"json\"); bBytes, _ := io.ReadAll(lResp.Body); lResp.Body.Close(); if isBin { body = base64.StdEncoding.EncodeToString(bBytes) } else { body = string(bBytes) } }; respPay, _ := json.Marshal(map[string]interface{}{\"requestId\": reqID, \"status\": status, \"headers\": map[string]string{\"content-type\": \"text/html\"}, \"body\": xor(body, key), \"isBase64\": isBin, \"isEncrypted\": true}); http.Post(sUrl+\"/api/res\", \"application/json\", bytes.NewBuffer(respPay)) } } }() }",
             python: `import threading, time, urllib.request, urllib.parse, json, base64
 def webtnx(id, port, timeout=15):
