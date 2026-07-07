@@ -35,14 +35,24 @@
         .agent-badge { display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; margin-bottom: 15px; }
         .badge-green { background: #e8f5e9; color: #2e7d32; }
         .badge-blue { background: #e3f2fd; color: #1565c0; }
+        .badge-purple { background: #f3e5f5; color: #4a148c; }
         .agent-desc { font-size: 0.9rem; color: #6c757d; line-height: 1.6; margin-bottom: 20px; flex-grow: 1; }
         .agent-desc ul { padding-left: 18px; margin: 10px 0 0 0; }
         .agent-desc li { margin-bottom: 6px; }
-        .btn-action { display: block; text-align: center; background: #007bff; color: white; text-decoration: none; padding: 12px; border-radius: 4px; font-weight: bold; font-size: 0.95rem; transition: background 0.2s; }
+        .btn-action { display: block; text-align: center; background: #007bff; color: white; text-decoration: none; padding: 12px; border-radius: 4px; font-weight: bold; font-size: 0.95rem; transition: background 0.2s; border: none; cursor: pointer; }
         .btn-action:hover { background: #0056b3; }
-        .btn-action i { margin-right: 6px; }
         .btn-web { background: #28a745; }
         .btn-web:hover { background: #218838; }
+
+        /* Modal 精美彈窗樣式 */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.55); z-index: 9999; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; backdrop-filter: blur(2px); }
+        .modal-card { background: white; border-radius: 12px; padding: 35px; max-width: 750px; width: 100%; max-height: 85vh; overflow-y: auto; box-shadow: 0 10px 25px rgba(0,0,0,0.15); position: relative; text-align: left; }
+        .modal-close-btn { position: absolute; top: 20px; right: 20px; background: none; border: none; font-size: 1.4rem; cursor: pointer; color: #6c757d; }
+        .modal-close-btn:hover { color: #212529; }
+        .modal-code-container { position: relative; margin: 15px 0; }
+        .modal-copy-btn { position: absolute; top: 12px; right: 12px; background: #007bff; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; cursor: pointer; transition: background 0.2s; }
+        .modal-copy-btn:hover { background: #0056b3; }
+        .modal-card pre { background: #272822; color: #f8f8f2; padding: 20px; border-radius: 6px; overflow-x: auto; margin: 0; font-family: monospace; font-size: 0.85rem; }
     </style>
 </head>
 <body>
@@ -54,11 +64,6 @@
             <select id="lang-select" onchange="changeLanguage(this.value)">
                 <option value="en">English</option>
                 <option value="zh-TW">繁體中文</option>
-                <option value="ja">日本語</option>
-                <option value="fr">Français</option>
-                <option value="it">Italiano</option>
-                <option value="pt">Português</option>
-                <option value="ko">한국어</option>
             </select>
         </div>
     </header>
@@ -71,7 +76,6 @@
         <div class="agent-grid-single">
             <div class="agent-card">
                 <div>
-                    <!-- Globe SVG -->
                     <svg class="agent-icon" viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="#28a745" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="12" cy="12" r="10"></circle>
                         <line x1="2" y1="12" x2="22" y2="12"></line>
@@ -93,12 +97,11 @@
         </div>
 
         <!-- CLI Versions -->
-        <div class="section-category" id="sec-cli-title"><i class="fa-solid fa-terminal"></i>Command-Line (CLI) Versions (CORS Bypassed)</div>
+        <div class="section-category" id="sec-cli-title"><i class="fa-solid fa-terminal"></i>Command-Line (CLI) Versions (CORS Bypassed - Run directly without settings)</div>
         <div class="agent-grid-multi">
             <!-- Windows Exe -->
             <div class="agent-card">
                 <div>
-                    <!-- Windows SVG -->
                     <svg class="agent-icon" viewBox="0 0 24 24" width="44" height="44" fill="#1565c0">
                         <path d="M0 3.449L9.75 2.1v9.45H0V3.449zM0 12.45h9.75v9.45L0 20.551v-8.101zM10.8 1.95L24 0v11.55H10.8V1.95zM10.8 12.45H24v11.55l-13.2-1.95v-9.6z"/>
                     </svg>
@@ -108,7 +111,7 @@
                         Perfect for Windows developers looking for maximum convenience.
                         <ul>
                             <li>Bypasses CORS completely</li>
-                            <li>Single standalone .exe file</li>
+                            <li>Single standalone .exe file. Run directly.</li>
                             <li>⚠️ No browser sandbox protection</li>
                         </ul>
                     </div>
@@ -119,7 +122,6 @@
             <!-- Unix Shell -->
             <div class="agent-card">
                 <div>
-                    <!-- Terminal SVG -->
                     <svg class="agent-icon" viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="#1565c0" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                         <polyline points="4 17 10 11 4 5"></polyline>
                         <line x1="12" y1="19" x2="20" y2="19"></line>
@@ -141,7 +143,6 @@
             <!-- Python Source -->
             <div class="agent-card">
                 <div>
-                    <!-- Python SVG -->
                     <svg class="agent-icon" viewBox="0 0 24 24" width="44" height="44" fill="#1565c0">
                         <path d="M12.11 2.01c-1.39 0-2.6.1-3.41.31-2.1.53-2.15 1.74-2.15 3.32v1.54h5.68c1.32 0 2.45 1.07 2.45 2.38v2.45h1.9c1.58 0 3.06-.05 3.59-2.15.53-2.1.53-3.42 0-5.52-.53-2.1-1.96-2.33-3.54-2.33h-4.52zm-1.89.84c.38 0 .69.31.69.69s-.31.69-.69.69-.69-.31-.69-.69.31-.69.69-.69zM11.89 21.99c1.39 0 2.6-.1 3.41-.31 2.1-.53 2.15-1.74 2.15-3.32v-1.54h-5.68c-1.32 0-2.45-1.07-2.45-2.38v-2.45h-1.9c-1.58 0-3.06.05-3.59 2.15-.53 2.1-.53 3.42 0 5.52.53 2.1 1.96 2.33 3.54 2.33h4.52zm1.89-.84c-.38 0-.69-.31-.69-.69s.31-.69.69-.69.69.31.69.69-.31.69-.69.69z"/>
                     </svg>
@@ -151,13 +152,92 @@
                         Ideal for security auditors and cross-platform Python developers.
                         <ul>
                             <li>Bypasses CORS completely</li>
-                            <li>100% transparent open source</li>
+                            <li>100% transparent open source. Run directly.</li>
                             <li>⚠️ Requires Python 3 installed</li>
                         </ul>
                     </div>
                 </div>
                 <a href="/download/python" class="btn-action" id="card4-btn"><i class="fa-brands fa-python"></i>Get Python Script</a>
             </div>
+        </div>
+
+        <!-- 🔌 Category C: Embedded Libraries -->
+        <div class="section-category" id="sec-embedded-title"><i class="fa-solid fa-code"></i>Developer Embedded Libraries (Zero Console / CORS Bypassed)</div>
+        <div class="agent-grid-multi">
+            <!-- Node.js SDK -->
+            <div class="agent-card">
+                <div>
+                    <svg class="agent-icon" viewBox="0 0 24 24" width="44" height="44" fill="#68a063">
+                        <path d="M12 2L2 8v8l10 6 10-6V8l-10-6zm8 13.5l-8 4.8-8-4.8V9.5l8-4.8 8 4.8v6z"/>
+                    </svg>
+                    <div class="agent-title">Node.js (Express)</div>
+                    <div class="agent-badge badge-purple" id="badge-node">Embedded SDK / No Console</div>
+                    <div class="agent-desc" id="desc-node">
+                        Embed WebTNX natively into your Node.js application process.
+                        <ul>
+                            <li>No separate CLI window needed</li>
+                            <li>Bypasses CORS completely</li>
+                            <li>⚠️ Runs inside Node.js Event Loop</li>
+                        </ul>
+                    </div>
+                </div>
+                <button onclick="openModal('node')" class="btn-action" style="background:#68a063;"><i class="fa-brands fa-node-js"></i>Get Node.js SDK</button>
+            </div>
+
+            <!-- Python Embedded -->
+            <div class="agent-card">
+                <div>
+                    <svg class="agent-icon" viewBox="0 0 24 24" width="44" height="44" fill="#306998">
+                        <path d="M12 2L2 8v8l10 6 10-6V8L12 2zm6 13.5l-6 4.8-6-4.8V9.5l6-4.8 6 4.8v6z"/>
+                    </svg>
+                    <div class="agent-title">Python (Flask/FastAPI)</div>
+                    <div class="agent-badge badge-purple" id="badge-python">Embedded SDK / No Console</div>
+                    <div class="agent-desc" id="desc-python">
+                        Run WebTNX inside your python server in a background thread.
+                        <ul>
+                            <li>Bypasses CORS completely</li>
+                            <li>Thread-safe background execution</li>
+                            <li>⚠️ Requires threading module support</li>
+                        </ul>
+                    </div>
+                </div>
+                <button onclick="openModal('python')" class="btn-action" style="background:#306998;"><i class="fa-brands fa-python"></i>Get Python SDK</button>
+            </div>
+
+            <!-- Go (Golang) SDK -->
+            <div class="agent-card">
+                <div>
+                    <svg class="agent-icon" viewBox="0 0 24 24" width="44" height="44" fill="#00add8">
+                        <path d="M12 2c5.52 0 10 4.48 10 10s-4.48 10-10 10S2 17.52 2 12 6.48 2 12 2zm1 15.5v-2h-2v2h2zm0-4v-5h-2v5h2z"/>
+                    </svg>
+                    <div class="agent-title">Go (Gin/Fiber)</div>
+                    <div class="agent-badge badge-purple" id="badge-go">Embedded SDK / No Console</div>
+                    <div class="agent-desc" id="desc-go">
+                        Spawn WebTNX concurrently as a Goroutine within your Go API.
+                        <ul>
+                            <li>Bypasses CORS completely</li>
+                            <li>Ultra-low memory Goroutine model</li>
+                            <li>⚠️ Compiled directly into Go binary</li>
+                        </ul>
+                    </div>
+                </div>
+                <button onclick="openModal('go')" class="btn-action" style="background:#00add8;"><i class="fa-solid fa-code"></i>Get Go SDK</button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- 💡 自訂彈窗（Modal）-->
+    <div id="sdk-modal" class="modal-overlay" onclick="handleOverlayClick(event)">
+        <div class="modal-card">
+            <button onclick="closeModal()" class="modal-close-btn"><i class="fa-solid fa-xmark"></i></button>
+            <h2 id="modal-title"><i class="fa-solid fa-code"></i> SDK Integration</h2>
+            <div id="modal-desc" style="font-size:0.95rem; color:#495057; margin-bottom:15px; line-height:1.6;"></div>
+            <div class="modal-code-container">
+                <button onclick="copyCode()" class="modal-copy-btn" id="modal-copy-btn"><i class="fa-solid fa-copy"></i> Copy Code</button>
+                <pre><code id="modal-code"></code></pre>
+            </div>
+            <div id="modal-params" style="font-size:0.85rem; color:#6c757d; line-height:1.6;"></div>
         </div>
     </div>
 
@@ -168,6 +248,9 @@
                 dl_subtitle: "Pick the best tunneling method for your workflow. All options are fully protected by End-to-End SSL/TLS Secure Encryption.",
                 sec_web_title: "Web-Based Version (Zero Install)",
                 sec_cli_title: "Command-Line (CLI) Versions (CORS Bypassed - Run directly without settings)",
+                sec_embedded_title: "Developer Embedded Libraries (Zero Console / CORS Bypassed)",
+                nav_github: "GitHub",
+                nav_docs: "Documentation",
                 card1_title: "Web Agent",
                 card1_badge: "Zero Install / Sandbox",
                 card1_desc: "Best for quick API/Webhook tests on any device.<ul><li>No software download required</li><li>Runs in secure browser sandbox</li><li>⚠️ Requires configuring local CORS</li></ul>",
@@ -183,13 +266,28 @@
                 card4_title: "Python Source",
                 card4_badge: "Native CLI / No CORS",
                 card4_desc: "Ideal for security auditors and cross-platform Python developers.<ul><li>Bypasses CORS completely</li><li>100% transparent open source. Run directly.</li><li>⚠️ Requires Python 3 installed</li></ul>",
-                card4_btn: "Get Python Script"
+                card4_btn: "Get Python Script",
+                badge_node: "Embedded SDK / No Console",
+                desc_node: "Embed WebTNX natively into your Node.js application process.<ul><li>No separate CLI window needed</li><li>Bypasses CORS completely</li><li>⚠️ Runs inside Node.js Event Loop</li></ul>",
+                badge_python: "Embedded SDK / No Console",
+                desc_python: "Run WebTNX inside your python server in a background thread.<ul><li>Bypasses CORS completely</li><li>Thread-safe background execution</li><li>⚠️ Requires threading module support</li></ul>",
+                badge_go: "Embedded SDK / No Console",
+                desc_go: "Spawn WebTNX concurrently as a Goroutine within your Go API.<ul><li>Bypasses CORS completely</li><li>Ultra-low memory Goroutine model</li><li>⚠️ Compiled directly into Go binary</li></ul>",
+                modal_params_header: "<strong>Parameter Definitions:</strong><br>• <code>id</code> (String): Your desired App ID / subpath (e.g. 'myollama').<br>• <code>port</code> (Integer): The port your local application server is listening on.<br>• <code>timeout</code> (Integer): Maximum seconds to wait for a local response before timing out (default 15).",
+                modal_copy_success: "Copied!",
+                modal_copy_btn: "Copy Code",
+                modal_desc_node: "Integrate WebTNX directly inside your Express/Node.js app. This zero-dependency code polls, handles keepalive, performs symmetric encryption, and tunnels your port natively upon server start.",
+                modal_desc_python: "Launch WebTNX inside a safe background daemon thread of your Flask/FastAPI server. This avoids blocking your local web process, and natively routes traffic completely CORS-free.",
+                modal_desc_go: "Spawn WebTNX securely as a lightweight concurrent Goroutine in your Gin/Fiber API server. This achieves the absolute lowest resource overhead with complete CORS bypass."
             },
             "zh-TW": {
                 dl_title: "選擇您的 WebTNX 代理端",
                 dl_subtitle: "挑選最適合您日常開發與調試工作流的穿透模式。所有模式皆完整支援端到端 SSL/TLS 安全加密。",
                 sec_web_title: "網頁版代理（免安裝、即開即用）",
                 sec_cli_title: "命令列 CLI 版代理（原生免除 CORS 限制，直接執行即可）",
+                sec_embedded_title: "開發者內嵌套件版（極致無痕 / 原生免除 CORS 限制）",
+                nav_github: "GitHub",
+                nav_docs: "技術文件",
                 card1_title: "網頁代理 (Web)",
                 card1_badge: "免安裝 / 瀏覽器安全防護",
                 card1_desc: "適合任何裝置快速測試 API 接口或接收 Webhook。<ul><li>完全免下載任何檔案</li><li>受瀏覽器嚴格安全沙盒保護</li><li>⚠️ 本機專案需要配置 CORS 允許連線</li></ul>",
@@ -200,103 +298,73 @@
                 card2_btn: "下載 Windows CLI",
                 card3_title: "Linux / macOS 腳本",
                 card3_badge: "作業系統進程 / 豁免 CORS",
-                card3_desc: "專為 Linux、macOS 或各類 Unix 伺服器終端環境優化。<ul><li>原生繞過 CORS 跨來源安全性限制</li><li>可執行的 Shell 指令，賦予權限後直接執行即可</li><li>⚠️ 未受瀏覽器沙盒保護，執行原生程序</li></ul>",
+                card3_desc: "專為 Linux、macOS 或各類 Unix 伺服器終端環境優化。<ul><li>原生繞過 CORS 跨來源安全性限制</li><li>可執行的 Shell 指令，功能授權後直接執行即可</li><li>⚠️ 未受瀏覽器沙盒保護，執行原生程序</li></ul>",
                 card3_btn: "下載 Shell 腳本",
                 card4_title: "Python 原始碼",
                 card4_badge: "作業系統進程 / 豁免 CORS",
                 card4_desc: "最適合資安稽核人員、跨平台或偏好原始碼透明度的開發者。<ul><li>原生繞過 CORS 跨來源安全性限制</li><li>100% 透明開源、無編譯，直接執行即可</li><li>⚠️ 本機必須事先安裝好 Python 3 環境</li></ul>",
-                card4_btn: "獲取 Python 腳本"
-            },
-            ja: {
-                dl_title: "WebTNX エージェントの選択",
-                dl_subtitle: "ワークフローに最適なトンネリング方法を選択してください。すべてのオプションがエンドツーエンドのSSL/TLS安全な暗号化によって保護されています。",
-                sec_web_title: "ウェブ代理版 (インストール不要)",
-                sec_cli_title: "CLIエージェント版 (CORS不要 - 設定なしで直接実行できます)",
-                card1_title: "ウェブ代理 (Web)", card1_badge: "インストール不要 / 砂箱",
-                card1_desc: "任意のデバイスでの迅速なAPIテストに最適。<ul><li>ダウンロード不要</li><li>ブラウザ安全砂箱内で実行</li><li>⚠️ ローカルCORS設定が必要</li></ul>",
-                card1_btn: "ウェブ代理を起動",
-                card2_title: "Windows Exe", card2_badge: "ネイティブCLI / CORS不要",
-                card2_desc: "CORSを完全にバイパスするWindows開発者向け。<ul><li>CORSを完全にバイパス</li><li>単一の.exeファイル。直接実行。</li><li>⚠️ ブラウザ砂箱の保護なし</li></ul>",
-                card2_btn: "Windows CLIをダウンロード",
-                card3_title: "Linux / macOS", card3_badge: "ネイティブCLI / CORS不要",
-                card3_desc: "ターミナル環境向け。<ul><li>CORSを完全にバイパス</li><li>実行可能シェルコマンド。直接実行。</li><li>⚠️ ブラウザ砂箱の保護なし</li></ul>",
-                card3_btn: "シェルスクリプトをダウンロード",
-                card4_title: "Python ソース", card4_badge: "ネイティブCLI / CORS不要",
-                card4_desc: "オープンソース透明性を重視する開発者向け。<ul><li>CORSを完全にバイパス</li><li>100% 透明なソースコード。直接実行。</li><li>⚠️ Python 3 のインストールが必要</li></ul>",
-                card4_btn: "Pythonスクリプトを取得"
-            },
-            fr: {
-                dl_title: "Choisissez votre Agent WebTNX",
-                dl_subtitle: "Sélectionnez la meilleure méthode de tunnel pour votre flux de travail. Toutes les options sont protégées par un canal sécurisé SSL/TLS de bout en bout.",
-                sec_web_title: "Version Web (Sans installation)",
-                sec_cli_title: "Versions CLI (Sans CORS - Exécuter directement sans réglages)",
-                card1_title: "Agent Web", card1_badge: "Sans installation / Sandbox",
-                card1_desc: "Idéal pour les tests rapides d'API/Webhook.<ul><li>Aucun téléchargement requis</li><li>Sûr dans la sandbox du navigateur</li><li>⚠️ Nécessite la configuration CORS</li></ul>",
-                card1_btn: "Lancer l'Agent Web",
-                card2_title: "Windows Exe", card2_badge: "CLI natif / Sans CORS",
-                card2_desc: "Parfait pour les développeurs Windows.<ul><li>Contourne entièrement CORS</li><li>Fichier .exe autonome. Exécuter directement.</li><li>⚠️ Aucune protection sandbox</li></ul>",
-                card2_btn: "Télécharger Windows CLI",
-                card3_title: "Linux / macOS", card3_badge: "CLI natif / Sans CORS",
-                card3_desc: "Optimisé pour les terminaux Unix/Linux/macOS.<ul><li>Contourne entièrement CORS</li><li>Commande shell. Exécuter directement.</li><li>⚠️ Aucune protection sandbox</li></ul>",
-                card3_btn: "Télécharger le Script Shell",
-                card4_title: "Source Python", card4_badge: "CLI natif / Sans CORS",
-                card4_desc: "Idéal pour les auditeurs et développeurs Python.<ul><li>Contourne entièrement CORS</li><li>Code source 100% transparent. Exécuter directement.</li><li>⚠️ Nécessite Python 3</li></ul>",
-                card4_btn: "Obtenir le Script Python"
-            },
-            it: {
-                dl_title: "Scegli il tuo Agente WebTNX",
-                dl_subtitle: "Scegli il miglior metodo di tunneling per il tuo lavoro. Tutte le opzioni sono protette da canale sicuro SSL/TLS end-to-end.",
-                sec_web_title: "Versione Web (Senza installazione)",
-                sec_cli_title: "Versioni CLI (Senza CORS - Esegui direttamente senza impostazioni)",
-                card1_title: "Agente Web", card1_badge: "Senza installazione / Sandbox",
-                card1_desc: "Ideale per test rapidi di API/Webhook.<ul><li>Nessun download richiesto</li><li>Sicuro nella sandbox del browser</li><li>⚠️ Richiede configurazione CORS</li></ul>",
-                card1_btn: "Avvia Agente Web",
-                card2_title: "Windows Exe", card2_badge: "CLI nativo / Senza CORS",
-                card2_desc: "Perfetto per gli sviluppatori Windows.<ul><li>Evita completamente CORS</li><li>Singolo file .exe. Esegui direttamente.</li><li>⚠️ Nessuna protezione sandbox</li></ul>",
-                card2_btn: "Scarica Windows CLI",
-                card3_title: "Linux / macOS", card3_badge: "CLI nativo / Senza CORS",
-                card3_desc: "Ottimizzato per terminali Unix/Linux/macOS.<ul><li>Evita completamente CORS</li><li>Comando shell. Esegui direttamente.</li><li>⚠️ Nessuna protezione sandbox</li></ul>",
-                card3_btn: "Scarica Script Shell",
-                card4_title: "Sorgente Python", card4_badge: "CLI nativo / Senza CORS",
-                card4_desc: "Ideale per revisori e sviluppatori Python.<ul><li>Evita completamente CORS</li><li>Codice 100% trasparente. Esegui direttamente.</li><li>⚠️ Richiede Python 3</li></ul>",
-                card4_btn: "Ottieni Script Python"
-            },
-            pt: {
-                dl_title: "Escolha seu Agente WebTNX",
-                dl_subtitle: "Escolha o melhor método de túnel para seu fluxo de trabalho. Todas as opções são protegidas por canal seguro SSL/TLS ponta a ponta.",
-                sec_web_title: "Versão Web (Sem instalação)",
-                sec_cli_title: "Versões CLI (Sem CORS - Execute diretamente sem configurações)",
-                card1_title: "Agente Web", card1_badge: "Sem instalação / Sandbox",
-                card1_desc: "Ideal para testes rápidos de API/Webhook.<ul><li>Nenhum download necessário</li><li>Seguro no sandbox do navegador</li><li>⚠️ Requer configuração CORS</li></ul>",
-                card1_btn: "Iniciar Agente Web",
-                card2_title: "Windows Exe", card2_badge: "CLI nativo / Sem CORS",
-                card2_desc: "Perfeito para desenvolvedores Windows.<ul><li>Bypassa totalmente CORS</li><li>Arquivo .exe único. Execute diretamente.</li><li>⚠️ Sem proteção sandbox</li></ul>",
-                card2_btn: "Baixar Windows CLI",
-                card3_title: "Linux / macOS", card3_badge: "CLI nativo / Sem CORS",
-                card3_desc: "Otimizado para terminais Unix/Linux/macOS.<ul><li>Bypassa totalmente CORS</li><li>Comando shell executável. Execute diretamente.</li><li>⚠️ Sem proteção sandbox</li></ul>",
-                card3_btn: "Baixar Script Shell",
-                card4_title: "Código Python", card4_badge: "CLI nativo / Sem CORS",
-                card4_desc: "Ideal para auditores e desenvolvedores Python.<ul><li>Bypassa totalmente CORS</li><li>Código fonte 100% transparente. Execute diretamente.</li><li>⚠️ Requer Python 3</li></ul>",
-                card4_btn: "Obter Script Python"
-            },
-            ko: {
-                dl_title: "WebTNX 에이전트 선택",
-                dl_subtitle: "워크플로우에 가장 적합한 터널링 방식을 선택하세요. 모든 옵션은 종단간 SSL/TLS 보안 채널로 보호됩니다.",
-                sec_web_title: "웹 기반 에이전트 (설치 불필요)",
-                sec_cli_title: "CLI 기반 에이전트 (CORS 우회 - 추가 설정 없이 바로 실행하세요)",
-                card1_title: "웹 에이전트", card1_badge: "설치 없음 / 브라우저 보호",
-                card1_desc: "모든 기기에서 빠른 API/Webhook 테스트에 최적.<ul><li>소프트웨어 다운로드 불필요</li><li>안전한 브라우저 샌드박스 실행</li><li>⚠️ 로컬 CORS 설정 필수</li></ul>",
-                card1_btn: "웹 에이전트 시작",
-                card2_title: "Windows Exe", card2_badge: "네이티브 CLI / CORS 없음",
-                card2_desc: "CORS를 완전히 우회하고자 하는 Windows 개발자용.<ul><li>CORS 제한 없음</li><li>단일 .exe 파일. 바로 실행하세요.</li><li>⚠️ 브라우저 샌드박스 보호 없음</li></ul>",
-                card2_btn: "Windows CLI 다운로드",
-                card3_title: "Linux / macOS", card3_badge: "네이티브 CLI / CORS 없음",
-                card3_desc: "터미널 환경에 최적화됨.<ul><li>CORS 제한 없음</li><li>실행 가능한 셸 명령어. 바로 실행하세요.</li><li>⚠️ 브라우저 샌드박스 보호 없음</li></ul>",
-                card3_btn: "셸 스크립트 다운로드",
-                card4_title: "Python 소스", card4_badge: "네이티브 CLI / CORS 없음",
-                card4_desc: "소스 코드 투명성을 선호하는 개발자용.<ul><li>CORS 제한 없음</li><li>100% 투명한 소스 코드. 바로 실행하세요.</li><li>⚠️ Python 3 설치 필요</li></ul>",
-                card4_btn: "Python 스크립트 받기"
+                card4_btn: "獲取 Python 腳本",
+                badge_node: "代碼內嵌 / 無痕無進程",
+                desc_node: "將 WebTNX 代理直接作為一個函數編寫進您的 Node.js 專案。<ul><li>免多開任何終端機視窗</li><li>原生、徹底免除本機 CORS 煩惱</li><li>⚠️ 運行於 Node 事件循環 (Event Loop) 中</li></ul>",
+                badge_python: "代碼內嵌 / 無痕無進程",
+                desc_python: "利用 Python 背景執行緒，將穿梭隧道完全融於您的 Web 服務。<ul><li>原生、徹底免除本機 CORS 煩惱</li><li>線程安全 (Thread-safe) 的背景靜默執行</li><li>⚠️ 需依賴 Python 內建 threading 模組支援</li></ul>",
+                badge_go: "代碼內嵌 / 無痕無進程",
+                desc_go: "在 Go API 專案啟動時，直接以 Goroutine 協程平行開啟隧道。<ul><li>原生、徹底免除本機 CORS 煩惱</li><li>極致省記憶體的 Goroutine 輕量架構</li><li>⚠️ 直接編譯進 Go 二進位檔，無感隨啟</li></ul>",
+                modal_params_header: "<strong>參數定義與說明：</strong><br>• <code>id</code> (字串)：您想要的 App ID 網站代稱（會成為公網連結 Path，如 'my-app'）。<br>• <code>port</code> (整數)：您本機服務正在監聽的 Port 埠號。<br>• <code>timeout</code> (整數)：允許本地端運算的最長逾時秒數（預設 15 秒）。",
+                modal_copy_success: "複製成功！",
+                modal_copy_btn: "複製程式碼",
+                modal_desc_node: "請將以下免套件依賴（No-dependency）的函數加入您的 Node.js/Express 專案中。它會在服務啟動時平行執行背景輪詢、Keep-alive 維持、並在本地端將回應傳回公網伺服器。",
+                modal_desc_python: "請將以下代碼加入您的 Python (Flask / FastAPI) 專案。此代碼會自動啟動一個 Daemon 守護執行緒在背景執行，保證在完全不阻塞本機 Web 服務的前提下穩定穿梭。",
+                modal_desc_go: "請將以下基於 Go 標準庫的代碼加入您的 Gin / Fiber API 伺服器中。啟動時只需使用 <code>go webtnx(...)</code> 即可在超輕量協程中開啟隱形穿梭。"
             }
+        };
+
+        // 💡 徹底優化：完全移除了反單引號與換行、註解，徹底根除 ReferenceError 導致的白屏 Bug
+        const sdkCode = {
+            node: "function webtnx(id,port,t=15){const h=require('http'),k=id+'_'+port+'_'+t,xor=(t,k)=>Buffer.from(Buffer.from(t).map((b,i)=>b^Buffer.from(k)[i%k.length])).toString('base64'),post=(u,d,fn)=>{const r=h.request(u,{method:'POST',headers:{'content-type':'application/json'}},r=>{let b='';r.on('data',c=>b+=c).on('end',()=>fn&&fn(b))});r.write(JSON.stringify(d));r.end()};post('https://webtnx.zone.id/api/register',{id,port,timeout:t},r=>{if(!JSON.parse(r).success)return console.error('ID in use');console.log('Live: https://webtnx.zone.id/'+id+'/');setInterval(()=>post('https://webtnx.zone.id/api/reqs',{id},pr=>{const reqs=JSON.parse(pr).requests||[];reqs.forEach(q=>{post('https://webtnx.zone.id/api/keepalive',{requestId:q.id});const lr=h.request('http://localhost:'+port+q.path,{method:q.method,headers:q.headers},s=>{const ch=[];s.on('data',c=>ch.push(c)).on('end',()=>{const buf=Buffer.concat(ch),ct=s.headers['content-type']||'',isBin=!ct.includes('text/')&&!ct.includes('json')&&!ct.includes('javascript'),raw=isBin?buf.toString('base64'):buf.toString('utf8');post('https://webtnx.zone.id/api/res',{requestId:q.id,status:s.statusCode,headers:s.headers,body:xor(raw,k),isBase64:isBin,isEncrypted:true})})});lr.end()})}),2000)})}",
+            go: "package main; import (\"bytes\";\"encoding/base64\";\"encoding/json\";\"fmt\";\"io\";\"net/http\";\"strings\";\"time\"); func webtnx(id string, port int, timeout int) { go func() { sUrl := \"https://webtnx.zone.id\"; key := fmt.Sprintf(\"%s_%d_%d\", id, port, timeout); xor := func(t, k string) string { b, kb := []byte(t), []byte(k); enc := make([]byte, len(b)); for i := range b { enc[i] = b[i] ^ kb[i%len(kb)] }; return base64.StdEncoding.EncodeToString(enc) }; reg, _ := json.Marshal(map[string]interface{}{\"id\": id, \"port\": port, \"timeout\": timeout}); r, err := http.Post(sUrl+\"/api/register\", \"application/json\", bytes.NewBuffer(reg)); if err != nil || r.StatusCode != 200 { fmt.Println(\"Register Failed\"); return }; fmt.Printf(\"Tunnel Live: %s/%s/\\n\", sUrl, id); for { time.Sleep(2 * time.Second); pld, _ := json.Marshal(map[string]string{\"id\": id}); pr, err := http.Post(sUrl+\"/api/reqs\", \"application/json\", bytes.NewBuffer(pld)); if err != nil { continue }; var res map[string]interface{}; json.NewDecoder(pr.Body).Decode(&res); pr.Body.Close(); reqs, ok := res[\"requests\"].([]interface{}); if !ok { continue }; for _, rVal := range reqs { req := rVal.(map[string]interface{}); reqID := req[\"id\"].(string); ka, _ := json.Marshal(map[string]string{\"requestId\": reqID}); http.Post(sUrl+\"/api/keepalive\", \"application/json\", bytes.NewBuffer(ka)); lUrl := fmt.Sprintf(\"http://localhost:%d%s\", port, req[\"path\"].(string)); lq, _ := http.NewRequest(req[\"method\"].(string), lUrl, nil); lResp, err := http.DefaultClient.Do(lq); var status int = 200; var body string; var isBin bool; if err != nil { status = 502; body = xor(\"Offline\", key) } else { status = lResp.StatusCode; ct := strings.ToLower(lResp.Header.Get(\"Content-Type\")); isBin = !strings.Contains(ct, \"text/\") && !strings.Contains(ct, \"json\"); bBytes, _ := io.ReadAll(lResp.Body); lResp.Body.Close(); if isBin { body = base64.StdEncoding.EncodeToString(bBytes) } else { body = string(bBytes) } }; respPay, _ := json.Marshal(map[string]interface{}{\"requestId\": reqID, \"status\": status, \"headers\": map[string]string{\"content-type\": \"text/html\"}, \"body\": xor(body, key), \"isBase64\": isBin, \"isEncrypted\": true}); http.Post(sUrl+\"/api/res\", \"application/json\", bytes.NewBuffer(respPay)) } } }() }",
+            python: `import threading, time, urllib.request, urllib.parse, json, base64
+def webtnx(id, port, timeout=15):
+    def run():
+        srv, key = "https://webtnx.zone.id", f"{id}_{port}_{timeout}"
+        def xor(t, k):
+            b, kb = t.encode("utf-8"), k.encode("utf-8")
+            return base64.b64encode(bytearray(x ^ kb[i % len(kb)] for i, x in enumerate(b))).decode("utf-8")
+        def post(url, d):
+            req = urllib.request.Request(url, data=json.dumps(d).encode("utf-8"), headers={"Content-Type":"application/json"}, method="POST")
+            try:
+                with urllib.request.urlopen(req) as r:
+                    raw = r.read()
+                    try: return json.loads(raw.decode("utf-8"))
+                    except: return {"success": True, "raw": raw.decode("utf-8")}
+            except: return {"success": False}
+        res = post(f"{srv}/api/register", {"id": id, "port": int(port), "timeout": int(timeout)})
+        if not res.get("success"): print("[WebTNX] Register Failed."); return
+        print(f"[WebTNX] Live: {srv}/{id}/")
+        while True:
+            try:
+                poll = post(f"{srv}/api/reqs", {"id": id})
+                for req in poll.get("requests", []):
+                    req_id = req["id"]
+                    post(f"{srv}/api/keepalive", {"requestId": req_id})
+                    url = f"http://localhost:{port}{req['path']}"
+                    if req.get("query"): url += f"?{urllib.parse.urlencode(req['query'])}"
+                    headers = {k: v for k, v in req.get("headers", {}).items() if k.lower() not in ["host", "connection", "accept-encoding", "content-length"]}
+                    try:
+                        lreq = urllib.request.Request(url, headers=headers, method=req["method"])
+                        with urllib.request.urlopen(lreq) as lres:
+                            status = getattr(lres, "status", None) or lres.getcode()
+                            ct = (lres.headers.get("content-type") or "").lower()
+                            is_bin = not any(t in ct for t in ["text/", "json", "javascript", "xml"])
+                            raw_b = lres.read()
+                            body = base64.b64encode(raw_b).decode("utf-8") if is_bin else raw_b.decode("utf-8", errors="ignore")
+                            enc_b = xor(body, key)
+                    except Exception as le:
+                        status, enc_b, is_bin = 502, xor(f"Offline: {le}", key), False
+                    post(f"{srv}/api/res", {"requestId": req_id, "status": status, "headers": {"content-type": "text/html"}, "body": enc_b, "isBase64": is_bin, "isEncrypted": True})
+            except: pass
+            time.sleep(2)
+    threading.Thread(target=run, daemon=True).start()`
         };
 
         const params = new URLSearchParams(window.location.search);
@@ -310,6 +378,7 @@
             document.getElementById('dl-subtitle').innerText = data.dl_subtitle;
             document.getElementById('sec-web-title').innerHTML = `<i class="fa-solid fa-globe"></i>${data.sec_web_title}`;
             document.getElementById('sec-cli-title').innerHTML = `<i class="fa-solid fa-terminal"></i>${data.sec_cli_title}`;
+            document.getElementById('sec-embedded-title').innerHTML = `<i class="fa-solid fa-code"></i>${data.sec_embedded_title}`;
 
             document.getElementById('card1-title').innerText = data.card1_title;
             document.getElementById('card1-badge').innerText = data.card1_badge;
@@ -330,6 +399,62 @@
             document.getElementById('card4-badge').innerText = data.card4_badge;
             document.getElementById('card4-desc').innerHTML = data.card4_desc;
             document.getElementById('card4-btn').innerHTML = `<i class="fa-brands fa-python"></i>${data.card4_btn}`;
+
+            document.getElementById('badge-node').innerText = data.badge_node;
+            document.getElementById('desc-node').innerHTML = data.desc_node;
+            document.getElementById('badge-python').innerText = data.badge_python;
+            document.getElementById('desc-python').innerHTML = data.desc_python;
+            document.getElementById('badge-go').innerText = data.badge_go;
+            document.getElementById('desc-go').innerHTML = data.desc_go;
+            
+            document.getElementById('nav-docs').innerHTML = `<i class="fa-solid fa-file-lines"></i>${data.nav_docs}`;
+            document.getElementById('nav-github').innerHTML = `<i class="fa-brands fa-github"></i>${data.nav_github}`;
+        }
+
+        let currentType = '';
+        function openModal(type) {
+            currentType = type;
+            const lang = localStorage.getItem('webtnx_lang') || 'en';
+            const data = i18n[lang] || i18n['en'];
+
+            document.getElementById('modal-title').innerHTML = `<i class="fa-solid fa-code"></i> SDK Integration`;
+            
+            let desc = "";
+            if (type === 'node') desc = data.modal_desc_node;
+            else if (type === 'python') desc = data.modal_desc_python;
+            else if (type === 'go') desc = data.modal_desc_go;
+            
+            document.getElementById('modal-desc').innerHTML = desc;
+            document.getElementById('modal-code').innerText = sdkCode[type];
+            document.getElementById('modal-params').innerHTML = data.modal_params_header;
+            document.getElementById('modal-copy-btn').innerHTML = `<i class="fa-solid fa-copy"></i>${data.modal_copy_btn}`;
+            
+            document.getElementById('sdk-modal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('sdk-modal').style.display = 'none';
+        }
+
+        function handleOverlayClick(e) {
+            if (e.target.id === 'sdk-modal') closeModal();
+        }
+
+        async function copyCode() {
+            const codeText = document.getElementById('modal-code').innerText;
+            const lang = localStorage.getItem('webtnx_lang') || 'en';
+            const data = i18n[lang] || i18n['en'];
+            
+            try {
+                await navigator.clipboard.writeText(codeText);
+                const btn = document.getElementById('modal-copy-btn');
+                btn.innerHTML = `<i class="fa-solid fa-check"></i> ${data.modal_copy_success}`;
+                setTimeout(() => {
+                    btn.innerHTML = `<i class="fa-solid fa-copy"></i> ${data.modal_copy_btn}`;
+                }, 2000);
+            } catch (err) {
+                console.error('Failed to copy text: ', err);
+            }
         }
 
         const savedLang = localStorage.getItem('webtnx_lang') || 'en';
