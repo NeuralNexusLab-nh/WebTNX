@@ -1,29 +1,42 @@
-PROPRIETARY LICENSE
+NEURALNEXUSLAB SHARED SOURCE LICENSE v1.0
 
 Copyright (c) 2026 NeuralNexusLab. All Rights Reserved.
+Official Website: https://nxlab.zone.id
 
-This software and all associated documentation files (the "Software") are the 
-sole and exclusive property of NeuralNexusLab. 
+Permission is hereby granted, free of charge, to any person or organization 
+obtaining a copy of this software and associated documentation files (the 
+"Software"), to use, run, and host the Software, subject to the following 
+conditions:
 
-By accessing, running, installing, or otherwise using this Software, you agree 
-to the terms and conditions of this License.
+1. ATTRIBUTION REQUIREMENT
+   Any publicly hosted instance of this Software, redistributed copies of the 
+   source code, or modified derivative works based on this Software, must 
+   prominently display the following copyright attribution and link back to 
+   the developer's website on the main user interface (e.g., footer):
+   "Powered by NeuralNexusLab (https://nxlab.zone.id/)"
 
-1. PROPRIETARY RIGHTS AND OWNERSHIP
-   All rights, title, and interest in and to the Software, including but not 
-   limited to any copyrights, patents, trademarks, source code, designs, and 
-   intellectual property rights therein, remain exclusively with NeuralNexusLab.
+2. PERMITTED COMMERCIAL USE (INDIRECT / ENABLED BUSINESS)
+   You are strictly permitted to use this Software to facilitate, develop, 
+   support, or proxy your own business services, applications, or products. 
+   For example, you may host this Software on your own servers to proxy 
+   backend APIs (such as local AI models or proprietary services) and charge 
+   your users a subscription fee for the access to that underlying service.
 
-2. RESTRICTIONS ON USE
-   This Software is licensed, not sold. You are strictly prohibited from:
-   a) Copying, distributing, sharing, publishing, or transmitting the Software 
-      to any third party without prior written consent from NeuralNexusLab.
-   b) Modifying, adapting, translating, or creating derivative works based 
-      upon the Software.
-   c) Reverse engineering, decompiling, disassembling, or otherwise attempting 
-      to discover the source code of the Software.
-   d) Sublicensing, renting, leasing, or renting out the Software.
+3. PROHIBITED COMMERCIAL USE (DIRECT TUNNEL RE-SELLING)
+   You are strictly prohibited from directly commercializing the HTTP Tunneling 
+   service itself. You may not charge users or customers directly for using 
+   WebTNX tunneling tunnels, selling subdomains, charging for tunnel bandwidth, 
+   or packaging and distributing WebTNX as a commercial tunneling SaaS 
+   (Software-as-a-Service) product.
 
-3. NO WARRANTY
+4. RESTRICTIONS
+   You may not:
+   a) Remove or alter any copyright notices, trademarks, or NeuralNexusLab 
+      branding within the source code or user interface.
+   b) Sublicense, lease, or rent the Software under a different name without 
+      prior written consent from NeuralNexusLab.
+
+5. DISCLAIMER OF WARRANTY
    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
    FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
@@ -31,6 +44,3 @@ to the terms and conditions of this License.
    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN 
    THE SOFTWARE.
-
-For permissions, inquiries, or licensing requests, please contact:
-NeuralNexusLab
