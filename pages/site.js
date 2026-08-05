@@ -2,6 +2,27 @@ const $ = (selector, root = document) => root.querySelector(selector);
 const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
 
 document.addEventListener('DOMContentLoaded', () => {
+  const languageSelects = $$('.language-select');
+  const applyLanguage = language => {
+    const lang = language === 'zh-TW' ? 'zh-TW' : 'en';
+    document.documentElement.lang = lang;
+    localStorage.setItem('webtnx-language', lang);
+    languageSelects.forEach(select => { select.value = lang; });
+    $$('[data-en][data-zh]').forEach(node => {
+      if (node.hasAttribute('data-dynamic')) return;
+      node.textContent = lang === 'zh-TW' ? node.dataset.zh : node.dataset.en;
+    });
+    $$('[data-en-html][data-zh-html]').forEach(node => {
+      node.innerHTML = lang === 'zh-TW' ? node.dataset.zhHtml : node.dataset.enHtml;
+    });
+    $$('[data-en-placeholder][data-zh-placeholder]').forEach(node => {
+      node.placeholder = lang === 'zh-TW' ? node.dataset.zhPlaceholder : node.dataset.enPlaceholder;
+    });
+    document.dispatchEvent(new CustomEvent('webtnx:languagechange', { detail: { lang } }));
+  };
+  languageSelects.forEach(select => select.addEventListener('change', () => applyLanguage(select.value)));
+  applyLanguage(localStorage.getItem('webtnx-language') || 'en');
+
   const menu = $('.menu');
   const links = $('.nav-links');
   menu?.addEventListener('click', () => links?.classList.toggle('open'));
@@ -35,5 +56,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const old = button.textContent;
     button.textContent = 'Copied';
     setTimeout(() => button.textContent = old, 1400);
+  }));
+
+  $$('.faq-item > button').forEach(button => button.addEventListener('click', () => {
+    const item = button.closest('.faq-item');
+    const open = item.classList.toggle('open');
+    button.setAttribute('aria-expanded', String(open));
   }));
 });

@@ -2,7 +2,6 @@
 import base64
 import json
 import os
-import platform
 import sys
 import time
 import urllib.error
@@ -39,7 +38,7 @@ def encrypt_payload(data, key):
 
 
 def post_json(path, data, token=None):
-    headers = {'Content-Type': 'application/json', 'User-Agent': 'WebTNX/2.0'}
+    headers = {'Content-Type': 'application/json', 'User-Agent': 'WebTNX'}
     if token:
         headers['Authorization'] = f'Bearer {token}'
     request = urllib.request.Request(
@@ -61,25 +60,20 @@ def source_line(source):
     )
 
 
-def usage():
-    command = 'webtnx.exe' if platform.system().lower() == 'windows' else 'python3 webtnx.py'
-    print(f'Usage: {command} <tunnel_id> <local_port> [timeout_seconds]')
-
-
 def main():
-    print(f'{BLUE}{BOLD}WebTNX 2 | AES-256-GCM authenticated tunnel{RESET}')
-    if len(sys.argv) >= 3:
-        tunnel_id, port = sys.argv[1].strip().lower(), sys.argv[2].strip()
-        timeout = sys.argv[3].strip() if len(sys.argv) > 3 else '30'
-    else:
-        try:
-            tunnel_id = input(f'{CYAN}Tunnel ID: {RESET}').strip().lower()
-            port = input(f'{CYAN}Local port: {RESET}').strip()
-            timeout = input(f'{CYAN}Timeout seconds [30]: {RESET}').strip() or '30'
-        except (KeyboardInterrupt, EOFError):
-            return 1
-    if not tunnel_id or not port.isdigit():
-        usage()
+    print(f'{BLUE}{BOLD}WebTNX | AES-256-GCM authenticated HTTP tunnel{RESET}')
+    print(f'{CYAN}Enter the local service details below. No command-line parameters are needed.{RESET}')
+    try:
+        tunnel_id = input(f'{CYAN}Tunnel ID: {RESET}').strip().lower()
+        port = input(f'{CYAN}Local port [3000]: {RESET}').strip() or '3000'
+        timeout = input(f'{CYAN}Timeout seconds [30]: {RESET}').strip() or '30'
+    except (KeyboardInterrupt, EOFError):
+        return 1
+    if not tunnel_id or not port.isdigit() or not timeout.isdigit():
+        print(f'{RED}Tunnel ID, local port, or timeout is invalid.{RESET}')
+        return 1
+    if not 1 <= int(port) <= 65535 or not 5 <= int(timeout) <= 120:
+        print(f'{RED}Port must be 1-65535 and timeout must be 5-120 seconds.{RESET}')
         return 1
 
     try:
@@ -155,4 +149,10 @@ def main():
 
 
 if __name__ == '__main__':
-    sys.exit(main())
+    exit_code = main()
+    if os.name == 'nt' and not sys.stdin.closed:
+        try:
+            input('\nPress Enter to close...')
+        except (KeyboardInterrupt, EOFError):
+            pass
+    sys.exit(exit_code)

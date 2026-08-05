@@ -1,8 +1,8 @@
-# WebTNX 2
+# WebTNX
 
 WebTNX is a lightweight, self-hosted HTTP relay that gives a local web service a public path. It supports a zero-install browser agent plus native Windows and Python clients.
 
-## What changed in v2
+## Features
 
 - Complete HTTP request forwarding: method, path, query, body, safe headers, status and binary responses.
 - Per-session random agent credentials.
@@ -33,15 +33,17 @@ When running directly behind exactly one trusted reverse proxy, set `TRUST_PROXY
 ### Windows
 
 ```powershell
-.\webtnx.exe my-app 3000 30
+.\webtnx.exe
 ```
 
 ### Python (Windows, Linux, macOS)
 
 ```bash
 python3 -m pip install cryptography
-python3 webtnx.py my-app 3000 30
+python3 webtnx.py
 ```
+
+Both native clients start an interactive setup. Enter the tunnel ID, local port, and timeout when prompted; command-line parameters are not required or used.
 
 The browser agent is available at `/create`. Browser security rules prevent JavaScript from setting a few restricted headers such as `Cookie`; use the native client when exact header fidelity is required.
 
