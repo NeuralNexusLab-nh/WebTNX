@@ -1,102 +1,66 @@
-# WebTNX
+# WebTNX 2
 
-<p align="center">
-  <strong>Stable, Lightweight, and Secure HTTP Tunneling Tool</strong>
-</p>
+WebTNX is a lightweight, self-hosted HTTP relay that gives a local web service a public path. It supports a zero-install browser agent plus native Windows and Python clients.
 
-<p align="center">
-  <img src="https://img.shields.io/badge/RAM_Footprint-~10MB_--_50MB-green?style=flat-square" alt="RAM Footprint">
-  <img src="https://img.shields.io/badge/Security-SSL%2FTLS%20%2B%20Symmetric_Encryption-blue?style=flat-square" alt="Security">
-  <img src="https://img.shields.io/badge/License-NeuralNexusLab_Proprietary-red?style=flat-square" alt="License">
-</p>
+## What changed in v2
 
----
+- Complete HTTP request forwarding: method, path, query, body, safe headers, status and binary responses.
+- Per-session random agent credentials.
+- AES-256-GCM authenticated encryption for request and response bodies, transported over TLS.
+- Ephemeral in-memory request queues—no request headers or bodies written to disk.
+- Source IP, protocol, user agent, path, status and byte counts in client logs.
+- Continuous CORS health checks in the browser agent.
+- Bounded queues, request deadlines and inactive-session cleanup for small servers.
+- Rebuilt frosted-glass midnight interface.
 
-**WebTNX** is a stable, convenient, and secure HTTP reverse-proxy tunnel that allows you to safely expose your local servers to the internet without configuring any router settings or system dependencies. It is designed to be highly reliable, lightweight, and suitable for stable, long-term server hosting.
+> WebTNX is not end-to-end encrypted: the relay must decrypt an agent response before returning it to the public visitor. TLS protects the full control plane in transit, while AES-256-GCM adds authenticated payload protection between relay and agent.
 
-WebTNX supports both a **Zero-Install Web Agent** (running entirely in a browser tab) and **Native CLI Clients** (Windows standalone `.exe`, Linux/macOS Shell script, and Python Source). The native CLI agents run directly on the host OS, completely bypassing browser sandboxing and CORS (Cross-Origin Resource Sharing) restrictions.
+## Self-hosting
 
----
+Requirements: Node.js 18 or later.
 
-## ⚙️ Key Features
-
-* 🌐 **Web Agent**: Expose your local server on any device (including smartphones and tablets) directly via a browser tab. Requires no software installation.
-* 💻 **Native CLI Agents (CORS Bypassed)**: Run directly on your OS to bypass CORS restrictions natively—no need to configure CORS on your local codebase.
-* 🔒 **Symmetric Transit Encryption**: Protected by End-to-End SSL/TLS secure channels, supplemented by symmetric payload encryption on the client before data transit.
-* 🚀 **Extreme Server Efficiency**: Highly optimized backend, stably running with a baseline memory footprint of less than 50MB of RAM.
-* 📊 **Interactive Web Console**: A real-time request history dashboard built into the tunnel page, displaying HTTP methods, path logs, response status codes, and payload previews.
-
----
-
-## 🛠️ Part 1: Self-Hosting Guide (How to Copy & Run)
-
-Expose your public server instance in less than 2 minutes. Follow these simple steps:
-
-### Prerequisites
-Ensure you have **Node.js** (v18+ recommended) installed on your public server.
-
-### 1. Clone the Repository
 ```bash
 git clone https://github.com/NeuralNexusLab-nh/WebTNX.git
 cd WebTNX
+npm ci
+NODE_OPTIONS=--max-old-space-size=24 PORT=3000 node server.js
 ```
 
-### 2. Install Dependencies
-```bash
-npm install
-```
+When running directly behind exactly one trusted reverse proxy, set `TRUST_PROXY=1` so source IP logging uses the forwarded client address. Do not enable this for an untrusted direct deployment.
 
-### 3. Configure the Port and Run
-You can configure the server port via the `PORT` environment variable:
+## Clients
 
-**On Linux / macOS:**
-```bash
-PORT=3000 node server.js
-```
+### Windows
 
-**On Windows (PowerShell):**
 ```powershell
-$env:PORT="3000"; node server.js
+.\webtnx.exe my-app 3000 30
 ```
 
-**On Windows (CMD):**
-```cmd
-set PORT=3000
-node server.js
+### Python (Windows, Linux, macOS)
+
+```bash
+python3 -m pip install cryptography
+python3 webtnx.py my-app 3000 30
 ```
 
-The WebTNX server is now live. Open your browser and visit `http://localhost:3000` to access the tunnel panel.
+The browser agent is available at `/create`. Browser security rules prevent JavaScript from setting a few restricted headers such as `Cookie`; use the native client when exact header fidelity is required.
 
----
+## Protocol limits
 
-## 🛡️ Part 2: Active Defense & Security Architecture
+- Request body limit: 2 MB.
+- Timeout: 5–120 seconds.
+- 10 queued requests per tunnel; 64 pending requests and a 4 MB queued-body budget per process.
+- No WebSocket, SSE or streaming response support.
+- Active tunnels end when the WebTNX server restarts.
 
-WebTNX is designed with proactive security principles at its core:
-* **Directory Traversal Immunity**: Strict whitelist-based validation blocks malicious payload injection on tunnel IDs.
-* **DDoS & Memory Exhaustion Shield**: A hard-capped **2MB payload limit** prevents memory-overflow attacks on resource-constrained hosting environments.
-* **Auto Fault Tolerance**: In case of temporary network drops, the CLI agent automatically retries connection recovery every 5 seconds without manual restarts.
-* **Symmetric Encryption**: Payload contents are encrypted on the client using a secure key, keeping your local data completely private over the public internet.
+## Security notes
 
----
+- Tunnel IDs are public routing identifiers, not passwords.
+- Each registration receives a random 256-bit bearer token and independent AES key.
+- AES-256-GCM authenticates every body before it is forwarded or returned.
+- Public applications should retain their own authentication and authorization.
+- Put rate limiting and TLS termination at a trusted reverse proxy for public deployments.
 
-## 🏢 Part 3: Developer Profile: NeuralNexusLab
+## License
 
-**WebTNX** is developed and maintained by **NeuralNexusLab**.
-
-* 🌐 **Official Website**: [https://nxlab.zone.id](https://nxlab.zone.id)
-* 📍 **Location**: Based in Taiwan.
-* ⚔️ **Expertise**: Full-Stack DevSecOps & Web Penetration Testing (Red Team).
-
-Our background in professional offensive security and defensive engineering is the reason WebTNX is built with a highly secure, hardened, and resilient architecture. We design tools that prioritize not only convenience but robust defense.
-
----
-
-## ⚖️ License
-
-Distributed under the **NeuralNexusLab Shared Source License v1.0**. 
-
-* Commercial use to facilitate or power your own business operations or subscription services is **strictly permitted** (e.g., using WebTNX to proxy your backend AI APIs and charging users for the AI service).
-* Commercializing the HTTP Tunneling service itself is **strictly prohibited** (e.g., you cannot sell or charge users directly for WebTNX tunneling, subdomains, or hosting).
-* Attribution is required. You must prominently credit **NeuralNexusLab** with a link to `https://nxlab.zone.id` in any publicly hosted instance or modified version of this software.
-
-See the `LICENSE` file for more details.
+Distributed under the [NeuralNexusLab Shared Source License v1.0](LICENSE). Public instances and modified versions must retain the required attribution. Direct commercial resale of the tunneling service is prohibited; see the license for the complete terms.

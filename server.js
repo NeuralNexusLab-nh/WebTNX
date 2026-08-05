@@ -1,305 +1,295 @@
-const express = require('express');
+const http = require('http');
 const crypto = require('crypto');
 const fs = require('fs');
 const path = require('path');
 
-const app = express();
-const PORT = process.env.PORT || 3000;
-
-app.disable('x-powered-by');
-
-app.use(express.json({ limit: '2mb' }));
-app.use(express.urlencoded({ limit: '2mb', extended: true }));
-app.use(express.text({ limit: '2mb' }));
-app.use(express.raw({ limit: '2mb' }));
-
-const dataDir = path.join(__dirname, 'data');
-const reqsDir = path.join(__dirname, 'data', 'requests');
-const idsPath = path.join(__dirname, 'data', 'ids.json');
-
-if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
-if (!fs.existsSync(reqsDir)) fs.mkdirSync(reqsDir, { recursive: true });
-if (!fs.existsSync(idsPath)) fs.writeFileSync(idsPath, '{}');
-
+const PORT = Number(process.env.PORT) || 3000;
+const ACTIVE_WINDOW_MS = 20_000;
+const MAX_TIMEOUT_SECONDS = 120;
+const MAX_QUEUE_PER_TUNNEL = 10;
+const MAX_PENDING_REQUESTS = 64;
+const MAX_QUEUED_BODY_BYTES = 4 * 1024 * 1024;
+const MAX_REQUEST_BODY_BYTES = 2 * 1024 * 1024;
+const MAX_CONTROL_BODY_BYTES = 3 * 1024 * 1024;
+const pagesDir = path.join(__dirname, 'pages');
+const tunnels = new Map();
 const pendingRequests = new Map();
+let queuedBodyBytes = 0;
 
-function isValidTunnelId(id) {
-    if (!id || typeof id !== 'string') return false;
-    const safeIdRegex = /^[a-zA-Z0-9-_]+$/;
-    if (!safeIdRegex.test(id)) return false;
-    
-    const reservedIds = [
-        'api', 'create', 'tunnel', 'timeout', 'license', 
-        'index', 'requests', 'ids', 'data', 'favicon', 'static', 'download', 'docs'
-    ];
-    if (reservedIds.includes(id.toLowerCase())) return false;
-    return true;
+const staticFiles = new Map([
+  ['/', ['index.html', 'text/html; charset=utf-8']],
+  ['/index.html', ['index.html', 'text/html; charset=utf-8']],
+  ['/create', ['create.html', 'text/html; charset=utf-8']],
+  ['/tunnel', ['tunnel.html', 'text/html; charset=utf-8']],
+  ['/download', ['download.html', 'text/html; charset=utf-8']],
+  ['/docs', ['docs.html', 'text/html; charset=utf-8']],
+  ['/timeout.html', ['timeout.html', 'text/html; charset=utf-8']],
+  ['/styles.css', ['styles.css', 'text/css; charset=utf-8']],
+  ['/site.js', ['site.js', 'application/javascript; charset=utf-8']]
+]);
+const staticCache = new Map();
+for (const [urlPath, [file, type]] of staticFiles) {
+  staticCache.set(urlPath, { body: fs.readFileSync(path.join(pagesDir, file)), type });
+}
+const timeoutPage = staticCache.get('/timeout.html').body;
+
+function setSecurityHeaders(res) {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+  res.setHeader('Cross-Origin-Resource-Policy', 'same-origin');
 }
 
-app.use(express.static(path.join(__dirname, 'pages')));
+function send(res, status, body = '', headers = {}) {
+  if (res.writableEnded) return;
+  setSecurityHeaders(res);
+  for (const [key, value] of Object.entries(headers)) res.setHeader(key, value);
+  res.statusCode = status;
+  res.end(body);
+}
 
-app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'pages', 'index.html')));
-app.get('/create', (req, res) => res.sendFile(path.join(__dirname, 'pages', 'create.html')));
-app.get('/tunnel', (req, res) => res.sendFile(path.join(__dirname, 'pages', 'tunnel.html')));
-app.get('/download', (req, res) => res.sendFile(path.join(__dirname, 'pages', 'download.html')));
-app.get('/docs', (req, res) => res.sendFile(path.join(__dirname, 'pages', 'docs.html')));
+function sendJson(res, status, data) {
+  send(res, status, JSON.stringify(data), { 'Content-Type': 'application/json; charset=utf-8' });
+}
 
-app.get('/download/windows', (req, res) => {
-    const filePath = path.join(__dirname, 'webtnx.exe');
-    if (fs.existsSync(filePath)) {
-        res.download(filePath, 'webtnx.exe');
-    } else {
-        res.status(404).send('webtnx.exe is currently not built on server. Please consult admin.');
-    }
-});
+function readBody(req, limit) {
+  return new Promise((resolve, reject) => {
+    const chunks = [];
+    let length = 0;
+    req.on('data', chunk => {
+      length += chunk.length;
+      if (length > limit) {
+        const error = new Error('Payload too large');
+        error.status = 413;
+        reject(error);
+        req.destroy();
+        return;
+      }
+      chunks.push(chunk);
+    });
+    req.on('end', () => resolve(Buffer.concat(chunks, length)));
+    req.on('error', reject);
+  });
+}
 
-app.get('/download/unix', (req, res) => {
-    const filePath = path.join(__dirname, 'webtnx.sh');
-    if (fs.existsSync(filePath)) {
-        res.download(filePath, 'webtnx.sh');
-    } else {
-        res.status(404).send('webtnx.sh shell script is currently not placed on server. Please consult admin.');
-    }
-});
+async function readJson(req) {
+  const body = await readBody(req, MAX_CONTROL_BODY_BYTES);
+  try { return body.length ? JSON.parse(body.toString('utf8')) : {}; }
+  catch (_) { const error = new Error('Invalid JSON'); error.status = 400; throw error; }
+}
 
-app.get('/download/python', (req, res) => {
-    const filePath = path.join(__dirname, 'webtnx.py');
-    if (fs.existsSync(filePath)) {
-        res.download(filePath, 'webtnx.py');
-    } else {
-        res.status(404).send('webtnx.py is currently not placed on server. Please consult admin.');
-    }
-});
+function isValidTunnelId(id) {
+  if (typeof id !== 'string' || !/^[a-zA-Z0-9-_]{3,64}$/.test(id)) return false;
+  return !new Set(['api','create','tunnel','timeout','license','index','requests','ids','data','favicon','static','download','docs','styles','site']).has(id.toLowerCase());
+}
 
-function xorDecrypt(base64Text, key) {
-    const encryptedBytes = Buffer.from(base64Text, 'base64');
-    const keyBytes = Buffer.from(key, 'utf8');
-    const decryptedBytes = Buffer.alloc(encryptedBytes.length);
-    for (let i = 0; i < encryptedBytes.length; i++) {
-        decryptedBytes[i] = encryptedBytes[i] ^ keyBytes[i % keyBytes.length];
-    }
-    return decryptedBytes;
+function base64url(value) { return Buffer.from(value).toString('base64url'); }
+function fromBase64url(value) { return Buffer.from(value, 'base64url'); }
+function hashToken(token) { return crypto.createHash('sha256').update(token).digest(); }
+
+function safeEqualToken(token, expectedHash) {
+  if (!token || !expectedHash) return false;
+  const actual = hashToken(token);
+  return actual.length === expectedHash.length && crypto.timingSafeEqual(actual, expectedHash);
+}
+
+function bearerToken(req) {
+  const value = req.headers.authorization || '';
+  return value.startsWith('Bearer ') ? value.slice(7) : '';
+}
+
+function encryptPayload(buffer, key) {
+  const iv = crypto.randomBytes(12);
+  const cipher = crypto.createCipheriv('aes-256-gcm', key, iv);
+  const ciphertext = Buffer.concat([cipher.update(buffer), cipher.final()]);
+  return { algorithm: 'AES-256-GCM', iv: base64url(iv), data: base64url(Buffer.concat([ciphertext, cipher.getAuthTag()])) };
+}
+
+function decryptPayload(payload, key) {
+  if (!payload || payload.algorithm !== 'AES-256-GCM') throw new Error('Unsupported encrypted payload');
+  const iv = fromBase64url(payload.iv);
+  const combined = fromBase64url(payload.data);
+  if (iv.length !== 12 || combined.length < 16) throw new Error('Malformed encrypted payload');
+  const decipher = crypto.createDecipheriv('aes-256-gcm', key, iv);
+  decipher.setAuthTag(combined.subarray(-16));
+  return Buffer.concat([decipher.update(combined.subarray(0, -16)), decipher.final()]);
+}
+
+function authenticateAgent(req, res, id) {
+  const tunnel = tunnels.get(id);
+  if (!tunnel || !safeEqualToken(bearerToken(req), tunnel.tokenHash)) {
+    sendJson(res, 401, { error: 'Invalid tunnel credentials' });
+    return null;
+  }
+  tunnel.lastActive = Date.now();
+  return tunnel;
+}
+
+function sanitizeForwardHeaders(headers) {
+  const excluded = new Set(['connection','proxy-connection','keep-alive','transfer-encoding','upgrade','te','trailer','host','content-length','proxy-authenticate','proxy-authorization']);
+  return Object.fromEntries(Object.entries(headers || {}).filter(([key]) => !excluded.has(key.toLowerCase())));
+}
+
+function queryObject(searchParams) {
+  const output = {};
+  for (const [key, value] of searchParams) {
+    if (key in output) output[key] = Array.isArray(output[key]) ? [...output[key], value] : [output[key], value];
+    else output[key] = value;
+  }
+  return output;
+}
+
+function sourceDetails(req) {
+  const forwarded = process.env.TRUST_PROXY === '1' ? String(req.headers['x-forwarded-for'] || '').split(',')[0].trim() : '';
+  return {
+    ip: forwarded || req.socket.remoteAddress || 'unknown',
+    forwardedFor: process.env.TRUST_PROXY === '1' ? (req.headers['x-forwarded-for'] || null) : null,
+    protocol: process.env.TRUST_PROXY === '1' ? String(req.headers['x-forwarded-proto'] || 'http').split(',')[0] : (req.socket.encrypted ? 'https' : 'http'),
+    host: req.headers.host || '',
+    userAgent: req.headers['user-agent'] || 'unknown',
+    referer: req.headers.referer || null,
+    receivedAt: new Date().toISOString()
+  };
 }
 
 function rewriteUrls(content, tunnelId) {
-    if (typeof content !== 'string') return content;
-    let rewritten = content.replace(/(href|src|action)=["']\/(?!\/)([^"']*)["']/g, (match, prop, subPath) => {
-        if (subPath.startsWith(tunnelId + '/')) return `${prop}="/${subPath}"`;
-        return `${prop}="/${tunnelId}/${subPath}"`;
-    });
-    rewritten = rewritten.replace(/url\(["']\/(?!\/)([^"']*)["']\)/g, (match, subPath) => {
-        if (subPath.startsWith(tunnelId + '/')) return `url("/${subPath}")`;
-        return `url("/${tunnelId}/${subPath}")`;
-    });
-    return rewritten;
+  let rewritten = content.replace(/(href|src|action)=["']\/(?!\/)([^"']*)["']/gi, (match, prop, subPath) => subPath.startsWith(`${tunnelId}/`) ? `${prop}="/${subPath}"` : `${prop}="/${tunnelId}/${subPath}"`);
+  return rewritten.replace(/url\(["']?\/(?!\/)([^"')]+)["']?\)/gi, (match, subPath) => subPath.startsWith(`${tunnelId}/`) ? `url("/${subPath}")` : `url("/${tunnelId}/${subPath}")`);
 }
 
-app.post('/api/register', (req, res) => {
-    const { id, port, timeout } = req.body;
-    if (!id || !port) return res.status(400).json({ success: false, reason: 'invalid' });
+function sendTimeout(requestId) {
+  const pending = pendingRequests.get(requestId);
+  if (!pending) return;
+  pendingRequests.delete(requestId);
+  send(pending.res, 504, timeoutPage, { 'Content-Type': 'text/html; charset=utf-8' });
+}
 
-    if (!isValidTunnelId(id)) {
-        return res.status(400).json({ success: false, reason: 'malicious_or_reserved_id' });
-    }
+function armTimeout(requestId, seconds) {
+  const pending = pendingRequests.get(requestId);
+  if (!pending) return;
+  if (pending.timeoutId) clearTimeout(pending.timeoutId);
+  pending.timeoutId = setTimeout(() => sendTimeout(requestId), seconds * 1000);
+}
 
-    const ids = JSON.parse(fs.readFileSync(idsPath, 'utf8'));
-    const now = Date.now();
+function serveStatic(urlPath, res) {
+  const asset = staticCache.get(urlPath);
+  if (!asset) return false;
+  send(res, 200, asset.body, { 'Content-Type': asset.type, 'Cache-Control': urlPath.endsWith('.css') || urlPath.endsWith('.js') ? 'public, max-age=300' : 'no-cache' });
+  return true;
+}
 
-    if (ids[id] && (now - ids[id].lastActive <= 20000)) {
-        return res.json({ success: false, reason: 'in_use' });
-    }
+function serveDownload(filename, res) {
+  const filePath = path.join(__dirname, filename);
+  if (!fs.existsSync(filePath)) return send(res, 404, 'Client is not available.');
+  setSecurityHeaders(res);
+  res.statusCode = 200;
+  res.setHeader('Content-Type', 'application/octet-stream');
+  res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+  res.setHeader('Content-Length', fs.statSync(filePath).size);
+  fs.createReadStream(filePath).pipe(res);
+}
 
-    ids[id] = {
-        port: parseInt(port, 10),
-        timeout: parseInt(timeout, 10) || 30,
-        lastActive: now
-    };
-    fs.writeFileSync(idsPath, JSON.stringify(ids, null, 2));
-    res.json({ success: true });
-});
-
-app.post('/api/reqs', (req, res) => {
-    const { id } = req.body;
-    
-    if (!isValidTunnelId(id)) {
-        return res.status(400).json({ error: 'Invalid ID format or reserved' });
-    }
-
-    if (!id) return res.status(400).json({ error: 'Missing ID' });
-
-    const ids = JSON.parse(fs.readFileSync(idsPath, 'utf8'));
-    if (ids[id]) {
-        ids[id].lastActive = Date.now(); 
-        fs.writeFileSync(idsPath, JSON.stringify(ids, null, 2));
-    }
-
-    const reqFilePath = path.join(reqsDir, `${id}.json`);
-    let requests = [];
-    if (fs.existsSync(reqFilePath)) {
-        try {
-            requests = JSON.parse(fs.readFileSync(reqFilePath, 'utf8'));
-            fs.writeFileSync(reqFilePath, '[]'); 
-        } catch (e) {
-            requests = [];
-        }
-    }
-    res.json({ requests });
-});
-
-app.post('/api/keepalive', (req, res) => {
-    const { requestId } = req.body;
-    const pending = pendingRequests.get(requestId);
-    if (pending) {
-        if (pending.timeoutId) {
-            clearTimeout(pending.timeoutId); 
-            pending.timeoutId = null; 
-        }
-        return res.json({ success: true });
-    }
-    res.status(404).json({ error: 'Request not found' });
-});
-
-app.post('/api/res', (req, res) => {
-    const { requestId, status, headers, body, isBase64, isEncrypted } = req.body;
-    const pending = pendingRequests.get(requestId);
-    if (!pending) return res.status(404).send('Request expired or not found.');
-
+async function handleApi(req, res, pathname) {
+  if (req.method !== 'POST') return sendJson(res, 405, { error: 'Method not allowed' });
+  const body = await readJson(req);
+  if (pathname === '/api/register') {
+    const id = String(body.id || '').trim().toLowerCase();
+    const port = Number(body.port);
+    const timeout = Math.min(MAX_TIMEOUT_SECONDS, Math.max(5, Number(body.timeout) || 30));
+    if (!isValidTunnelId(id) || !Number.isInteger(port) || port < 1 || port > 65535) return sendJson(res, 400, { success: false, reason: 'invalid_configuration' });
+    const current = tunnels.get(id);
+    if (current && Date.now() - current.lastActive <= ACTIVE_WINDOW_MS) return sendJson(res, 409, { success: false, reason: 'in_use' });
+    const token = base64url(crypto.randomBytes(32));
+    const key = crypto.randomBytes(32);
+    tunnels.set(id, { id, port, timeout, tokenHash: hashToken(token), key, lastActive: Date.now(), queue: [] });
+    return sendJson(res, 200, { success: true, token, encryptionKey: base64url(key), encryption: 'AES-256-GCM', pollIntervalMs: 1500 });
+  }
+  if (pathname === '/api/reqs') {
+    const id = String(body.id || '').trim().toLowerCase();
+    if (!isValidTunnelId(id)) return sendJson(res, 400, { error: 'Invalid tunnel ID' });
+    const tunnel = authenticateAgent(req, res, id);
+    if (!tunnel) return;
+    const requests = tunnel.queue.splice(0, tunnel.queue.length);
+    for (const request of requests) queuedBodyBytes = Math.max(0, queuedBodyBytes - request.bodyBytes);
+    return sendJson(res, 200, { requests });
+  }
+  if (pathname === '/api/keepalive') {
+    const pending = pendingRequests.get(body.requestId);
+    if (!pending) return sendJson(res, 404, { error: 'Request not found' });
+    const tunnel = authenticateAgent(req, res, pending.tunnelId);
+    if (!tunnel) return;
+    armTimeout(body.requestId, tunnel.timeout);
+    return sendJson(res, 200, { success: true });
+  }
+  if (pathname === '/api/res') {
+    const pending = pendingRequests.get(body.requestId);
+    if (!pending) return sendJson(res, 404, { error: 'Request expired or not found' });
+    const tunnel = authenticateAgent(req, res, pending.tunnelId);
+    if (!tunnel) return;
+    let responseBody;
+    try { responseBody = decryptPayload(body.payload, tunnel.key); }
+    catch (_) { return sendJson(res, 400, { error: 'Payload authentication failed' }); }
     if (pending.timeoutId) clearTimeout(pending.timeoutId);
+    pendingRequests.delete(body.requestId);
+    const responseHeaders = sanitizeForwardHeaders(body.headers && typeof body.headers === 'object' ? body.headers : {});
+    const contentType = String(responseHeaders['content-type'] || responseHeaders['Content-Type'] || '');
+    if (contentType.includes('text/html') || contentType.includes('text/css')) responseBody = Buffer.from(rewriteUrls(responseBody.toString('utf8'), pending.tunnelId));
+    const safeStatus = Number.isInteger(Number(body.status)) && Number(body.status) >= 100 && Number(body.status) <= 599 ? Number(body.status) : 200;
+    send(pending.res, safeStatus, responseBody, { ...responseHeaders, 'X-Via': 'WebTNX', 'X-Request-Id': body.requestId });
+    return sendJson(res, 200, { success: true });
+  }
+  return sendJson(res, 404, { error: 'API route not found' });
+}
 
-    let decryptedData;
-    if (isEncrypted) {
-        const ids = JSON.parse(fs.readFileSync(idsPath, 'utf8'));
-        const tunnelInfo = ids[pending.tunnelId];
-        const secretKey = `${pending.tunnelId}_${tunnelInfo.port}_${tunnelInfo.timeout}`;
-        
-        decryptedData = xorDecrypt(body, secretKey);
-    } else {
-        decryptedData = Buffer.from(body, isBase64 ? 'base64' : 'utf8');
-    }
+async function handleTunnel(req, res, url) {
+  const match = url.pathname.match(/^\/([^/]+)(\/.*)?$/);
+  if (!match) return false;
+  const tunnelId = decodeURIComponent(match[1]).toLowerCase();
+  if (!isValidTunnelId(tunnelId)) return false;
+  if (!match[2]) { send(res, 302, '', { Location: `/${tunnelId}/` }); return true; }
+  const tunnel = tunnels.get(tunnelId);
+  if (!tunnel || Date.now() - tunnel.lastActive > ACTIVE_WINDOW_MS) { send(res, 404, 'Tunnel not active or expired.'); return true; }
+  if (pendingRequests.size >= MAX_PENDING_REQUESTS || tunnel.queue.length >= MAX_QUEUE_PER_TUNNEL) { send(res, 503, 'Tunnel is busy. Please retry shortly.'); return true; }
+  const rawBody = await readBody(req, MAX_REQUEST_BODY_BYTES);
+  if (queuedBodyBytes + rawBody.length > MAX_QUEUED_BODY_BYTES) { send(res, 503, 'Relay memory budget is busy. Please retry shortly.'); return true; }
+  const requestId = base64url(crypto.randomBytes(24));
+  const requestData = {
+    id: requestId, method: req.method, headers: sanitizeForwardHeaders(req.headers),
+    path: match[2] || '/', query: queryObject(url.searchParams), payload: encryptPayload(rawBody, tunnel.key),
+    bodyBytes: rawBody.length, source: sourceDetails(req)
+  };
+  tunnel.queue.push(requestData);
+  queuedBodyBytes += rawBody.length;
+  pendingRequests.set(requestId, { res, tunnelId, timeoutId: null });
+  armTimeout(requestId, tunnel.timeout);
+  return true;
+}
 
-    let finalBody;
-    
-    if (isBase64) {
-        finalBody = Buffer.from(decryptedData.toString('utf8'), 'base64');
-    } else {
-        finalBody = decryptedData.toString('utf8');
-        const contentType = headers['content-type'] || '';
-        if (contentType.includes('text/html') || contentType.includes('application/javascript')) {
-            finalBody = rewriteUrls(finalBody, pending.tunnelId);
-        }
-    }
-
-    pending.resolve({ status, headers, body: finalBody });
-    pendingRequests.delete(requestId);
-    res.sendStatus(200);
+const server = http.createServer(async (req, res) => {
+  try {
+    const url = new URL(req.url, 'http://webtnx.local');
+    if ((req.method === 'GET' || req.method === 'HEAD') && serveStatic(url.pathname, res)) return;
+    if (req.method === 'GET' && url.pathname === '/download/windows') return serveDownload('webtnx.exe', res);
+    if (req.method === 'GET' && url.pathname === '/download/python') return serveDownload('webtnx.py', res);
+    if (url.pathname.startsWith('/api/')) return await handleApi(req, res, url.pathname);
+    if (await handleTunnel(req, res, url)) return;
+    send(res, 404, 'Not found.');
+  } catch (error) {
+    if (!res.headersSent) send(res, error.status || 500, error.status === 413 ? '413 Payload Too Large: WebTNX limit is 2 MB.' : 'WebTNX internal error.');
+    if (error.status !== 413) console.error(error);
+  }
 });
 
-app.get('/:tunnelId', (req, res, next) => {
-    const { tunnelId } = req.params;
-
-    if (['tunnel', 'api', 'create', 'timeout', 'download', 'docs'].includes(tunnelId) || req.path === '/' || req.path === '/index.html') {
-        return next();
+setInterval(() => {
+  const now = Date.now();
+  for (const [id, tunnel] of tunnels) {
+    if (now - tunnel.lastActive <= ACTIVE_WINDOW_MS * 3) continue;
+    for (const request of tunnel.queue) {
+      queuedBodyBytes = Math.max(0, queuedBodyBytes - request.bodyBytes);
+      sendTimeout(request.id);
     }
+    tunnels.delete(id);
+  }
+}, 10_000).unref();
 
-    if(req.path.endsWith("/")) {
-        return next();
-    }
-
-    res.redirect(302, `/${tunnelId}/`);
-});
-
-app.all('/:tunnelId/*', (req, res, next) => {
-    const { tunnelId } = req.params;
-    if (['tunnel', 'api', 'create', 'timeout', 'download', 'docs'].includes(tunnelId) || req.path === '/' || req.path === '/index.html') {
-        return next();
-    }
-
-    const ids = JSON.parse(fs.readFileSync(idsPath, 'utf8'));
-    const now = Date.now();
-
-    if (!ids[tunnelId] || (now - ids[tunnelId].lastActive > 20000)) {
-        return res.status(404).send('Tunnel not active or expired.');
-    }
-
-    const requestId = crypto.randomBytes(32).toString('hex');
-    const subPath = '/' + (req.params[0] || '');
-
-    const reqData = {
-        id: requestId,
-        method: req.method,
-        headers: Object.assign({}, req.headers, { host: undefined }),
-        path: subPath,
-        query: req.query
-    };
-
-    const reqFilePath = path.join(reqsDir, `${tunnelId}.json`);
-    let list = [];
-    if (fs.existsSync(reqFilePath)) {
-        try {
-            list = JSON.parse(fs.readFileSync(reqFilePath, 'utf8'));
-        } catch (e) {}
-    }
-    list.push(reqData);
-    fs.writeFileSync(reqFilePath, JSON.stringify(list, null, 2));
-
-    let resolveRequest;
-    const promise = new Promise((resolve) => {
-        resolveRequest = resolve;
-    });
-
-    const timeoutSeconds = ids[tunnelId].timeout || 30;
-    
-    const tId = setTimeout(() => {
-        if (pendingRequests.has(requestId)) {
-            pendingRequests.delete(requestId);
-
-            if (fs.existsSync(reqFilePath)) {
-                try {
-                    let currentList = JSON.parse(fs.readFileSync(reqFilePath, 'utf8'));
-                    currentList = currentList.filter(item => item.id !== requestId);
-                    
-                    fs.writeFileSync(reqFilePath, JSON.stringify(currentList, null, 2));
-                } catch (err) {
-                }
-            }
-
-            const timeoutHtmlPath = path.join(__dirname, 'pages', 'timeout.html');
-            const html = fs.existsSync(timeoutHtmlPath) 
-                ? fs.readFileSync(timeoutHtmlPath, 'utf8') 
-                : '504 Gateway Timeout (WebTNX)';
-            res.status(504).send(html);
-        }
-    }, timeoutSeconds * 1000);
-
-    pendingRequests.set(requestId, {
-        resolve: resolveRequest,
-        timeoutId: tId,
-        tunnelId: tunnelId
-    });
-
-    promise.then(({ status, headers: resHeaders, body }) => {
-        Object.keys(resHeaders).forEach(key => {
-            if (key.toLowerCase() !== 'transfer-encoding' && key.toLowerCase() !== 'content-length' && key.toLowerCase() !== 'x-powered-by') {
-                res.setHeader(key, resHeaders[key]);
-            }
-        });
-
-        res.setHeader('X-Via', 'WebTNX');
-        res.setHeader('X-Tunneled-By', 'WebTNX');
-        res.setHeader('X-Request-Id', requestId);
-        res.setHeader('X-Website', 'https://webtnx.zone.id/');
-
-        res.status(status || 200).send(body);
-    });
-});
-
-app.use((err, req, res, next) => {
-    if (err.type === 'entity.too.large' || err.status === 413) {
-        return res.status(413).send('413 Payload Too Large: WebTNX limit is 2MB to protect server memory.');
-    }
-    next(err);
-});
-
-app.listen(PORT, () => {
-    console.log(`WebTNX Server is running on port ${PORT}`);
-});
+server.listen(PORT, () => console.log(`WebTNX Server is running on port ${PORT}`));

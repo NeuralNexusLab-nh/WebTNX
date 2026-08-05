@@ -1,153 +1,158 @@
 #!/usr/bin/env python3
-import sys
-import json
-import time
 import base64
-import urllib.request
+import json
+import os
+import platform
+import sys
+import time
 import urllib.error
 import urllib.parse
-import platform
-SERVER_URL = "https://webtnx.zone.id"
-GREEN = '\033[92m'
-BLUE = '\033[94m'
-YELLOW = '\033[93m'
-CYAN = '\033[96m'
-RED = '\033[91m'
-BOLD = '\033[1m'
-RESET = '\033[0m'
-def exit_with_pause(code=1):
-    try:
-        input(f"\n{YELLOW}[PROMPT]{RESET} Press ENTER to exit...")
-    except (KeyboardInterrupt, EOFError):
-        pass
-    sys.exit(code)
-def xor_encrypt(text_str, key_str):
-    text_bytes = text_str.encode('utf-8')
-    key_bytes = key_str.encode('utf-8')
-    encrypted_bytes = bytearray(len(text_bytes))
-    for i in range(len(text_bytes)):
-        encrypted_bytes[i] = text_bytes[i] ^ key_bytes[i % len(key_bytes)]
-    return base64.b64encode(encrypted_bytes).decode('utf-8')
-def send_post(url, data_dict):
-    req_data = json.dumps(data_dict).encode('utf-8')
-    req = urllib.request.Request(url, data=req_data, headers={'Content-Type': 'application/json'}, method='POST')
-    with urllib.request.urlopen(req) as response:
-        raw_res = response.read()
-        try:
-            return json.loads(raw_res.decode('utf-8'))
-        except Exception:
-            return {"success": True, "raw": raw_res.decode('utf-8')}
-def show_usage():
-    is_windows = platform.system().lower() == "windows"
-    print(f"{RED}[USAGE]{RESET} WebTNX CLI Client")
-    if is_windows:
-        print("Run command:\n  webtnx.exe <tunnel_id> <local_port> [timeout_seconds]\nOR:\n  python webtnx.py <tunnel_id> <local_port> [timeout_seconds]")
-        print("\nExamples:\n  webtnx.exe my-app 8080 15\n  python webtnx.py my-app 3000 30")
-    else:
-        print("Run command:\n  ./webtnx <tunnel_id> <local_port> [timeout_seconds]\nOR:\n  python3 webtnx.py <tunnel_id> <local_port> [timeout_seconds]")
-        print("\nExamples:\n  ./webtnx my-app 8080 15\n  python3 webtnx.py my-app 3000 30")
-    print("\nParameters:\n  <tunnel_id>      : The unique subdomain/name for your public URL (e.g., https://webtnx.zone.id/my-app/)\n  <local_port>     : The port your local server is running on (e.g., 8080, 3000)\n  [timeout_seconds]: Optional. Maximum seconds to wait for a local response before timing out (Default: 15)")
+import urllib.request
+from cryptography.hazmat.primitives.ciphers.aead import AESGCM
+
+SERVER_URL = os.environ.get('WEBTNX_SERVER_URL', 'https://webtnx.zone.id').rstrip('/')
+GREEN, BLUE, YELLOW, CYAN, RED = '\033[92m', '\033[94m', '\033[93m', '\033[96m', '\033[91m'
+BOLD, RESET = '\033[1m', '\033[0m'
+HOP_HEADERS = {
+    'connection', 'proxy-connection', 'keep-alive', 'transfer-encoding', 'upgrade',
+    'te', 'trailer', 'host', 'content-length', 'proxy-authenticate', 'proxy-authorization'
+}
+
+
+def b64decode(value):
+    return base64.urlsafe_b64decode(value + '=' * (-len(value) % 4))
+
+
+def b64encode(value):
+    return base64.urlsafe_b64encode(value).rstrip(b'=').decode('ascii')
+
+
+def decrypt_payload(payload, key):
+    if payload.get('algorithm') != 'AES-256-GCM':
+        raise ValueError('Unsupported encryption algorithm')
+    return AESGCM(key).decrypt(b64decode(payload['iv']), b64decode(payload['data']), None)
+
+
+def encrypt_payload(data, key):
+    iv = os.urandom(12)
+    return {'algorithm': 'AES-256-GCM', 'iv': b64encode(iv), 'data': b64encode(AESGCM(key).encrypt(iv, data, None))}
+
+
+def post_json(path, data, token=None):
+    headers = {'Content-Type': 'application/json', 'User-Agent': 'WebTNX/2.0'}
+    if token:
+        headers['Authorization'] = f'Bearer {token}'
+    request = urllib.request.Request(
+        f'{SERVER_URL}{path}', data=json.dumps(data).encode('utf-8'), headers=headers, method='POST'
+    )
+    with urllib.request.urlopen(request, timeout=135) as response:
+        raw = response.read()
+        return json.loads(raw.decode('utf-8')) if raw else {}
+
+
+def clean_headers(headers):
+    return {key: value for key, value in headers.items() if key.lower() not in HOP_HEADERS}
+
+
+def source_line(source):
+    return (
+        f"IP {source.get('ip', 'unknown')}  |  {source.get('protocol', 'http').upper()}  |  "
+        f"{source.get('userAgent', 'unknown')}"
+    )
+
+
+def usage():
+    command = 'webtnx.exe' if platform.system().lower() == 'windows' else 'python3 webtnx.py'
+    print(f'Usage: {command} <tunnel_id> <local_port> [timeout_seconds]')
+
+
 def main():
-    print(f"{BLUE}{BOLD}WebTNX - HTTP Tunnel")
-    print(f"{BLUE}===================================================={RESET}")
-    print(f"{GREEN}[INFO]{RESET} Starting WebTNX CLI Client...")
-    print(f"{GREEN}[COPY]{RESET} Copyright (c) 2026 {BOLD}NeuralNexusLab{RESET}. All Rights Reserved.")
-    print(f"{BLUE}===================================================={RESET}")
+    print(f'{BLUE}{BOLD}WebTNX 2 | AES-256-GCM authenticated tunnel{RESET}')
     if len(sys.argv) >= 3:
-        tunnel_id = sys.argv[1].strip().lower()
-        port = sys.argv[2].strip()
-        timeout = sys.argv[3].strip() if len(sys.argv) > 3 else "15"
+        tunnel_id, port = sys.argv[1].strip().lower(), sys.argv[2].strip()
+        timeout = sys.argv[3].strip() if len(sys.argv) > 3 else '30'
     else:
         try:
-            tunnel_id = input(f"{CYAN}1. Enter App ID (Tunnel ID): {RESET}").strip().lower()
-            port = input(f"{CYAN}2. Enter Local Port (e.g. 8080): {RESET}").strip()
-            timeout = input(f"{CYAN}3. Enter Timeout (Seconds, default 15): {RESET}").strip() or "15"
+            tunnel_id = input(f'{CYAN}Tunnel ID: {RESET}').strip().lower()
+            port = input(f'{CYAN}Local port: {RESET}').strip()
+            timeout = input(f'{CYAN}Timeout seconds [30]: {RESET}').strip() or '30'
         except (KeyboardInterrupt, EOFError):
-            print(f"\n{RED}[ABORT]{RESET} Process terminated by user.")
-            sys.exit(1)
-    if not tunnel_id or not port:
-        print(f"\n{RED}[ERROR]{RESET} Tunnel ID and Local Port cannot be empty.")
-        show_usage()
-        exit_with_pause(1)
-    secret_key = f"{tunnel_id}_{port}_{timeout}"
-    print(f"\n{GREEN}[RUN]{RESET} App Name     : {CYAN}{tunnel_id}{RESET}")
-    print(f"{GREEN}[RUN]{RESET} Public URL   : {CYAN}{SERVER_URL}/{tunnel_id}/{RESET}")
-    print(f"{GREEN}[RUN]{RESET} Local Server : {CYAN}http://localhost:{port}{RESET}")
-    print(f"{GREEN}[RUN]{RESET} Secure Key   : {YELLOW}{secret_key} (Encrypted){RESET}")
-    print(f"{BLUE}===================================================={RESET}")
+            return 1
+    if not tunnel_id or not port.isdigit():
+        usage()
+        return 1
+
     try:
-        reg_res = send_post(f"{SERVER_URL}/api/register", {"id": tunnel_id, "port": int(port), "timeout": int(timeout)})
-        if not reg_res.get("success"):
-            print(f"{RED}[ERROR]{RESET} ID '{tunnel_id}' is already in use or reserved.")
-            exit_with_pause(1)
-        print(f"{GREEN}[OK]{RESET} Tunnel registered successfully. Keep this terminal open.\n")
-    except Exception as e:
-        print(f"{RED}[ERROR]{RESET} Network Error during registration: {e}")
-        exit_with_pause(1)
-    print(f"{YELLOW}[LOG]{RESET} Polling tunnel requests active...")
+        registration = post_json('/api/register', {'id': tunnel_id, 'port': int(port), 'timeout': int(timeout)})
+    except Exception as error:
+        print(f'{RED}Registration failed: {error}{RESET}')
+        return 1
+    if not registration.get('success'):
+        print(f'{RED}Tunnel ID is in use or invalid.{RESET}')
+        return 1
+
+    token = registration['token']
+    key = b64decode(registration['encryptionKey'])
+    interval = max(0.5, registration.get('pollIntervalMs', 1500) / 1000)
+    print(f'{GREEN}Live:{RESET} {SERVER_URL}/{tunnel_id}/')
+    print(f'{GREEN}Local:{RESET} http://localhost:{port}')
+    print(f'{GREEN}Security:{RESET} AES-256-GCM payload authentication over TLS')
+
     while True:
         try:
-            poll_res = send_post(f"{SERVER_URL}/api/reqs", {"id": tunnel_id})
-            requests = poll_res.get("requests", [])
-            for req in requests:
-                req_id = req["id"]
-                req_path = req["path"]
-                req_method = req["method"]
-                req_headers = req.get("headers", {})
-                req_query = req.get("query", {})
-                method_color = GREEN if req_method == 'POST' else BLUE
-                print(f"📥 {method_color}[{req_method}]{RESET} {req_path}", end="", flush=True)
+            queued = post_json('/api/reqs', {'id': tunnel_id}, token).get('requests', [])
+            for incoming in queued:
+                request_id = incoming['id']
+                source = incoming.get('source', {})
+                print(f"\n{BLUE}{incoming['method']}{RESET} {incoming['path']}  |  {source_line(source)}")
                 try:
-                    send_post(f"{SERVER_URL}/api/keepalive", {"requestId": req_id})
-                except Exception:
-                    pass
-                target_url = f"http://localhost:{port}{req_path}"
-                if req_query:
-                    query_str = urllib.parse.urlencode(req_query)
-                    target_url += f"?{query_str}"
-                headers_to_remove = ['host', 'connection', 'accept-encoding', 'content-length']
-                cleaned_headers = {}
-                for k, v in req_headers.items():
-                    if k.lower() not in headers_to_remove:
-                        cleaned_headers[k] = v
-                try:
-                    local_req = urllib.request.Request(target_url, headers=cleaned_headers, method=req_method)
-                    with urllib.request.urlopen(local_req) as local_res:
-                        local_status = getattr(local_res, 'status', None) or local_res.getcode()
-                        content_type = (local_res.headers.get('content-type') or '').lower()
-                        res_headers = {}
-                        for key, val in local_res.headers.items():
-                            res_headers[key.lower()] = val
-                        is_binary = not any(t in content_type for t in ["text/", "json", "javascript", "xml"])
-                        raw_body_bytes = local_res.read()
-                        if is_binary:
-                            raw_body_data = base64.b64encode(raw_body_bytes).decode('utf-8')
-                            is_base64 = True
-                        else:
-                            raw_body_data = raw_body_bytes.decode('utf-8', errors='ignore')
-                            is_base64 = False
-                        encrypted_body = xor_encrypt(raw_body_data, secret_key)
-                except urllib.error.HTTPError as he:
-                    local_status = he.code
-                    res_headers = {k.lower(): v for k, v in he.headers.items()}
-                    raw_body_data = he.read().decode('utf-8', errors='ignore')
-                    encrypted_body = xor_encrypt(raw_body_data, secret_key)
-                    is_base64 = False
-                except Exception as le:
-                    local_status = 502
-                    res_headers = {"content-type": "text/plain"}
-                    raw_body_data = f"WebTNX Proxy Error: Local service offline. {le}"
-                    encrypted_body = xor_encrypt(raw_body_data, secret_key)
-                    is_base64 = False
-                try:
-                    send_post(f"{SERVER_URL}/api/res", {"requestId": req_id, "status": local_status, "headers": res_headers, "body": encrypted_body, "isBase64": is_base64, "isEncrypted": True})
-                    status_color = GREEN if local_status < 400 else RED
-                    print(f"  --> {status_color}📤 [{local_status}]{RESET} (Bytes: {len(encrypted_body)})" + (f" {YELLOW}(Binary){RESET}" if is_base64 else ""))
-                except Exception as re:
-                    print(f"  --> {RED}📤 [FAIL]{RESET} Send response back failed: {re}")
-        except Exception as pe:
-            print(f"\r⚠️ {YELLOW}[WARN]{RESET} Polling connection warning: {pe}")
-            time.sleep(5)
-        time.sleep(2)
-if __name__ == "__main__":
-    main()
+                    post_json('/api/keepalive', {'requestId': request_id}, token)
+                    body = decrypt_payload(incoming['payload'], key)
+                    url = f"http://localhost:{port}{incoming['path']}"
+                    query = urllib.parse.urlencode(incoming.get('query') or {}, doseq=True)
+                    if query:
+                        url += f'?{query}'
+                    method = incoming['method'].upper()
+                    data = body if method not in {'GET', 'HEAD'} else None
+                    local_request = urllib.request.Request(
+                        url, data=data, headers=clean_headers(incoming.get('headers', {})), method=method
+                    )
+                    try:
+                        with urllib.request.urlopen(local_request, timeout=int(timeout)) as local_response:
+                            status = local_response.status
+                            response_headers = dict(local_response.headers.items())
+                            response_body = local_response.read()
+                    except urllib.error.HTTPError as http_error:
+                        status = http_error.code
+                        response_headers = dict(http_error.headers.items())
+                        response_body = http_error.read()
+                except Exception as local_error:
+                    status = 502
+                    response_headers = {'content-type': 'text/plain; charset=utf-8'}
+                    response_body = f'WebTNX local proxy error: {local_error}'.encode('utf-8')
+
+                post_json('/api/res', {
+                    'requestId': request_id,
+                    'status': status,
+                    'headers': clean_headers(response_headers),
+                    'payload': encrypt_payload(response_body, key)
+                }, token)
+                color = GREEN if status < 400 else RED
+                print(f'{color}-> {status}{RESET} | {len(response_body)} bytes | source {source.get("ip", "unknown")}')
+        except urllib.error.HTTPError as error:
+            if error.code == 401:
+                print(f'{RED}Tunnel session expired. Restart the client to register again.{RESET}')
+                return 1
+            print(f'{YELLOW}Control plane warning: HTTP {error.code}{RESET}')
+            time.sleep(3)
+        except (KeyboardInterrupt, EOFError):
+            print('\nTunnel stopped.')
+            return 0
+        except Exception as error:
+            print(f'{YELLOW}Connection warning: {error}; retrying...{RESET}')
+            time.sleep(3)
+        time.sleep(interval)
+
+
+if __name__ == '__main__':
+    sys.exit(main())
