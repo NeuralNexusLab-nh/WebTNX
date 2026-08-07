@@ -15,38 +15,6 @@ WebTNX is a lightweight, self-hosted HTTP relay that gives a local web service a
 
 > WebTNX is not end-to-end encrypted: the relay must decrypt an agent response before returning it to the public visitor. TLS protects the full control plane in transit, while AES-256-GCM adds authenticated payload protection between relay and agent.
 
-## Self-hosting
-
-Requirements: Node.js 18 or later.
-
-```bash
-git clone https://github.com/NeuralNexusLab-nh/WebTNX.git
-cd WebTNX
-npm ci
-NODE_OPTIONS=--max-old-space-size=24 PORT=3000 node server.js
-```
-
-When running directly behind exactly one trusted reverse proxy, set `TRUST_PROXY=1` so source IP logging uses the forwarded client address. Do not enable this for an untrusted direct deployment.
-
-## Clients
-
-### Windows
-
-```powershell
-.\webtnx.exe
-```
-
-### Python (Windows, Linux, macOS)
-
-```bash
-python3 -m pip install cryptography
-python3 webtnx.py
-```
-
-Both native clients start an interactive setup. Enter the tunnel ID, local port, and timeout when prompted; command-line parameters are not required or used.
-
-The browser agent is available at `/create`. Browser security rules prevent JavaScript from setting a few restricted headers such as `Cookie`; use the native client when exact header fidelity is required.
-
 ## Protocol limits
 
 - Request body limit: 2 MB.
