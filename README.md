@@ -1,4 +1,4 @@
-# WebTNX
+# [WebTNX](https://webtnx.zone.id/)
 
 WebTNX is a lightweight, self-hosted HTTP relay that gives a local web service a public path. It supports a zero-install browser agent plus native Windows and Python clients.
 
