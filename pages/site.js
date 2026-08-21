@@ -23,10 +23,6 @@ document.addEventListener('DOMContentLoaded', () => {
   languageSelects.forEach(select => select.addEventListener('change', () => applyLanguage(select.value)));
   applyLanguage(localStorage.getItem('webtnx-language') || 'en');
 
-  const menu = $('.menu');
-  const links = $('.nav-links');
-  menu?.addEventListener('click', () => links?.classList.toggle('open'));
-
   const observer = new IntersectionObserver(entries => {
     entries.forEach(entry => entry.isIntersecting && entry.target.classList.add('visible'));
   }, { threshold: .13 });
