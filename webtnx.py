@@ -9,7 +9,7 @@ import urllib.parse
 import urllib.request
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 
-SERVER_URL = os.environ.get('WEBTNX_SERVER_URL', 'https://webtnx.zone.id').rstrip('/')
+SERVER_URL = os.environ.get('WEBTNX_SERVER_URL', 'https://webtnx.nxlabtw.com').rstrip('/')
 GREEN, BLUE, YELLOW, CYAN, RED = '\033[92m', '\033[94m', '\033[93m', '\033[96m', '\033[91m'
 BOLD, RESET = '\033[1m', '\033[0m'
 HOP_HEADERS = {
