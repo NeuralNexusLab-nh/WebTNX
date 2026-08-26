@@ -1,12 +1,51 @@
 const $ = (selector, root = document) => root.querySelector(selector);
 const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
+const LANGUAGE_STORAGE_KEY = 'webtnx-language';
+
+const normalizeLanguage = language => {
+  const value = String(language || '').trim().replaceAll('_', '-').toLowerCase();
+  if (value === 'zh-tw' || value === 'zh-hk' || value === 'zh-mo' || value.startsWith('zh-hant')) return 'zh-TW';
+  if (value === 'en' || value.startsWith('en-')) return 'en';
+  return null;
+};
+
+const storedLanguage = () => {
+  try {
+    return normalizeLanguage(localStorage.getItem(LANGUAGE_STORAGE_KEY));
+  } catch {
+    return null;
+  }
+};
+
+const saveLanguage = language => {
+  try {
+    localStorage.setItem(LANGUAGE_STORAGE_KEY, language);
+  } catch {
+    // The UI still changes when storage is unavailable (private mode, policy, or sandboxing).
+  }
+};
+
+const accountLanguage = () => normalizeLanguage(
+  document.documentElement.dataset.accountLanguage || window.WEBTNX_ACCOUNT_LANGUAGE
+);
+
+const browserLanguage = () => {
+  const preferences = Array.isArray(navigator.languages) && navigator.languages.length
+    ? navigator.languages
+    : [navigator.language];
+  for (const preference of preferences) {
+    const supported = normalizeLanguage(preference);
+    if (supported) return supported;
+  }
+  return 'en';
+};
 
 document.addEventListener('DOMContentLoaded', () => {
   const languageSelects = $$('.language-select');
-  const applyLanguage = language => {
+  const applyLanguage = (language, { persist = false } = {}) => {
     const lang = language === 'zh-TW' ? 'zh-TW' : 'en';
     document.documentElement.lang = lang;
-    localStorage.setItem('webtnx-language', lang);
+    if (persist) saveLanguage(lang);
     languageSelects.forEach(select => { select.value = lang; });
     $$('[data-en][data-zh]').forEach(node => {
       if (node.hasAttribute('data-dynamic')) return;
@@ -20,8 +59,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     document.dispatchEvent(new CustomEvent('webtnx:languagechange', { detail: { lang } }));
   };
-  languageSelects.forEach(select => select.addEventListener('change', () => applyLanguage(select.value)));
-  applyLanguage(localStorage.getItem('webtnx-language') || 'en');
+  languageSelects.forEach(select => select.addEventListener('change', () => applyLanguage(select.value, { persist: true })));
+  applyLanguage(accountLanguage() || storedLanguage() || browserLanguage());
 
   const observer = new IntersectionObserver(entries => {
     entries.forEach(entry => entry.isIntersecting && entry.target.classList.add('visible'));
