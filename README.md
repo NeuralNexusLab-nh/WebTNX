@@ -3,7 +3,7 @@
 https://webtnx.nxlabtw.com
 ```
 
-WebTNX is a lightweight, self-hosted HTTP relay that gives a local web service a public path. It supports a zero-install browser agent plus native Windows and Python clients.
+WebTNX is a lightweight HTTP relay that gives a local web service a public path. It supports a zero-install browser agent plus native Windows and Python clients.
 
 ## Features
 
@@ -13,6 +13,7 @@ WebTNX is a lightweight, self-hosted HTTP relay that gives a local web service a
 - Ephemeral in-memory request queues—no request headers or bodies written to disk.
 - Source IP, protocol, user agent, path, status and byte counts in client logs.
 - Continuous CORS health checks in the browser agent.
+- Automatic Tunnel ID prefixes for statically identifiable same-site asset paths in HTML, CSS, and JavaScript.
 - Bounded queues, request deadlines and inactive-session cleanup for small servers.
 - Rebuilt frosted-glass midnight interface.
 
@@ -32,7 +33,6 @@ WebTNX is a lightweight, self-hosted HTTP relay that gives a local web service a
 - Each registration receives a random 256-bit bearer token and independent AES key.
 - AES-256-GCM authenticates every body before it is forwarded or returned.
 - Public applications should retain their own authentication and authorization.
-- Put rate limiting and TLS termination at a trusted reverse proxy for public deployments.
 
 ## License
 

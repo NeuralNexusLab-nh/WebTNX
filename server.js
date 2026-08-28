@@ -152,9 +152,44 @@ function sourceDetails(req) {
   };
 }
 
-function rewriteUrls(content, tunnelId) {
-  let rewritten = content.replace(/(href|src|action)=["']\/(?!\/)([^"']*)["']/gi, (match, prop, subPath) => subPath.startsWith(`${tunnelId}/`) ? `${prop}="/${subPath}"` : `${prop}="/${tunnelId}/${subPath}"`);
-  return rewritten.replace(/url\(["']?\/(?!\/)([^"')]+)["']?\)/gi, (match, subPath) => subPath.startsWith(`${tunnelId}/`) ? `url("/${subPath}")` : `url("/${tunnelId}/${subPath}")`);
+function tunnelPath(pathname, tunnelId) {
+  if (pathname === `/${tunnelId}` || pathname.startsWith(`/${tunnelId}/`)) return pathname;
+  return `/${tunnelId}${pathname}`;
+}
+
+function rewriteCssUrls(content, tunnelId) {
+  let rewritten = content.replace(/url\(\s*(["']?)\/(?!\/)([^"')]+)\1\s*\)/gi, (match, quote, subPath) => {
+    return `url(${quote}${tunnelPath(`/${subPath}`, tunnelId)}${quote})`;
+  });
+  return rewritten.replace(/(@import\s+)(["'])\/(?!\/)([^"']+)\2/gi, (match, prefix, quote, subPath) => {
+    return `${prefix}${quote}${tunnelPath(`/${subPath}`, tunnelId)}${quote}`;
+  });
+}
+
+function rewriteUrls(content, tunnelId, contentType) {
+  let rewritten = content;
+  if (contentType.includes('text/html')) {
+    rewritten = rewritten.replace(/(href|src|action|poster)(\s*=\s*)(["'])\/(?!\/)([^"']*)\3/gi, (match, prop, separator, quote, subPath) => {
+      return `${prop}${separator}${quote}${tunnelPath(`/${subPath}`, tunnelId)}${quote}`;
+    });
+    rewritten = rewritten.replace(/(srcset)(\s*=\s*)(["'])([^"']*)\3/gi, (match, prop, separator, quote, value) => {
+      const paths = value.split(',').map(candidate => candidate.trim().replace(/^\/(?!\/)(\S+)(.*)$/, (item, pathname, descriptor) => {
+        return `${tunnelPath(`/${pathname}`, tunnelId)}${descriptor}`;
+      }));
+      return `${prop}${separator}${quote}${paths.join(', ')}${quote}`;
+    });
+    rewritten = rewriteCssUrls(rewritten, tunnelId);
+  } else if (contentType.includes('text/css')) {
+    rewritten = rewriteCssUrls(rewritten, tunnelId);
+  } else if (contentType.includes('javascript') || contentType.includes('ecmascript')) {
+    rewritten = rewritten.replace(/(["'])\/(?!\/)([^"'\r\n]*)\1/g, (match, quote, subPath) => {
+      return `${quote}${tunnelPath(`/${subPath}`, tunnelId)}${quote}`;
+    });
+    rewritten = rewritten.replace(/`\/(?!\/)([^`${}\r\n]*)`/g, (match, subPath) => {
+      return `\`${tunnelPath(`/${subPath}`, tunnelId)}\``;
+    });
+  }
+  return rewritten;
 }
 
 function sendTimeout(requestId) {
@@ -232,8 +267,10 @@ async function handleApi(req, res, pathname) {
     if (pending.timeoutId) clearTimeout(pending.timeoutId);
     pendingRequests.delete(body.requestId);
     const responseHeaders = sanitizeForwardHeaders(body.headers && typeof body.headers === 'object' ? body.headers : {});
-    const contentType = String(responseHeaders['content-type'] || responseHeaders['Content-Type'] || '');
-    if (contentType.includes('text/html') || contentType.includes('text/css')) responseBody = Buffer.from(rewriteUrls(responseBody.toString('utf8'), pending.tunnelId));
+    const contentType = String(responseHeaders['content-type'] || responseHeaders['Content-Type'] || '').toLowerCase();
+    if (contentType.includes('text/html') || contentType.includes('text/css') || contentType.includes('javascript') || contentType.includes('ecmascript')) {
+      responseBody = Buffer.from(rewriteUrls(responseBody.toString('utf8'), pending.tunnelId, contentType));
+    }
     const safeStatus = Number.isInteger(Number(body.status)) && Number(body.status) >= 100 && Number(body.status) <= 599 ? Number(body.status) : 200;
     send(pending.res, safeStatus, responseBody, { ...responseHeaders, 'X-Via': 'WebTNX', 'X-Request-Id': body.requestId });
     return sendJson(res, 200, { success: true });

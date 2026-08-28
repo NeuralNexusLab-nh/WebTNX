@@ -80,3 +80,57 @@ test('rejects an unauthenticated agent poll', async () => {
   const result = await api('/api/reqs', { id: 'integration' });
   assert.equal(result.response.status, 401);
 });
+
+test('automatically prefixes statically identifiable asset paths with the tunnel ID', async () => {
+  const tunnelId = 'assetpaths';
+  const registration = (await api('/api/register', { id: tunnelId, port: 4321, timeout: 10 })).data;
+  const key = decode(registration.encryptionKey);
+
+  async function relay(pathname, contentType, body) {
+    const visitor = fetch(`${base}/${tunnelId}${pathname}`);
+    await new Promise(resolve => setTimeout(resolve, 80));
+    const poll = await api('/api/reqs', { id: tunnelId }, registration.token);
+    assert.equal(poll.data.requests.length, 1);
+    await api('/api/res', {
+      requestId: poll.data.requests[0].id,
+      status: 200,
+      headers: { 'content-type': contentType },
+      payload: encrypt(Buffer.from(body), key)
+    }, registration.token);
+    return (await visitor).text();
+  }
+
+  const html = await relay('/', 'text/html; charset=utf-8', [
+    '<link href="/styles/app.css">',
+    '<script src="/scripts/app.js"></script>',
+    '<img src="/images/logo.png" srcset="/images/one.png 1x, /images/two.png 2x">',
+    '<video poster="/images/poster.jpg"></video>',
+    '<form action="/submit"></form>',
+    '<link href="/assetpaths/already.css">',
+    '<img src="https://cdn.example/logo.png">'
+  ].join(''));
+  assert.match(html, /href="\/assetpaths\/styles\/app\.css"/);
+  assert.match(html, /src="\/assetpaths\/scripts\/app\.js"/);
+  assert.match(html, /srcset="\/assetpaths\/images\/one\.png 1x, \/assetpaths\/images\/two\.png 2x"/);
+  assert.match(html, /poster="\/assetpaths\/images\/poster\.jpg"/);
+  assert.match(html, /action="\/assetpaths\/submit"/);
+  assert.equal((html.match(/\/assetpaths\/already\.css/g) || []).length, 1);
+  assert.match(html, /https:\/\/cdn\.example\/logo\.png/);
+
+  const css = await relay('/styles/app.css', 'text/css', '@import "/theme.css";body{background:url(/images/hero.png)}');
+  assert.match(css, /@import "\/assetpaths\/theme\.css"/);
+  assert.match(css, /url\(\/assetpaths\/images\/hero\.png\)/);
+
+  const javascript = await relay('/scripts/app.js', 'application/javascript', [
+    'import module from "/modules/app.js";',
+    "fetch('/api/items');",
+    'const image=`/images/icon.svg`;',
+    'const existing="/assetpaths/ready";',
+    'const external="https://cdn.example/app.js";'
+  ].join(''));
+  assert.match(javascript, /"\/assetpaths\/modules\/app\.js"/);
+  assert.match(javascript, /fetch\('\/assetpaths\/api\/items'\)/);
+  assert.match(javascript, /`\/assetpaths\/images\/icon\.svg`/);
+  assert.equal((javascript.match(/\/assetpaths\/ready/g) || []).length, 1);
+  assert.match(javascript, /https:\/\/cdn\.example\/app\.js/);
+});
