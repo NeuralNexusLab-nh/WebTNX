@@ -36,4 +36,4 @@ WebTNX is a lightweight HTTP relay that gives a local web service a public path.
 
 ## License
 
-Distributed under the [NeuralNexusLab Shared Source License v1.0](LICENSE). Public instances and modified versions must retain the required attribution. Direct commercial resale of the tunneling service is prohibited; see the license for the complete terms.
+Distributed under the [NXLabTW Shared Source License v1.0](LICENSE). Public instances and modified versions must retain the required attribution. Direct commercial resale of the tunneling service is prohibited; see the license for the complete terms.
