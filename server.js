@@ -4,6 +4,7 @@ const fs = require('fs');
 const path = require('path');
 
 const PORT = Number(process.env.PORT) || 3000;
+const PUBLIC_BASE_DOMAIN = String(process.env.PUBLIC_BASE_DOMAIN || 'webtnx.nxlabtw.com').toLowerCase();
 const ACTIVE_WINDOW_MS = 20_000;
 const MAX_TIMEOUT_SECONDS = 120;
 const MAX_QUEUE_PER_TUNNEL = 10;
@@ -79,7 +80,7 @@ async function readJson(req) {
 }
 
 function isValidTunnelId(id) {
-  if (typeof id !== 'string' || !/^[a-zA-Z0-9-_]{3,64}$/.test(id)) return false;
+  if (typeof id !== 'string' || !/^[a-zA-Z0-9-]{3,63}$/.test(id)) return false;
   return !new Set(['api','create','tunnel','timeout','license','index','requests','ids','data','favicon','static','download','docs','styles','site']).has(id.toLowerCase());
 }
 
@@ -157,6 +158,14 @@ function tunnelPath(pathname, tunnelId) {
   return `/${tunnelId}${pathname}`;
 }
 
+function subdomainTunnelId(req) {
+  const hostname = String(req.headers.host || '').split(':')[0].toLowerCase();
+  const suffix = `.${PUBLIC_BASE_DOMAIN}`;
+  if (!hostname.endsWith(suffix)) return null;
+  const id = hostname.slice(0, -suffix.length);
+  return /^[a-z0-9-]{3,63}$/.test(id) && isValidTunnelId(id) ? id : null;
+}
+
 function rewriteCssUrls(content, tunnelId) {
   let rewritten = content.replace(/url\(\s*(["']?)\/(?!\/)([^"')]+)\1\s*\)/gi, (match, quote, subPath) => {
     return `url(${quote}${tunnelPath(`/${subPath}`, tunnelId)}${quote})`;
@@ -192,32 +201,34 @@ function rewriteUrls(content, tunnelId, contentType) {
   return rewritten;
 }
 
-function rewriteLocation(value, tunnelId, localPort) {
+function rewriteLocation(value, tunnelId, localPort, publicHost = null) {
   if (typeof value !== 'string' || !value) return value;
-  if (value.startsWith('/') && !value.startsWith('//')) return tunnelPath(value, tunnelId);
+  if (value.startsWith('/') && !value.startsWith('//')) return publicHost ? value : tunnelPath(value, tunnelId);
   try {
     const target = new URL(value);
     const localHost = target.hostname === 'localhost' || target.hostname === '127.0.0.1' || target.hostname === '[::1]';
     if (localHost && (!target.port || Number(target.port) === localPort)) {
-      return tunnelPath(`${target.pathname}${target.search}${target.hash}`, tunnelId);
+      const localPath = `${target.pathname}${target.search}${target.hash}`;
+      return publicHost ? `https://${publicHost}${localPath}` : tunnelPath(localPath, tunnelId);
     }
   } catch (_) {}
   return value;
 }
 
-function rewriteSetCookie(value, tunnelId) {
+function rewriteSetCookie(value, tunnelId, useSubdomain) {
   if (typeof value !== 'string') return value;
   const withoutLocalDomain = value.replace(/;\s*Domain=(?:localhost|127\.0\.0\.1|\[::1\])(?=;|$)/gi, '');
-  return withoutLocalDomain.replace(/;\s*Path=\/(?!\/)([^;]*)/i, (match, subPath) => `; Path=${tunnelPath(`/${subPath}`, tunnelId)}`);
+  return useSubdomain ? withoutLocalDomain : withoutLocalDomain.replace(/;\s*Path=\/(?!\/)([^;]*)/i, (match, subPath) => `; Path=${tunnelPath(`/${subPath}`, tunnelId)}`);
 }
 
-function rewriteResponseHeaders(headers, tunnel) {
+function rewriteResponseHeaders(headers, tunnel, pending) {
   const rewritten = { ...headers };
+  const publicHost = pending.routeMode === 'subdomain' ? pending.publicHost : null;
   for (const [key, value] of Object.entries(rewritten)) {
     const lower = key.toLowerCase();
-    if (lower === 'location') rewritten[key] = Array.isArray(value) ? value.map(item => rewriteLocation(item, tunnel.id, tunnel.port)) : rewriteLocation(value, tunnel.id, tunnel.port);
-    if (lower === 'set-cookie') rewritten[key] = Array.isArray(value) ? value.map(item => rewriteSetCookie(item, tunnel.id)) : rewriteSetCookie(value, tunnel.id);
-    if (lower === 'link') rewritten[key] = String(value).replace(/<\/(?!\/)([^>]+)>/g, (match, subPath) => `<${tunnelPath(`/${subPath}`, tunnel.id)}>`);
+    if (lower === 'location') rewritten[key] = Array.isArray(value) ? value.map(item => rewriteLocation(item, tunnel.id, tunnel.port, publicHost)) : rewriteLocation(value, tunnel.id, tunnel.port, publicHost);
+    if (lower === 'set-cookie') rewritten[key] = Array.isArray(value) ? value.map(item => rewriteSetCookie(item, tunnel.id, Boolean(publicHost))) : rewriteSetCookie(value, tunnel.id, Boolean(publicHost));
+    if (lower === 'link' && !publicHost) rewritten[key] = String(value).replace(/<\/(?!\/)([^>]+)>/g, (match, subPath) => `<${tunnelPath(`/${subPath}`, tunnel.id)}>`);
   }
   return rewritten;
 }
@@ -267,7 +278,7 @@ async function handleApi(req, res, pathname) {
     const token = base64url(crypto.randomBytes(32));
     const key = crypto.randomBytes(32);
     tunnels.set(id, { id, port, timeout, tokenHash: hashToken(token), key, lastActive: Date.now(), queue: [] });
-    return sendJson(res, 200, { success: true, token, encryptionKey: base64url(key), encryption: 'AES-256-GCM', pollIntervalMs: 1500 });
+    return sendJson(res, 200, { success: true, token, encryptionKey: base64url(key), encryption: 'AES-256-GCM', publicUrl: `https://${id}.${PUBLIC_BASE_DOMAIN}/`, pollIntervalMs: 1500 });
   }
   if (pathname === '/api/reqs') {
     const id = String(body.id || '').trim().toLowerCase();
@@ -296,9 +307,9 @@ async function handleApi(req, res, pathname) {
     catch (_) { return sendJson(res, 400, { error: 'Payload authentication failed' }); }
     if (pending.timeoutId) clearTimeout(pending.timeoutId);
     pendingRequests.delete(body.requestId);
-    const responseHeaders = rewriteResponseHeaders(sanitizeForwardHeaders(body.headers && typeof body.headers === 'object' ? body.headers : {}), tunnel);
+    const responseHeaders = rewriteResponseHeaders(sanitizeForwardHeaders(body.headers && typeof body.headers === 'object' ? body.headers : {}), tunnel, pending);
     const contentType = String(responseHeaders['content-type'] || responseHeaders['Content-Type'] || '').toLowerCase();
-    if (contentType.includes('text/html') || contentType.includes('text/css') || contentType.includes('javascript') || contentType.includes('ecmascript')) {
+    if (pending.routeMode === 'path' && (contentType.includes('text/html') || contentType.includes('text/css') || contentType.includes('javascript') || contentType.includes('ecmascript'))) {
       responseBody = Buffer.from(rewriteUrls(responseBody.toString('utf8'), pending.tunnelId, contentType));
     }
     const safeStatus = Number.isInteger(Number(body.status)) && Number(body.status) >= 100 && Number(body.status) <= 599 ? Number(body.status) : 200;
@@ -308,12 +319,12 @@ async function handleApi(req, res, pathname) {
   return sendJson(res, 404, { error: 'API route not found' });
 }
 
-async function handleTunnel(req, res, url) {
-  const match = url.pathname.match(/^\/([^/]+)(\/.*)?$/);
-  if (!match) return false;
-  const tunnelId = decodeURIComponent(match[1]).toLowerCase();
+async function handleTunnel(req, res, url, subdomainId = null) {
+  const match = subdomainId ? null : url.pathname.match(/^\/([^/]+)(\/.*)?$/);
+  if (!subdomainId && !match) return false;
+  const tunnelId = subdomainId || decodeURIComponent(match[1]).toLowerCase();
   if (!isValidTunnelId(tunnelId)) return false;
-  if (!match[2]) { send(res, 302, '', { Location: `/${tunnelId}/` }); return true; }
+  if (!subdomainId && !match[2]) { send(res, 302, '', { Location: `/${tunnelId}/` }); return true; }
   const tunnel = tunnels.get(tunnelId);
   if (!tunnel || Date.now() - tunnel.lastActive > ACTIVE_WINDOW_MS) { send(res, 404, 'Tunnel not active or expired.'); return true; }
   if (pendingRequests.size >= MAX_PENDING_REQUESTS || tunnel.queue.length >= MAX_QUEUE_PER_TUNNEL) { send(res, 503, 'Tunnel is busy. Please retry shortly.'); return true; }
@@ -322,12 +333,12 @@ async function handleTunnel(req, res, url) {
   const requestId = base64url(crypto.randomBytes(24));
   const requestData = {
     id: requestId, method: req.method, headers: sanitizeForwardHeaders(req.headers),
-    path: match[2] || '/', query: queryObject(url.searchParams), payload: encryptPayload(rawBody, tunnel.key),
+    path: subdomainId ? url.pathname || '/' : match[2] || '/', query: queryObject(url.searchParams), payload: encryptPayload(rawBody, tunnel.key),
     bodyBytes: rawBody.length, source: sourceDetails(req)
   };
   tunnel.queue.push(requestData);
   queuedBodyBytes += rawBody.length;
-  pendingRequests.set(requestId, { res, tunnelId, timeoutId: null });
+  pendingRequests.set(requestId, { res, tunnelId, timeoutId: null, routeMode: subdomainId ? 'subdomain' : 'path', publicHost: String(req.headers.host || '').split(':')[0] });
   armTimeout(requestId, tunnel.timeout);
   return true;
 }
@@ -335,6 +346,8 @@ async function handleTunnel(req, res, url) {
 const server = http.createServer(async (req, res) => {
   try {
     const url = new URL(req.url, 'http://webtnx.local');
+    const subdomainId = subdomainTunnelId(req);
+    if (subdomainId) return await handleTunnel(req, res, url, subdomainId);
     if ((req.method === 'GET' || req.method === 'HEAD') && serveStatic(url.pathname, res)) return;
     if (req.method === 'GET' && url.pathname === '/download/windows') return serveDownload('webtnx.exe', res);
     if (req.method === 'GET' && url.pathname === '/download/python') return serveDownload('webtnx.py', res);

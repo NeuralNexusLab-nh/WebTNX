@@ -89,7 +89,7 @@ def main():
     token = registration['token']
     key = b64decode(registration['encryptionKey'])
     interval = max(0.5, registration.get('pollIntervalMs', 1500) / 1000)
-    print(f'{GREEN}Live:{RESET} {SERVER_URL}/{tunnel_id}/')
+    print(f'{GREEN}Live:{RESET} {registration.get("publicUrl", f"{SERVER_URL}/{tunnel_id}/")}')
     print(f'{GREEN}Local:{RESET} http://localhost:{port}')
     print(f'{GREEN}Security:{RESET} AES-256-GCM payload authentication over TLS')
 

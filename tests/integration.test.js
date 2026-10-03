@@ -1,6 +1,7 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const crypto = require('node:crypto');
+const http = require('node:http');
 const { spawn } = require('node:child_process');
 const path = require('node:path');
 
@@ -29,6 +30,17 @@ async function api(pathname, data, token) {
     body: JSON.stringify(data)
   });
   return { response, data: await response.json() };
+}
+function visitorRequest(pathname, host) {
+  return new Promise((resolve, reject) => {
+    const request = http.request({ hostname: '127.0.0.1', port, path: pathname, headers: { host } }, response => {
+      const chunks = [];
+      response.on('data', chunk => chunks.push(chunk));
+      response.on('end', () => resolve({ status: response.statusCode, headers: response.headers, body: Buffer.concat(chunks) }));
+    });
+    request.on('error', reject);
+    request.end();
+  });
 }
 
 test.before(async () => {
@@ -79,6 +91,34 @@ test('forwards and authenticates a complete HTTP request', async () => {
 test('rejects an unauthenticated agent poll', async () => {
   const result = await api('/api/reqs', { id: 'integration' });
   assert.equal(result.response.status, 401);
+});
+
+test('routes wildcard subdomains without path rewriting', async () => {
+  const tunnelId = 'subdomain';
+  const registration = (await api('/api/register', { id: tunnelId, port: 4321, timeout: 10 })).data;
+  assert.equal(registration.publicUrl, `https://${tunnelId}.webtnx.nxlabtw.com/`);
+  const key = decode(registration.encryptionKey);
+  const visitor = visitorRequest('/dashboard?view=activity', `${tunnelId}.webtnx.nxlabtw.com`);
+  await new Promise(resolve => setTimeout(resolve, 80));
+  const poll = await api('/api/reqs', { id: tunnelId }, registration.token);
+  assert.equal(poll.data.requests.length, 1);
+  assert.equal(poll.data.requests[0].path, '/dashboard');
+  assert.equal(poll.data.requests[0].query.view, 'activity');
+  await api('/api/res', {
+    requestId: poll.data.requests[0].id,
+    status: 302,
+    headers: {
+      location: 'http://localhost:4321/login',
+      'set-cookie': 'session=abc; Domain=localhost; Path=/; HttpOnly',
+      'content-type': 'text/html'
+    },
+    payload: encrypt(Buffer.from('<script src="/assets/app.js"></script>'), key)
+  }, registration.token);
+  const response = await visitor;
+  assert.equal(response.headers.location, `https://${tunnelId}.webtnx.nxlabtw.com/login`);
+  assert.match(response.headers['set-cookie'][0], /Path=\//);
+  assert.doesNotMatch(response.headers['set-cookie'][0], /Domain=localhost/i);
+  assert.equal(response.body.toString(), '<script src="/assets/app.js"></script>');
 });
 
 test('automatically prefixes statically identifiable asset paths with the tunnel ID', async () => {

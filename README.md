@@ -13,7 +13,7 @@ WebTNX is a lightweight HTTP relay that gives a local web service a public path.
 - Ephemeral in-memory request queues—no request headers or bodies written to disk.
 - Source IP, protocol, user agent, path, status and byte counts in client logs.
 - Continuous CORS health checks in the browser agent.
-- Automatic Tunnel ID prefixes for statically identifiable same-site asset paths in HTML, CSS, and JavaScript.
+- Each tunnel receives its own public subdomain: `https://YOUR-ID.webtnx.nxlabtw.com/`, so same-site paths, cookies, and SPA routing work naturally. Legacy path routing remains available for existing links.
 - Bounded queues, request deadlines and inactive-session cleanup for small servers.
 - Rebuilt frosted-glass midnight interface.
 
