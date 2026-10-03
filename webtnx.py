@@ -14,7 +14,8 @@ GREEN, BLUE, YELLOW, CYAN, RED = '\033[92m', '\033[94m', '\033[93m', '\033[96m',
 BOLD, RESET = '\033[1m', '\033[0m'
 HOP_HEADERS = {
     'connection', 'proxy-connection', 'keep-alive', 'transfer-encoding', 'upgrade',
-    'te', 'trailer', 'host', 'content-length', 'proxy-authenticate', 'proxy-authorization'
+    'te', 'trailer', 'host', 'content-length', 'proxy-authenticate', 'proxy-authorization',
+    'accept-encoding'
 }
 
 
@@ -108,9 +109,10 @@ def main():
                         url += f'?{query}'
                     method = incoming['method'].upper()
                     data = body if method not in {'GET', 'HEAD'} else None
-                    local_request = urllib.request.Request(
-                        url, data=data, headers=clean_headers(incoming.get('headers', {})), method=method
-                    )
+                    local_headers = clean_headers(incoming.get('headers', {}))
+                    # Keep rewritten HTML/CSS/JS readable by the relay; compressed bodies cannot be safely rewritten.
+                    local_headers['Accept-Encoding'] = 'identity'
+                    local_request = urllib.request.Request(url, data=data, headers=local_headers, method=method)
                     try:
                         with urllib.request.urlopen(local_request, timeout=int(timeout)) as local_response:
                             status = local_response.status

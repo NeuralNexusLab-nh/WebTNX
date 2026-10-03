@@ -169,7 +169,7 @@ function rewriteCssUrls(content, tunnelId) {
 function rewriteUrls(content, tunnelId, contentType) {
   let rewritten = content;
   if (contentType.includes('text/html')) {
-    rewritten = rewritten.replace(/(href|src|action|poster)(\s*=\s*)(["'])\/(?!\/)([^"']*)\3/gi, (match, prop, separator, quote, subPath) => {
+    rewritten = rewritten.replace(/(href|src|action|poster|base)(\s*=\s*)(["'])\/(?!\/)([^"']*)\3/gi, (match, prop, separator, quote, subPath) => {
       return `${prop}${separator}${quote}${tunnelPath(`/${subPath}`, tunnelId)}${quote}`;
     });
     rewritten = rewritten.replace(/(srcset)(\s*=\s*)(["'])([^"']*)\3/gi, (match, prop, separator, quote, value) => {
@@ -188,6 +188,36 @@ function rewriteUrls(content, tunnelId, contentType) {
     rewritten = rewritten.replace(/`\/(?!\/)([^`${}\r\n]*)`/g, (match, subPath) => {
       return `\`${tunnelPath(`/${subPath}`, tunnelId)}\``;
     });
+  }
+  return rewritten;
+}
+
+function rewriteLocation(value, tunnelId, localPort) {
+  if (typeof value !== 'string' || !value) return value;
+  if (value.startsWith('/') && !value.startsWith('//')) return tunnelPath(value, tunnelId);
+  try {
+    const target = new URL(value);
+    const localHost = target.hostname === 'localhost' || target.hostname === '127.0.0.1' || target.hostname === '[::1]';
+    if (localHost && (!target.port || Number(target.port) === localPort)) {
+      return tunnelPath(`${target.pathname}${target.search}${target.hash}`, tunnelId);
+    }
+  } catch (_) {}
+  return value;
+}
+
+function rewriteSetCookie(value, tunnelId) {
+  if (typeof value !== 'string') return value;
+  const withoutLocalDomain = value.replace(/;\s*Domain=(?:localhost|127\.0\.0\.1|\[::1\])(?=;|$)/gi, '');
+  return withoutLocalDomain.replace(/;\s*Path=\/(?!\/)([^;]*)/i, (match, subPath) => `; Path=${tunnelPath(`/${subPath}`, tunnelId)}`);
+}
+
+function rewriteResponseHeaders(headers, tunnel) {
+  const rewritten = { ...headers };
+  for (const [key, value] of Object.entries(rewritten)) {
+    const lower = key.toLowerCase();
+    if (lower === 'location') rewritten[key] = Array.isArray(value) ? value.map(item => rewriteLocation(item, tunnel.id, tunnel.port)) : rewriteLocation(value, tunnel.id, tunnel.port);
+    if (lower === 'set-cookie') rewritten[key] = Array.isArray(value) ? value.map(item => rewriteSetCookie(item, tunnel.id)) : rewriteSetCookie(value, tunnel.id);
+    if (lower === 'link') rewritten[key] = String(value).replace(/<\/(?!\/)([^>]+)>/g, (match, subPath) => `<${tunnelPath(`/${subPath}`, tunnel.id)}>`);
   }
   return rewritten;
 }
@@ -266,7 +296,7 @@ async function handleApi(req, res, pathname) {
     catch (_) { return sendJson(res, 400, { error: 'Payload authentication failed' }); }
     if (pending.timeoutId) clearTimeout(pending.timeoutId);
     pendingRequests.delete(body.requestId);
-    const responseHeaders = sanitizeForwardHeaders(body.headers && typeof body.headers === 'object' ? body.headers : {});
+    const responseHeaders = rewriteResponseHeaders(sanitizeForwardHeaders(body.headers && typeof body.headers === 'object' ? body.headers : {}), tunnel);
     const contentType = String(responseHeaders['content-type'] || responseHeaders['Content-Type'] || '').toLowerCase();
     if (contentType.includes('text/html') || contentType.includes('text/css') || contentType.includes('javascript') || contentType.includes('ecmascript')) {
       responseBody = Buffer.from(rewriteUrls(responseBody.toString('utf8'), pending.tunnelId, contentType));

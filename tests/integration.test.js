@@ -106,6 +106,7 @@ test('automatically prefixes statically identifiable asset paths with the tunnel
     '<img src="/images/logo.png" srcset="/images/one.png 1x, /images/two.png 2x">',
     '<video poster="/images/poster.jpg"></video>',
     '<form action="/submit"></form>',
+    '<base href="/app/">',
     '<link href="/assetpaths/already.css">',
     '<img src="https://cdn.example/logo.png">'
   ].join(''));
@@ -114,6 +115,7 @@ test('automatically prefixes statically identifiable asset paths with the tunnel
   assert.match(html, /srcset="\/assetpaths\/images\/one\.png 1x, \/assetpaths\/images\/two\.png 2x"/);
   assert.match(html, /poster="\/assetpaths\/images\/poster\.jpg"/);
   assert.match(html, /action="\/assetpaths\/submit"/);
+  assert.match(html, /href="\/assetpaths\/app\/"/);
   assert.equal((html.match(/\/assetpaths\/already\.css/g) || []).length, 1);
   assert.match(html, /https:\/\/cdn\.example\/logo\.png/);
 
@@ -133,4 +135,24 @@ test('automatically prefixes statically identifiable asset paths with the tunnel
   assert.match(javascript, /`\/assetpaths\/images\/icon\.svg`/);
   assert.equal((javascript.match(/\/assetpaths\/ready/g) || []).length, 1);
   assert.match(javascript, /https:\/\/cdn\.example\/app\.js/);
+
+  const redirectVisitor = fetch(`${base}/${tunnelId}/account`, { redirect: 'manual' });
+  await new Promise(resolve => setTimeout(resolve, 80));
+  const redirectPoll = await api('/api/reqs', { id: tunnelId }, registration.token);
+  assert.equal(redirectPoll.data.requests.length, 1);
+  await api('/api/res', {
+    requestId: redirectPoll.data.requests[0].id,
+    status: 302,
+    headers: {
+      location: 'http://localhost:4321/login?next=%2Faccount',
+      'set-cookie': 'session=abc; Domain=localhost; Path=/; HttpOnly',
+      link: '</assets/app.css>; rel=preload; as=style'
+    },
+    payload: encrypt(Buffer.alloc(0), key)
+  }, registration.token);
+  const redirectResponse = await redirectVisitor;
+  assert.equal(redirectResponse.headers.get('location'), '/assetpaths/login?next=%2Faccount');
+  assert.match(redirectResponse.headers.get('set-cookie'), /Path=\/assetpaths\//);
+  assert.doesNotMatch(redirectResponse.headers.get('set-cookie'), /Domain=localhost/i);
+  assert.match(redirectResponse.headers.get('link'), /<\/assetpaths\/assets\/app\.css>/);
 });
